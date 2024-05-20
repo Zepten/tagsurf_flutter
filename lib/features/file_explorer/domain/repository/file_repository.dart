@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:tagsurf_flutter/domain/entities/file_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
 abstract class FileRepository {
   // TODO: File system methods

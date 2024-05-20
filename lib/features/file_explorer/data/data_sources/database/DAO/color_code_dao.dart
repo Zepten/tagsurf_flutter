@@ -1,5 +1,5 @@
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/data/models/color_code.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/models/color_code.dart';
 
 @dao
 abstract class ColorCodeDao {

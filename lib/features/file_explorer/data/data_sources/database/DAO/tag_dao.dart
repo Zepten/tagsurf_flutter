@@ -1,5 +1,5 @@
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/data/models/tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 
 @dao
 abstract class TagDao {

@@ -1,6 +1,6 @@
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/domain/entities/color_code_entity.dart';
-import 'package:tagsurf_flutter/domain/entities/tag_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 @Entity(tableName: 'tags', foreignKeys: [
   ForeignKey(

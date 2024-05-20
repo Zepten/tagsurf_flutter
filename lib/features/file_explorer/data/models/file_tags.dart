@@ -1,6 +1,6 @@
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/domain/entities/file_entity.dart';
-import 'package:tagsurf_flutter/domain/entities/tag_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 @Entity(tableName: 'file_tags', primaryKeys: [
   'file_id',
