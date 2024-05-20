@@ -19,16 +19,16 @@ class FileRepositoryImpl implements FileRepository {
   // Database methods implementation
   @override
   Future<List<FileModel>> getTrackedFiles() {
-    return _appDatabase.fileDAO.getAllFiles();
+    return _appDatabase.fileDao.getAllFiles();
   }
 
   @override
   Future<void> trackFile(FileEntity file) async {
-    _appDatabase.fileDAO.insertFile(FileModel.fromEntity(file));
+    _appDatabase.fileDao.insertFile(FileModel.fromEntity(file));
   }
 
   @override
   Future<void> untrackFile(FileEntity file) async {
-    _appDatabase.fileDAO.deleteFile(FileModel.fromEntity(file));
+    _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
   }
 }

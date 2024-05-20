@@ -9,6 +9,12 @@ abstract class TagDao {
   @delete
   Future<void> deleteTag(TagModel tag);
 
+  @Query('select * from tags where id = :id')
+  Future<TagModel?> findTagById(int id);
+
   @Query('select * from tags')
   Future<List<TagModel>> getAllTags();
+
+  @Query('select name from tags')
+  Future<List<String>> getAllTagsNames();
 }

@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
-import 'package:tagsurf_flutter/domain/entities/color_code_entity.dart';
+import 'package:floor/floor.dart';
 
 class TagEntity extends Equatable {
+  @PrimaryKey(autoGenerate: true)
   final int? id;
   final String? name;
-  final ColorCodeEntity? colorCode;
-  final TagEntity? parentTag;
+  @ColumnInfo(name: 'parent_tag_id')
+  final int? parentTag;
+  @ColumnInfo(name: 'color_code')
+  final String colorCode;
 
   const TagEntity(
-      {required this.id,
-      required this.name,
-      required this.colorCode,
-      this.parentTag});
+      {required this.id, required this.name, required this.parentTag, required this.colorCode});
 
   @override
-  List<Object?> get props => [id, name, colorCode, parentTag];
+  List<Object?> get props => [id, name, parentTag, colorCode];
 }
