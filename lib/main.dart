@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tagsurf_flutter/injection_container.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDependencies();
   runApp(const MyApp());
 }
 
