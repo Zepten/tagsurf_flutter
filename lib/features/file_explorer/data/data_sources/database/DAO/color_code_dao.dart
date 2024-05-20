@@ -6,6 +6,9 @@ abstract class ColorCodeDao {
   @Insert()
   Future<void> insertColorCode(ColorCodeModel colorCode);
 
+  @Update()
+  Future<void> updateColorCode(ColorCodeModel colorCode);
+
   @delete
   Future<void> deleteColorCode(ColorCodeModel colorCode);
 

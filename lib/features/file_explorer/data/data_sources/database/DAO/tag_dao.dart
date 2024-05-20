@@ -6,6 +6,9 @@ abstract class TagDao {
   @Insert()
   Future<void> insertTag(TagModel tag);
 
+  @Update()
+  Future<void> updateTag(TagModel tag);
+
   @delete
   Future<void> deleteTag(TagModel tag);
 
@@ -17,4 +20,7 @@ abstract class TagDao {
 
   @Query('select name from tags')
   Future<List<String>> getAllTagsNames();
+
+  @Query('select * from tags where name = :name')
+  Future<TagModel?> findTagByName(String name);
 }

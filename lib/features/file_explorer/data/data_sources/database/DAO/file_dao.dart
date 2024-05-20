@@ -6,9 +6,15 @@ abstract class FileDao {
   @Insert()
   Future<void> insertFile(FileModel file);
 
+  @Update()
+  Future<void> updateFile(FileModel file);
+
   @delete
   Future<void> deleteFile(FileModel file);
 
   @Query('select * from files')
   Future<List<FileModel>> getAllFiles();
+
+  @Query('select * from files where path = :path')
+  Future<FileModel?> getFileByPath(String path);
 }

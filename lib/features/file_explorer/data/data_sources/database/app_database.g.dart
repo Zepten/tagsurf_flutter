@@ -140,6 +140,12 @@ class _$FileDao extends FileDao {
             'files',
             (FileModel item) =>
                 <String, Object?>{'id': item.id, 'path': item.path}),
+        _fileModelUpdateAdapter = UpdateAdapter(
+            database,
+            'files',
+            ['id'],
+            (FileModel item) =>
+                <String, Object?>{'id': item.id, 'path': item.path}),
         _fileModelDeletionAdapter = DeletionAdapter(
             database,
             'files',
@@ -155,6 +161,8 @@ class _$FileDao extends FileDao {
 
   final InsertionAdapter<FileModel> _fileModelInsertionAdapter;
 
+  final UpdateAdapter<FileModel> _fileModelUpdateAdapter;
+
   final DeletionAdapter<FileModel> _fileModelDeletionAdapter;
 
   @override
@@ -165,8 +173,21 @@ class _$FileDao extends FileDao {
   }
 
   @override
+  Future<FileModel?> getFileByPath(String path) async {
+    return _queryAdapter.query('select * from files where path = ?1',
+        mapper: (Map<String, Object?> row) =>
+            FileModel(id: row['id'] as int?, path: row['path'] as String?),
+        arguments: [path]);
+  }
+
+  @override
   Future<void> insertFile(FileModel file) async {
     await _fileModelInsertionAdapter.insert(file, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateFile(FileModel file) async {
+    await _fileModelUpdateAdapter.update(file, OnConflictStrategy.abort);
   }
 
   @override
@@ -183,6 +204,16 @@ class _$TagDao extends TagDao {
         _tagModelInsertionAdapter = InsertionAdapter(
             database,
             'tags',
+            (TagModel item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'parent_tag_id': item.parentTag,
+                  'color_code': item.colorCode
+                }),
+        _tagModelUpdateAdapter = UpdateAdapter(
+            database,
+            'tags',
+            ['id'],
             (TagModel item) => <String, Object?>{
                   'id': item.id,
                   'name': item.name,
@@ -207,6 +238,8 @@ class _$TagDao extends TagDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<TagModel> _tagModelInsertionAdapter;
+
+  final UpdateAdapter<TagModel> _tagModelUpdateAdapter;
 
   final DeletionAdapter<TagModel> _tagModelDeletionAdapter;
 
@@ -238,8 +271,24 @@ class _$TagDao extends TagDao {
   }
 
   @override
+  Future<TagModel?> findTagByName(String name) async {
+    return _queryAdapter.query('select * from tags where name = ?1',
+        mapper: (Map<String, Object?> row) => TagModel(
+            id: row['id'] as int?,
+            name: row['name'] as String?,
+            parentTag: row['parent_tag_id'] as int?,
+            colorCode: row['color_code'] as String),
+        arguments: [name]);
+  }
+
+  @override
   Future<void> insertTag(TagModel tag) async {
     await _tagModelInsertionAdapter.insert(tag, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateTag(TagModel tag) async {
+    await _tagModelUpdateAdapter.update(tag, OnConflictStrategy.abort);
   }
 
   @override
@@ -257,6 +306,11 @@ class _$ColorCodeDao extends ColorCodeDao {
             database,
             'color_codes',
             (ColorCodeModel item) => <String, Object?>{'color': item.color}),
+        _colorCodeModelUpdateAdapter = UpdateAdapter(
+            database,
+            'color_codes',
+            ['color'],
+            (ColorCodeModel item) => <String, Object?>{'color': item.color}),
         _colorCodeModelDeletionAdapter = DeletionAdapter(
             database,
             'color_codes',
@@ -271,6 +325,8 @@ class _$ColorCodeDao extends ColorCodeDao {
 
   final InsertionAdapter<ColorCodeModel> _colorCodeModelInsertionAdapter;
 
+  final UpdateAdapter<ColorCodeModel> _colorCodeModelUpdateAdapter;
+
   final DeletionAdapter<ColorCodeModel> _colorCodeModelDeletionAdapter;
 
   @override
@@ -283,6 +339,12 @@ class _$ColorCodeDao extends ColorCodeDao {
   @override
   Future<void> insertColorCode(ColorCodeModel colorCode) async {
     await _colorCodeModelInsertionAdapter.insert(
+        colorCode, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateColorCode(ColorCodeModel colorCode) async {
+    await _colorCodeModelUpdateAdapter.update(
         colorCode, OnConflictStrategy.abort);
   }
 
