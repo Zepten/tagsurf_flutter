@@ -11,7 +11,7 @@ import 'dart:async';
 
 part 'app_database.g.dart';
 
-@Database(version: 1, entities: [FileModel, TagModel, ColorCodeModel, FileTags])
+@Database(version: 1, entities: [FileModel, TagModel, ColorCodeModel, FileTagsModel])
 abstract class AppDatabase extends FloorDatabase {
   FileDao get fileDao;
   TagDao get tagDao;
