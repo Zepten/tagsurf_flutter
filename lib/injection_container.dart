@@ -6,22 +6,21 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_re
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 
-import 'features/file_explorer/domain/usecases/get_untracked_files.dart';
-
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
   //Database
-  final database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
+  final database =
+      await $FloorAppDatabase.databaseBuilder('app_database.db').build();
   sl.registerSingleton<AppDatabase>(database);
 
   // Dependencies
-  sl.registerSingleton<FileSystemService>(FileSystemServiceImpl(sl()));
+  sl.registerSingleton<FileSystemService>(FileSystemServiceImpl());
   sl.registerSingleton<FileRepository>(FileRepositoryImpl(sl(), sl()));
 
   // UseCases
   sl.registerSingleton<GetTrackedFilesUseCase>(GetTrackedFilesUseCase(sl()));
-  sl.registerSingleton<GetUnrackedFilesUseCase>(GetUnrackedFilesUseCase(sl()));
+  // sl.registerSingleton<GetUnrackedFilesUseCase>(GetUnrackedFilesUseCase(sl()));
 
   // BloCs
   sl.registerFactory<FileBloc>(() => FileBloc(sl()));
