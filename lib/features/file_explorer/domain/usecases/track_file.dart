@@ -8,7 +8,7 @@ class TrackFileUseCase implements UseCase<void, FileEntity> {
   TrackFileUseCase(this._fileRepository);
 
   @override
-  Future<void> call({FileEntity ? params}) {
+  Future<void> call({FileEntity? params}) {
     return _fileRepository.trackFile(params!);
   }
 }
