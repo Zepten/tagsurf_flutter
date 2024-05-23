@@ -76,6 +76,8 @@ class _$AppDatabase extends AppDatabase {
 
   TagDao? _tagDaoInstance;
 
+  FilesTagsDao? _fileTagsDaoInstance;
+
   ColorCodeDao? _colorCodeDaoInstance;
 
   Future<sqflite.Database> open(
@@ -122,6 +124,11 @@ class _$AppDatabase extends AppDatabase {
   @override
   TagDao get tagDao {
     return _tagDaoInstance ??= _$TagDao(database, changeListener);
+  }
+
+  @override
+  FilesTagsDao get fileTagsDao {
+    return _fileTagsDaoInstance ??= _$FilesTagsDao(database, changeListener);
   }
 
   @override
@@ -233,17 +240,6 @@ class _$TagDao extends TagDao {
   final DeletionAdapter<TagModel> _tagModelDeletionAdapter;
 
   @override
-  Future<TagModel?> findTagById(int id) async {
-    return _queryAdapter.query('select * from tags where id = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(
-            id: row['id'] as int?,
-            name: row['name'] as String?,
-            parentTag: row['parent_tag_id'] as int?,
-            colorCode: row['color_code'] as String),
-        arguments: [id]);
-  }
-
-  @override
   Future<List<TagModel>> getAllTags() async {
     return _queryAdapter.queryList('select * from tags',
         mapper: (Map<String, Object?> row) => TagModel(
@@ -254,20 +250,14 @@ class _$TagDao extends TagDao {
   }
 
   @override
-  Future<List<String>> getAllTagsNames() async {
-    return _queryAdapter.queryList('select name from tags',
-        mapper: (Map<String, Object?> row) => row.values.first as String);
-  }
-
-  @override
-  Future<TagModel?> findTagByName(String name) async {
-    return _queryAdapter.query('select * from tags where name = ?1',
+  Future<TagModel?> getTagById(int id) async {
+    return _queryAdapter.query('select * from tags where id = ?1',
         mapper: (Map<String, Object?> row) => TagModel(
             id: row['id'] as int?,
             name: row['name'] as String?,
             parentTag: row['parent_tag_id'] as int?,
             colorCode: row['color_code'] as String),
-        arguments: [name]);
+        arguments: [id]);
   }
 
   @override
@@ -283,6 +273,81 @@ class _$TagDao extends TagDao {
   @override
   Future<void> deleteTag(TagModel tag) async {
     await _tagModelDeletionAdapter.delete(tag);
+  }
+}
+
+class _$FilesTagsDao extends FilesTagsDao {
+  _$FilesTagsDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _filesTagsModelInsertionAdapter = InsertionAdapter(
+            database,
+            'files_tags',
+            (FilesTagsModel item) => <String, Object?>{
+                  'file_path': item.filePath,
+                  'tag_id': item.tagId
+                }),
+        _filesTagsModelUpdateAdapter = UpdateAdapter(
+            database,
+            'files_tags',
+            ['file_path', 'tag_id'],
+            (FilesTagsModel item) => <String, Object?>{
+                  'file_path': item.filePath,
+                  'tag_id': item.tagId
+                }),
+        _filesTagsModelDeletionAdapter = DeletionAdapter(
+            database,
+            'files_tags',
+            ['file_path', 'tag_id'],
+            (FilesTagsModel item) => <String, Object?>{
+                  'file_path': item.filePath,
+                  'tag_id': item.tagId
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<FilesTagsModel> _filesTagsModelInsertionAdapter;
+
+  final UpdateAdapter<FilesTagsModel> _filesTagsModelUpdateAdapter;
+
+  final DeletionAdapter<FilesTagsModel> _filesTagsModelDeletionAdapter;
+
+  @override
+  Future<List<int>> getTagsIdsByFilePath(String filePath) async {
+    return _queryAdapter.queryList(
+        'SELECT tag_id FROM files_tags WHERE file_path = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [filePath]);
+  }
+
+  @override
+  Future<List<String>> getFilesPathsByTag(int tagId) async {
+    return _queryAdapter.queryList(
+        'SELECT file_path FROM files_tags WHERE tag_id = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as String,
+        arguments: [tagId]);
+  }
+
+  @override
+  Future<void> insertFileTags(FilesTagsModel filesTags) async {
+    await _filesTagsModelInsertionAdapter.insert(
+        filesTags, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateFileTags(FilesTagsModel filesTags) async {
+    await _filesTagsModelUpdateAdapter.update(
+        filesTags, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteFileTags(FilesTagsModel filesTags) async {
+    await _filesTagsModelDeletionAdapter.delete(filesTags);
   }
 }
 
