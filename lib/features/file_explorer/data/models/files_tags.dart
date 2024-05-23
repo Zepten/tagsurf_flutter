@@ -10,11 +10,11 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
       childColumns: ['file_path'], parentColumns: ['path'], entity: FileEntity),
   ForeignKey(childColumns: ['tag_id'], parentColumns: ['id'], entity: TagEntity)
 ])
-class FileTagsModel {
+class FilesTagsModel {
   @ColumnInfo(name: 'file_path')
   final String? filePath;
   @ColumnInfo(name: 'tag_id')
   final int? tagId;
 
-  FileTagsModel({this.filePath, this.tagId});
+  FilesTagsModel({this.filePath, this.tagId});
 }
