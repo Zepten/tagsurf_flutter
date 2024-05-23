@@ -4,6 +4,8 @@ import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_sy
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_repository_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 
 final sl = GetIt.instance;
@@ -20,6 +22,8 @@ Future<void> initializeDependencies() async {
 
   // UseCases
   sl.registerSingleton<GetTrackedFilesUseCase>(GetTrackedFilesUseCase(sl()));
+  sl.registerSingleton<TrackFileUseCase>(TrackFileUseCase(sl()));
+  sl.registerSingleton<UntrackFileUseCase>(UntrackFileUseCase(sl()));
   // sl.registerSingleton<GetUnrackedFilesUseCase>(GetUnrackedFilesUseCase(sl()));
 
   // BloCs
