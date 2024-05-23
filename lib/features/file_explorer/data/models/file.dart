@@ -3,11 +3,9 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_enti
 
 @Entity(tableName: 'files')
 class FileModel extends FileEntity {
-  const FileModel(
-      {required super.id, required super.path});
+  const FileModel({required super.path});
 
   factory FileModel.fromEntity(FileEntity fileEntity) {
-    return FileModel(
-        id: fileEntity.id, path: fileEntity.path);
+    return FileModel(path: fileEntity.path);
   }
 }

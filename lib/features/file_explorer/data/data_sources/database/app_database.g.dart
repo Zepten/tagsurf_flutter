@@ -100,13 +100,13 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `files` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT)');
+            'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT, PRIMARY KEY (`path`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `tags` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `parent_tag_id` INTEGER, `color_code` TEXT NOT NULL, FOREIGN KEY (`parent_tag_id`) REFERENCES `TagEntity` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`color_code`) REFERENCES `ColorCodeEntity` (`color`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `color_codes` (`color` TEXT, PRIMARY KEY (`color`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `file_tags` (`file_id` INTEGER, `tag_id` INTEGER, FOREIGN KEY (`file_id`) REFERENCES `FileEntity` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `TagEntity` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_id`, `tag_id`))');
+            'CREATE TABLE IF NOT EXISTS `files_tags` (`file_path` TEXT, `tag_id` INTEGER, FOREIGN KEY (`file_path`) REFERENCES `FileEntity` (`path`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `TagEntity` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_path`, `tag_id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -135,23 +135,12 @@ class _$FileDao extends FileDao {
     this.database,
     this.changeListener,
   )   : _queryAdapter = QueryAdapter(database),
-        _fileModelInsertionAdapter = InsertionAdapter(
-            database,
-            'files',
-            (FileModel item) =>
-                <String, Object?>{'id': item.id, 'path': item.path}),
-        _fileModelUpdateAdapter = UpdateAdapter(
-            database,
-            'files',
-            ['id'],
-            (FileModel item) =>
-                <String, Object?>{'id': item.id, 'path': item.path}),
-        _fileModelDeletionAdapter = DeletionAdapter(
-            database,
-            'files',
-            ['id'],
-            (FileModel item) =>
-                <String, Object?>{'id': item.id, 'path': item.path});
+        _fileModelInsertionAdapter = InsertionAdapter(database, 'files',
+            (FileModel item) => <String, Object?>{'path': item.path}),
+        _fileModelUpdateAdapter = UpdateAdapter(database, 'files', ['path'],
+            (FileModel item) => <String, Object?>{'path': item.path}),
+        _fileModelDeletionAdapter = DeletionAdapter(database, 'files', ['path'],
+            (FileModel item) => <String, Object?>{'path': item.path});
 
   final sqflite.DatabaseExecutor database;
 
@@ -169,14 +158,14 @@ class _$FileDao extends FileDao {
   Future<List<FileModel>> getAllFiles() async {
     return _queryAdapter.queryList('select * from files',
         mapper: (Map<String, Object?> row) =>
-            FileModel(id: row['id'] as int?, path: row['path'] as String?));
+            FileModel(path: row['path'] as String?));
   }
 
   @override
   Future<FileModel?> getFileByPath(String path) async {
     return _queryAdapter.query('select * from files where path = ?1',
         mapper: (Map<String, Object?> row) =>
-            FileModel(id: row['id'] as int?, path: row['path'] as String?),
+            FileModel(path: row['path'] as String?),
         arguments: [path]);
   }
 

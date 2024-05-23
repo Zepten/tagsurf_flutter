@@ -4,11 +4,11 @@ import 'package:tagsurf_flutter/features/file_explorer/data/models/file_tags.dar
 @dao
 abstract class FileTagsDao {
   @Insert()
-  Future<void> insertFileTags(FileTagsModel fileTags);
+  Future<void> insertFileTags(FileTagsModel filesTags);
 
   @Update()
-  Future<void> updateFileTags(FileTagsModel fileTags);
+  Future<void> updateFileTags(FileTagsModel filesTags);
 
   @delete
-  Future<void> deleteFileTags(FileTagsModel fileTags);
+  Future<void> deleteFileTags(FileTagsModel filesTags);
 }
