@@ -61,57 +61,70 @@ Future<void> main() async {
 
     // File system methods
     test('Empty directory', () async {
-      final files = await fileRepository.getFilesFromDirectory(emptyDir.path);
+      final files = await fileRepository.getAllFilesFromDirectory(emptyDir.path);
       expect(files, isEmpty);
     });
 
     test('Directory with test files', () async {
       final filesFromDirectory =
-          await fileRepository.getFilesFromDirectory(targetDir.path);
+          await fileRepository.getAllFilesFromDirectory(targetDir.path);
       expect(filesFromDirectory, equals(matchFilesEntities));
     });
 
     // Database methods
-    test('Track file', () async {
+    test('Track mock file', () async {
       const file = FileEntity(path: 'test track');
 
+      // Track file
       await fileRepository.trackFile(file);
+
+      // Check if file is tracked
       final actual = await fileRepository.getTrackedFileByPath(file.path!);
       expect(actual, equals(file));
     });
 
-    test('Untrack file', () async {
+    test('Untrack mock file', () async {
       const file = FileEntity(path: 'test untrack');
 
+      // Track file
       await fileRepository.trackFile(file);
+
+      // Check if file is tracked
       final actual1 = await fileRepository.getTrackedFileByPath(file.path!);
       expect(actual1, equals(file));
 
+      // Untrack file
       await fileRepository.untrackFile(file);
+
+      // Check if file is untracked
       final actual2 = await fileRepository.getTrackedFileByPath(file.path!);
       expect(actual2, isNull);
     });
 
-    test('Track 2 files', () async {
-      const file1 = FileEntity(path: 'test 1');
-      const file2 = FileEntity(path: 'test 2');
-      await fileRepository.trackFile(file1);
-      await fileRepository.trackFile(file2);
+    test('Track multiple mock files', () async {
+      const files = [
+        FileEntity(path: 'test 1'),
+        FileEntity(path: 'test 2'),
+        FileEntity(path: 'test 3')
+      ];
 
-      final actual1 = await fileRepository.getTrackedFiles();
-      expect(actual1.length, 2);
+      // Track files
+      for (final file in files) {
+        await fileRepository.trackFile(file);
+      }
 
-      final actual2 = await fileRepository.getTrackedFileByPath(file1.path!);
-      expect(actual2, equals(file1));
-
-      final actual3 = await fileRepository.getTrackedFileByPath(file2.path!);
-      expect(actual3, equals(file2));
+      // Check if files are tracked
+      final actual = await fileRepository.getTrackedFiles();
+      expect(actual, equals(files));
     });
 
     test('Get untracked files from target directory with no files in DB',
         () async {
+      // Get untracked files from target directory
       final actual =
           await fileRepository.getUntrackedFilesFromDirectory(targetDir.path);
+
+      // Check if untracked files are the same as test files
       expect(actual, equals(matchFilesEntities));
     });
 
@@ -119,14 +132,18 @@ Future<void> main() async {
         () async {
       const trackedFiles = [1, 3, 5];
       final matchFilesUntracked = List.from(matchFilesEntities);
+
+      // Track some files from test files and remove them from untracked match files
       for (final index in trackedFiles) {
         await fileRepository.trackFile(matchFilesEntities[index]);
         matchFilesUntracked.remove(matchFilesEntities[index]);
       }
 
+      // Get untracked files from target directory
       final actual =
           await fileRepository.getUntrackedFilesFromDirectory(targetDir.path);
 
+      // Check if returned untracked files are the same as untracked match files
       expect(actual, equals(matchFilesUntracked));
     });
   });
