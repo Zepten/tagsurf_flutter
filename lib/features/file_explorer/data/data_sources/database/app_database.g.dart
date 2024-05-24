@@ -144,8 +144,6 @@ class _$FileDao extends FileDao {
   )   : _queryAdapter = QueryAdapter(database),
         _fileModelInsertionAdapter = InsertionAdapter(database, 'files',
             (FileModel item) => <String, Object?>{'path': item.path}),
-        _fileModelUpdateAdapter = UpdateAdapter(database, 'files', ['path'],
-            (FileModel item) => <String, Object?>{'path': item.path}),
         _fileModelDeletionAdapter = DeletionAdapter(database, 'files', ['path'],
             (FileModel item) => <String, Object?>{'path': item.path});
 
@@ -156,8 +154,6 @@ class _$FileDao extends FileDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<FileModel> _fileModelInsertionAdapter;
-
-  final UpdateAdapter<FileModel> _fileModelUpdateAdapter;
 
   final DeletionAdapter<FileModel> _fileModelDeletionAdapter;
 
@@ -179,11 +175,6 @@ class _$FileDao extends FileDao {
   @override
   Future<void> insertFile(FileModel file) async {
     await _fileModelInsertionAdapter.insert(file, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateFile(FileModel file) async {
-    await _fileModelUpdateAdapter.update(file, OnConflictStrategy.abort);
   }
 
   @override

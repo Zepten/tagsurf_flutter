@@ -27,11 +27,6 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
-  Future<void> updateFile(FileEntity file) async {
-    _appDatabase.fileDao.updateFile(FileModel.fromEntity(file));
-  }
-
-  @override
   Future<void> untrackFile(FileEntity file) async {
     _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
   }
