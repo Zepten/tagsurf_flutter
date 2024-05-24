@@ -8,9 +8,6 @@ abstract class FilesTagsDao {
   @Insert()
   Future<void> insertFileTags(FilesTagsModel filesTags);
 
-  @Update()
-  Future<void> updateFileTags(FilesTagsModel filesTags);
-
   @delete
   Future<void> deleteFileTags(FilesTagsModel filesTags);
 
@@ -19,6 +16,6 @@ abstract class FilesTagsDao {
   Future<List<TagModel>> getTagsByFilePath(String filePath);
 
   @Query(
-      'SELECT f.* FROM files f JOIN files_tags ft ON f.path = ft.file_path JOIN tags s ON ft.tag_name = t.name WHERE t.name = :tagName')
+      'SELECT f.* FROM files f JOIN files_tags ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name = :tagName')
   Future<List<FileModel>> getFilesByTagName(String tagName);
 }

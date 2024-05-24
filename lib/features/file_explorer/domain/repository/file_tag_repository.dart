@@ -5,6 +5,5 @@ abstract class FileTagRepository {
   Future<List<FileEntity>> getFilesByTag(TagEntity tag);
   Future<List<TagEntity>> getTagsByFile(FileEntity file);
   Future<void> linkFileAndTag(FileEntity file, TagEntity tag);
-  Future<void> updateLinkFileAndTag(FileEntity file, TagEntity tag);
   Future<void> unlinkFileAndTag(FileEntity file, TagEntity tag);
 }

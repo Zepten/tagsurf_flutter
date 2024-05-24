@@ -275,14 +275,6 @@ class _$FilesTagsDao extends FilesTagsDao {
                   'file_path': item.filePath,
                   'tag_name': item.tagName
                 }),
-        _filesTagsModelUpdateAdapter = UpdateAdapter(
-            database,
-            'files_tags',
-            ['file_path', 'tag_name'],
-            (FilesTagsModel item) => <String, Object?>{
-                  'file_path': item.filePath,
-                  'tag_name': item.tagName
-                }),
         _filesTagsModelDeletionAdapter = DeletionAdapter(
             database,
             'files_tags',
@@ -300,8 +292,6 @@ class _$FilesTagsDao extends FilesTagsDao {
 
   final InsertionAdapter<FilesTagsModel> _filesTagsModelInsertionAdapter;
 
-  final UpdateAdapter<FilesTagsModel> _filesTagsModelUpdateAdapter;
-
   final DeletionAdapter<FilesTagsModel> _filesTagsModelDeletionAdapter;
 
   @override
@@ -315,7 +305,7 @@ class _$FilesTagsDao extends FilesTagsDao {
   @override
   Future<List<FileModel>> getFilesByTagName(String tagName) async {
     return _queryAdapter.queryList(
-        'SELECT f.* FROM files f JOIN files_tags ft ON f.path = ft.file_path JOIN tags s ON ft.tag_name = t.name WHERE t.name = ?1',
+        'SELECT f.* FROM files f JOIN files_tags ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name = ?1',
         mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String?),
         arguments: [tagName]);
   }
@@ -323,12 +313,6 @@ class _$FilesTagsDao extends FilesTagsDao {
   @override
   Future<void> insertFileTags(FilesTagsModel filesTags) async {
     await _filesTagsModelInsertionAdapter.insert(
-        filesTags, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateFileTags(FilesTagsModel filesTags) async {
-    await _filesTagsModelUpdateAdapter.update(
         filesTags, OnConflictStrategy.abort);
   }
 

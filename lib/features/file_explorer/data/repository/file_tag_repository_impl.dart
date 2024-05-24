@@ -34,12 +34,6 @@ class FileTagRepositoryImpl implements FileTagRepository {
   }
 
   @override
-  Future<void> updateLinkFileAndTag(FileEntity file, TagEntity tag) async {
-    _appDatabase.fileTagsDao
-        .updateFileTags(FilesTagsModel(filePath: file.path, tagName: tag.name));
-  }
-
-  @override
   Future<void> unlinkFileAndTag(FileEntity file, TagEntity tag) async {
     _appDatabase.fileTagsDao
         .deleteFileTags(FilesTagsModel(filePath: file.path, tagName: tag.name));
