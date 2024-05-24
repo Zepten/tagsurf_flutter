@@ -36,4 +36,17 @@ class TagRepositoryImpl implements TagRepository {
     final tagModel = await _appDatabase.tagDao.getTagByName(name);
     return tagModel == null ? null : TagEntity.fromModel(tagModel);
   }
+
+  @override
+  Future<List<TagEntity>> getParentTags(TagEntity childTag) async {
+    if (childTag.parentTagName == null) {
+      return [];
+    } else {
+      final tagsModels =
+          await _appDatabase.tagDao.getParentTags(childTag.parentTagName!);
+      return tagsModels
+          .map((tagModel) => TagEntity.fromModel(tagModel))
+          .toList(growable: false);
+    }
+  }
 }

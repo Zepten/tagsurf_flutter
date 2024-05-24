@@ -78,8 +78,6 @@ class _$AppDatabase extends AppDatabase {
 
   FilesTagsDao? _fileTagsDaoInstance;
 
-  ColorCodeDao? _colorCodeDaoInstance;
-
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -104,9 +102,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT, `parent_tag` TEXT, `color_code` TEXT NOT NULL, FOREIGN KEY (`parent_tag`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`color_code`) REFERENCES `color_codes` (`color`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`name`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `color_codes` (`color` TEXT, PRIMARY KEY (`color`))');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT, `parent_tag_name` TEXT, `color_code` TEXT NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`name`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `files_tags` (`file_path` TEXT, `tag_name` TEXT, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_path`, `tag_name`))');
 
@@ -129,11 +125,6 @@ class _$AppDatabase extends AppDatabase {
   @override
   FilesTagsDao get fileTagsDao {
     return _fileTagsDaoInstance ??= _$FilesTagsDao(database, changeListener);
-  }
-
-  @override
-  ColorCodeDao get colorCodeDao {
-    return _colorCodeDaoInstance ??= _$ColorCodeDao(database, changeListener);
   }
 }
 
@@ -193,7 +184,7 @@ class _$TagDao extends TagDao {
             'tags',
             (TagModel item) => <String, Object?>{
                   'name': item.name,
-                  'parent_tag': item.parentTag,
+                  'parent_tag_name': item.parentTagName,
                   'color_code': item.colorCode
                 }),
         _tagModelUpdateAdapter = UpdateAdapter(
@@ -202,7 +193,7 @@ class _$TagDao extends TagDao {
             ['name'],
             (TagModel item) => <String, Object?>{
                   'name': item.name,
-                  'parent_tag': item.parentTag,
+                  'parent_tag_name': item.parentTagName,
                   'color_code': item.colorCode
                 }),
         _tagModelDeletionAdapter = DeletionAdapter(
@@ -211,7 +202,7 @@ class _$TagDao extends TagDao {
             ['name'],
             (TagModel item) => <String, Object?>{
                   'name': item.name,
-                  'parent_tag': item.parentTag,
+                  'parent_tag_name': item.parentTagName,
                   'color_code': item.colorCode
                 });
 
@@ -232,7 +223,7 @@ class _$TagDao extends TagDao {
     return _queryAdapter.queryList('select * from tags',
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String?,
-            parentTag: row['parent_tag'] as String?,
+            parentTagName: row['parent_tag_name'] as String?,
             colorCode: row['color_code'] as String));
   }
 
@@ -241,9 +232,19 @@ class _$TagDao extends TagDao {
     return _queryAdapter.query('select * from tags where name = ?1',
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String?,
-            parentTag: row['parent_tag'] as String?,
+            parentTagName: row['parent_tag_name'] as String?,
             colorCode: row['color_code'] as String),
         arguments: [name]);
+  }
+
+  @override
+  Future<List<TagModel>> getParentTags(String parentTagName) async {
+    return _queryAdapter.queryList('select * from tags where name = ?1',
+        mapper: (Map<String, Object?> row) => TagModel(
+            name: row['name'] as String?,
+            parentTagName: row['parent_tag_name'] as String?,
+            colorCode: row['color_code'] as String),
+        arguments: [parentTagName]);
   }
 
   @override
@@ -307,7 +308,7 @@ class _$FilesTagsDao extends FilesTagsDao {
   Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
         'SELECT t.* FROM tags t JOIN files_tags ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String?, parentTag: row['parent_tag'] as String?, colorCode: row['color_code'] as String),
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String?, parentTagName: row['parent_tag_name'] as String?, colorCode: row['color_code'] as String),
         arguments: [filePath]);
   }
 
@@ -334,62 +335,5 @@ class _$FilesTagsDao extends FilesTagsDao {
   @override
   Future<void> deleteFileTags(FilesTagsModel filesTags) async {
     await _filesTagsModelDeletionAdapter.delete(filesTags);
-  }
-}
-
-class _$ColorCodeDao extends ColorCodeDao {
-  _$ColorCodeDao(
-    this.database,
-    this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database),
-        _colorCodeModelInsertionAdapter = InsertionAdapter(
-            database,
-            'color_codes',
-            (ColorCodeModel item) => <String, Object?>{'color': item.color}),
-        _colorCodeModelUpdateAdapter = UpdateAdapter(
-            database,
-            'color_codes',
-            ['color'],
-            (ColorCodeModel item) => <String, Object?>{'color': item.color}),
-        _colorCodeModelDeletionAdapter = DeletionAdapter(
-            database,
-            'color_codes',
-            ['color'],
-            (ColorCodeModel item) => <String, Object?>{'color': item.color});
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  final InsertionAdapter<ColorCodeModel> _colorCodeModelInsertionAdapter;
-
-  final UpdateAdapter<ColorCodeModel> _colorCodeModelUpdateAdapter;
-
-  final DeletionAdapter<ColorCodeModel> _colorCodeModelDeletionAdapter;
-
-  @override
-  Future<List<ColorCodeModel>> getAllColorCodes() async {
-    return _queryAdapter.queryList('select * from color_codes',
-        mapper: (Map<String, Object?> row) =>
-            ColorCodeModel(color: row['color'] as String?));
-  }
-
-  @override
-  Future<void> insertColorCode(ColorCodeModel colorCode) async {
-    await _colorCodeModelInsertionAdapter.insert(
-        colorCode, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateColorCode(ColorCodeModel colorCode) async {
-    await _colorCodeModelUpdateAdapter.update(
-        colorCode, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> deleteColorCode(ColorCodeModel colorCode) async {
-    await _colorCodeModelDeletionAdapter.delete(colorCode);
   }
 }

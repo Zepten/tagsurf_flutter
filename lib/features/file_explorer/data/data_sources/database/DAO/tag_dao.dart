@@ -17,4 +17,7 @@ abstract class TagDao {
 
   @Query('select * from tags where name = :name')
   Future<TagModel?> getTagByName(String name);
+
+  @Query('select * from tags where name = :parentTagName')
+  Future<List<TagModel>> getParentTags(String parentTagName);
 }
