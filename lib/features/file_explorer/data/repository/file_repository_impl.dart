@@ -12,7 +12,7 @@ class FileRepositoryImpl implements FileRepository {
 
   // File system methods implementation for files
   @override
-  Future<List<FileEntity>> getFilesFromDirectory(String targetDir) async {
+  Future<List<FileEntity>> getAllFilesFromDirectory(String targetDir) async {
     final filesModels =
         await _fileSystemService.getFilesFromDirectory(targetDir);
     return filesModels
