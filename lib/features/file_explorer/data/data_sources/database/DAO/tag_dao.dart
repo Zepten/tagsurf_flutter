@@ -15,6 +15,6 @@ abstract class TagDao {
   @Query('select * from tags')
   Future<List<TagModel>> getAllTags();
 
-  @Query('select * from tags where id = :id')
-  Future<TagModel?> getTagById(int id);
+  @Query('select * from tags where name = :name')
+  Future<TagModel?> getTagByName(String name);
 }

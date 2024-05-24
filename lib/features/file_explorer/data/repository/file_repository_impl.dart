@@ -12,8 +12,12 @@ class FileRepositoryImpl implements FileRepository {
 
   // File system methods implementation for files
   @override
-  Future<List<FileModel>> getFilesFromDirectory(String targetDir) async {
-    return _fileSystemService.getFilesFromDirectory(targetDir);
+  Future<List<FileEntity>> getFilesFromDirectory(String targetDir) async {
+    final filesModels =
+        await _fileSystemService.getFilesFromDirectory(targetDir);
+    return filesModels
+        .map((fileModel) => FileEntity.fromModel(fileModel))
+        .toList(growable: false);
   }
 
   // Database methods implementation for files
@@ -33,7 +37,28 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
-  Future<List<FileModel>> getTrackedFiles() {
-    return _appDatabase.fileDao.getAllFiles();
+  Future<List<FileEntity>> getTrackedFiles() async {
+    final filesModels = await _appDatabase.fileDao.getAllFiles();
+    return filesModels
+        .map((fileModel) => FileEntity.fromModel(fileModel))
+        .toList(growable: false);
+  }
+
+  @override
+  Future<FileEntity?> getTrackedFileByPath(String path) async {
+    final fileModel = await _appDatabase.fileDao.getFileByPath(path);
+    return fileModel == null ? null : FileEntity.fromModel(fileModel);
+  }
+
+  @override
+  Future<List<FileEntity>> getUntrackedFilesFromDirectory(
+      String targetDir) async {
+    final filesModelsFromFs =
+        await _fileSystemService.getFilesFromDirectory(targetDir);
+    final filesModelsFromDb = await _appDatabase.fileDao.getAllFiles();
+    return filesModelsFromFs
+        .where((fileModel) => !filesModelsFromDb.contains(fileModel))
+        .map((fileModel) => FileEntity.fromModel(fileModel))
+        .toList(growable: false);
   }
 }

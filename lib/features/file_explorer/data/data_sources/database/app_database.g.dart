@@ -104,11 +104,11 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `parent_tag_id` INTEGER, `color_code` TEXT NOT NULL, FOREIGN KEY (`parent_tag_id`) REFERENCES `TagEntity` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`color_code`) REFERENCES `ColorCodeEntity` (`color`) ON UPDATE NO ACTION ON DELETE NO ACTION)');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT, `parent_tag` TEXT, `color_code` TEXT NOT NULL, FOREIGN KEY (`parent_tag`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`color_code`) REFERENCES `color_codes` (`color`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`name`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `color_codes` (`color` TEXT, PRIMARY KEY (`color`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `files_tags` (`file_path` TEXT, `tag_id` INTEGER, FOREIGN KEY (`file_path`) REFERENCES `FileEntity` (`path`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_id`) REFERENCES `TagEntity` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_path`, `tag_id`))');
+            'CREATE TABLE IF NOT EXISTS `files_tags` (`file_path` TEXT, `tag_name` TEXT, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_path`, `tag_name`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -201,29 +201,26 @@ class _$TagDao extends TagDao {
             database,
             'tags',
             (TagModel item) => <String, Object?>{
-                  'id': item.id,
                   'name': item.name,
-                  'parent_tag_id': item.parentTag,
+                  'parent_tag': item.parentTag,
                   'color_code': item.colorCode
                 }),
         _tagModelUpdateAdapter = UpdateAdapter(
             database,
             'tags',
-            ['id'],
+            ['name'],
             (TagModel item) => <String, Object?>{
-                  'id': item.id,
                   'name': item.name,
-                  'parent_tag_id': item.parentTag,
+                  'parent_tag': item.parentTag,
                   'color_code': item.colorCode
                 }),
         _tagModelDeletionAdapter = DeletionAdapter(
             database,
             'tags',
-            ['id'],
+            ['name'],
             (TagModel item) => <String, Object?>{
-                  'id': item.id,
                   'name': item.name,
-                  'parent_tag_id': item.parentTag,
+                  'parent_tag': item.parentTag,
                   'color_code': item.colorCode
                 });
 
@@ -243,21 +240,19 @@ class _$TagDao extends TagDao {
   Future<List<TagModel>> getAllTags() async {
     return _queryAdapter.queryList('select * from tags',
         mapper: (Map<String, Object?> row) => TagModel(
-            id: row['id'] as int?,
             name: row['name'] as String?,
-            parentTag: row['parent_tag_id'] as int?,
+            parentTag: row['parent_tag'] as String?,
             colorCode: row['color_code'] as String));
   }
 
   @override
-  Future<TagModel?> getTagById(int id) async {
-    return _queryAdapter.query('select * from tags where id = ?1',
+  Future<TagModel?> getTagByName(String name) async {
+    return _queryAdapter.query('select * from tags where name = ?1',
         mapper: (Map<String, Object?> row) => TagModel(
-            id: row['id'] as int?,
             name: row['name'] as String?,
-            parentTag: row['parent_tag_id'] as int?,
+            parentTag: row['parent_tag'] as String?,
             colorCode: row['color_code'] as String),
-        arguments: [id]);
+        arguments: [name]);
   }
 
   @override
@@ -286,23 +281,23 @@ class _$FilesTagsDao extends FilesTagsDao {
             'files_tags',
             (FilesTagsModel item) => <String, Object?>{
                   'file_path': item.filePath,
-                  'tag_id': item.tagId
+                  'tag_name': item.tagName
                 }),
         _filesTagsModelUpdateAdapter = UpdateAdapter(
             database,
             'files_tags',
-            ['file_path', 'tag_id'],
+            ['file_path', 'tag_name'],
             (FilesTagsModel item) => <String, Object?>{
                   'file_path': item.filePath,
-                  'tag_id': item.tagId
+                  'tag_name': item.tagName
                 }),
         _filesTagsModelDeletionAdapter = DeletionAdapter(
             database,
             'files_tags',
-            ['file_path', 'tag_id'],
+            ['file_path', 'tag_name'],
             (FilesTagsModel item) => <String, Object?>{
                   'file_path': item.filePath,
-                  'tag_id': item.tagId
+                  'tag_name': item.tagName
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -318,19 +313,19 @@ class _$FilesTagsDao extends FilesTagsDao {
   final DeletionAdapter<FilesTagsModel> _filesTagsModelDeletionAdapter;
 
   @override
-  Future<List<int>> getTagsIdsByFilePath(String filePath) async {
+  Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
-        'SELECT tag_id FROM files_tags WHERE file_path = ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as int,
+        'SELECT t.* FROM tags t JOIN files_tags ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1',
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String?, parentTag: row['parent_tag'] as String?, colorCode: row['color_code'] as String),
         arguments: [filePath]);
   }
 
   @override
-  Future<List<String>> getFilesPathsByTag(int tagId) async {
+  Future<List<FileModel>> getFilesByTagName(String tagName) async {
     return _queryAdapter.queryList(
-        'SELECT file_path FROM files_tags WHERE tag_id = ?1',
-        mapper: (Map<String, Object?> row) => row.values.first as String,
-        arguments: [tagId]);
+        'SELECT f.* FROM files f JOIN files_tags ft ON f.path = ft.file_path JOIN tags s ON ft.tag_name = t.name WHERE t.name = ?1',
+        mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String?),
+        arguments: [tagName]);
   }
 
   @override

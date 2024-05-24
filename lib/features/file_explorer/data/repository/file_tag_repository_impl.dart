@@ -10,41 +10,38 @@ class FileTagRepositoryImpl implements FileTagRepository {
   FileTagRepositoryImpl(this._appDatabase);
 
   @override
-  Future<List<FileEntity?>> getFilesByTag(TagEntity tag) async {
-    final filesPaths =
-        await _appDatabase.fileTagsDao.getFilesPathsByTag(tag.id!);
-    final files = Future.wait(
-      filesPaths
-          .map((filePath) => _appDatabase.fileDao.getFileByPath(filePath)),
-    );
-    return files;
+  Future<List<FileEntity>> getFilesByTag(TagEntity tag) async {
+    final filesModels =
+        await _appDatabase.fileTagsDao.getFilesByTagName(tag.name!);
+    return filesModels
+        .map((fileModel) => FileEntity.fromModel(fileModel))
+        .toList(growable: false);
   }
 
   @override
-  Future<List<TagEntity?>> getTagsByFile(FileEntity file) async {
-    final tagsIds = await _appDatabase.fileTagsDao.getTagsIdsByFilePath(file.path!);
-    final tags = Future.wait(
-      tagsIds
-          .map((tagId) => _appDatabase.tagDao.getTagById(tagId)),
-    );
-    return tags;
+  Future<List<TagEntity>> getTagsByFile(FileEntity file) async {
+    final tagsModels =
+        await _appDatabase.fileTagsDao.getTagsByFilePath(file.path!);
+    return tagsModels
+        .map((tagModel) => TagEntity.fromModel(tagModel))
+        .toList(growable: false);
   }
 
   @override
   Future<void> linkFileAndTag(FileEntity file, TagEntity tag) async {
     _appDatabase.fileTagsDao
-        .insertFileTags(FilesTagsModel(filePath: file.path, tagId: tag.id));
+        .insertFileTags(FilesTagsModel(filePath: file.path, tagName: tag.name));
   }
 
   @override
   Future<void> updateLinkFileAndTag(FileEntity file, TagEntity tag) async {
     _appDatabase.fileTagsDao
-        .updateFileTags(FilesTagsModel(filePath: file.path, tagId: tag.id));
+        .updateFileTags(FilesTagsModel(filePath: file.path, tagName: tag.name));
   }
 
   @override
   Future<void> unlinkFileAndTag(FileEntity file, TagEntity tag) async {
     _appDatabase.fileTagsDao
-        .deleteFileTags(FilesTagsModel(filePath: file.path, tagId: tag.id));
+        .deleteFileTags(FilesTagsModel(filePath: file.path, tagName: tag.name));
   }
 }

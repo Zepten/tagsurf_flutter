@@ -6,6 +6,8 @@ abstract class FileRepository {
 
   // Database methods for files
   Future<List<FileEntity>> getTrackedFiles();
+  Future<FileEntity?> getTrackedFileByPath(String path);
+  Future<List<FileEntity>> getUntrackedFilesFromDirectory(String targetDir);
   Future<void> trackFile(FileEntity file);
   Future<void> updateFile(FileEntity file);
   Future<void> untrackFile(FileEntity file);

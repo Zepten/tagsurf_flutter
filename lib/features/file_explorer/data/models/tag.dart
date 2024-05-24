@@ -1,29 +1,27 @@
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/models/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
-@Entity(tableName: 'tags', foreignKeys: [
+@Entity(tableName: 'tags', primaryKeys: [
+  'name'
+], foreignKeys: [
   ForeignKey(
-      childColumns: ['parent_tag_id'],
-      parentColumns: ['id'],
-      entity: TagEntity),
+      childColumns: ['parent_tag'], parentColumns: ['name'], entity: TagModel),
   ForeignKey(
       childColumns: ['color_code'],
       parentColumns: ['color'],
-      entity: ColorCodeEntity)
+      entity: ColorCodeModel)
 ])
 class TagModel extends TagEntity {
   const TagModel(
-      {required super.id,
-      required super.name,
+      {required super.name,
       required super.parentTag,
       required super.colorCode});
 
   factory TagModel.fromEntity(TagEntity tagEntity) {
     return TagModel(
-      id: tagEntity.id,
       name: tagEntity.name,
-      parentTag: tagEntity.parentTag,
+      parentTag: tagEntity.parentTag!,
       colorCode: tagEntity.colorCode,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:floor/floor.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code_entity.dart';
 
-@Entity(tableName: 'color_codes')
+@Entity(tableName: 'color_codes', primaryKeys: ['color'])
 class ColorCodeModel extends ColorCodeEntity {
   const ColorCodeModel({required super.color});
 

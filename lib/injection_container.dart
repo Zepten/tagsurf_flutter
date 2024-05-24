@@ -8,6 +8,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_re
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_untracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
@@ -28,8 +29,11 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<FileTagRepository>(FileTagRepositoryImpl(sl()));
 
   // UseCases
+  sl.registerSingleton<GetFilesFromDirectoryUseCase>(
+      GetFilesFromDirectoryUseCase(sl()));
   sl.registerSingleton<GetTrackedFilesUseCase>(GetTrackedFilesUseCase(sl()));
-  sl.registerSingleton<GetUnrackedFilesUseCase>(GetUnrackedFilesUseCase(sl()));
+  sl.registerSingleton<GetUnrackedFilesFromDirectoryUseCase>(
+      GetUnrackedFilesFromDirectoryUseCase(sl()));
   sl.registerSingleton<TrackFileUseCase>(TrackFileUseCase(sl()));
   sl.registerSingleton<UntrackFileUseCase>(UntrackFileUseCase(sl()));
 
