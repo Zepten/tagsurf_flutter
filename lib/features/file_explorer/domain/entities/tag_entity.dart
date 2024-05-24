@@ -4,7 +4,7 @@ import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 
 class TagEntity extends Equatable {
   final String? name;
-  @ColumnInfo(name: 'parent_tag')
+  @ColumnInfo(name: 'parent_tag') // TODO: put into FileModel or remove inheritance from Models
   final String? parentTag;
   @ColumnInfo(name: 'color_code')
   final String colorCode;
