@@ -11,7 +11,6 @@ Future<void> main() async {
     setUp(() async {
       // Database and tag repository initialization
       database = await $FloorAppDatabase.inMemoryDatabaseBuilder().build();
-      // database = await $FloorAppDatabase.databaseBuilder('app_database.db').build();
       tagRepository = TagRepositoryImpl(database);
     });
 
