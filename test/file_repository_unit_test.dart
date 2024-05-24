@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service.dart';
@@ -5,15 +8,51 @@ import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_repo
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
 Future<void> main() async {
-  group('Track file', () {
+  group('Test file repository', () {
     late AppDatabase database;
     late FileRepositoryImpl fileRepository;
-    const emptyDir = 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\empty';
-    const targetDir = 'D:\\GitGub\\tagsurf_flutter\\test\\test_files';
+
+    const testFilesDir = 'tagsurf_flutter_test_files';
+    late Directory targetDir;
+    late Directory emptyDir;
+    late List<File> testFiles;
+    late List<FileEntity> matchFilesEntities;
 
     setUp(() async {
+      // Database and file repository initialization
       database = await $FloorAppDatabase.inMemoryDatabaseBuilder().build();
       fileRepository = FileRepositoryImpl(FileSystemServiceImpl(), database);
+
+      // Test files creation
+      targetDir = Directory('${Directory.systemTemp.path}\\$testFilesDir');
+      if (!await targetDir.exists()) {
+        await targetDir.create();
+        debugPrint('Created test directory: ${targetDir.path}');
+      }
+      emptyDir = Directory('${targetDir.path}\\empty');
+      if (!await emptyDir.exists()) {
+        await emptyDir.create();
+        debugPrint('Created empty test directory: ${emptyDir.path}');
+      }
+      testFiles = [
+        File('${targetDir.path}\\1.txt'),
+        File('${targetDir.path}\\2.bat'),
+        File('${targetDir.path}\\folder 1\\3.jpg'),
+        File('${targetDir.path}\\folder 1\\4.json'),
+        File('${targetDir.path}\\folder 1\\folder 1.1\\5.dart'),
+        File('${targetDir.path}\\folder 1\\folder 1.2\\6.cpp'),
+        File('${targetDir.path}\\folder 2\\folder 2.1\\7.docx'),
+        File('${targetDir.path}\\folder 2\\folder 2.2\\8.html'),
+      ];
+      for (final file in testFiles) {
+        if (!await file.exists()) {
+          await file.create(recursive: true);
+          debugPrint('Created test file: ${file.path}');
+        }
+      }
+      matchFilesEntities = testFiles
+          .map((file) => FileEntity(path: file.path))
+          .toList(growable: false);
     });
 
     tearDown(() async {
@@ -22,14 +61,14 @@ Future<void> main() async {
 
     // File system methods
     test('Empty directory', () async {
-      final files = await fileRepository.getFilesFromDirectory(emptyDir);
+      final files = await fileRepository.getFilesFromDirectory(emptyDir.path);
       expect(files, isEmpty);
     });
 
-    test('Directory with 5 text files', () async {
-      final files = await fileRepository.getFilesFromDirectory(targetDir);
-      expect(files, isNotEmpty);
-      expect(files.length, 5);
+    test('Directory with test files', () async {
+      final filesFromDirectory =
+          await fileRepository.getFilesFromDirectory(targetDir.path);
+      expect(filesFromDirectory, equals(matchFilesEntities));
     });
 
     // Database methods
@@ -71,47 +110,24 @@ Future<void> main() async {
 
     test('Get untracked files from target directory with no files in DB',
         () async {
-      const matchFiles = [
-        FileEntity(
-            path: 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\1.txt'),
-        FileEntity(
-            path: 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\2.txt'),
-        FileEntity(
-            path: 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\3.txt'),
-        FileEntity(
-            path:
-                'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\subdir\\4.txt'),
-        FileEntity(
-            path:
-                'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\subdir\\5.txt')
-      ];
       final actual =
-          await fileRepository.getUntrackedFilesFromDirectory(targetDir);
-      expect(actual, equals(matchFiles));
+          await fileRepository.getUntrackedFilesFromDirectory(targetDir.path);
+      expect(actual, equals(matchFilesEntities));
     });
 
-    test('Get untracked files from target directory with 2 files in DB',
+    test('Get untracked files from target directory with multiple files in DB',
         () async {
-      const matchFiles = [
-        FileEntity(
-            path: 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\3.txt'),
-        FileEntity(
-            path:
-                'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\subdir\\4.txt'),
-        FileEntity(
-            path:
-                'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\subdir\\5.txt')
-      ];
-
-      fileRepository.trackFile(const FileEntity(
-          path: 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\1.txt'));
-      fileRepository.trackFile(const FileEntity(
-          path: 'D:\\GitGub\\tagsurf_flutter\\test\\test_files\\2.txt'));
+      const trackedFiles = [1, 3, 5];
+      final matchFilesUntracked = List.from(matchFilesEntities);
+      for (final index in trackedFiles) {
+        await fileRepository.trackFile(matchFilesEntities[index]);
+        matchFilesUntracked.remove(matchFilesEntities[index]);
+      }
 
       final actual =
-          await fileRepository.getUntrackedFilesFromDirectory(targetDir);
+          await fileRepository.getUntrackedFilesFromDirectory(targetDir.path);
 
-      expect(actual, equals(matchFiles));
+      expect(actual, equals(matchFilesUntracked));
     });
   });
 }
