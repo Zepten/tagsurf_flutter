@@ -1,7 +1,5 @@
-import 'dart:io';
-
 class FileUtils {
-  static String basename(File file) {
-    return file.path.replaceAll('\\', '/').split('/').last;
+  static String basename(String path) {
+    return path.replaceAll('\\', '/').split('/').last;
   }
 }
