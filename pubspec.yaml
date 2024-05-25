@@ -52,6 +52,9 @@ dependencies:
   # Use a native file explorer to pick single or multiple absolute file paths
   file_picker: ^8.0.3
 
+  # File opening
+  url_launcher: ^6.2.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
