@@ -14,6 +14,14 @@ class TagRepositoryImpl implements TagRepository {
   }
 
   @override
+  Future<void> createTags(List<TagEntity> tags) async {
+    final tagsModels = tags
+        .map((tagEntity) => TagModel.fromEntity(tagEntity))
+        .toList(growable: false);
+    _appDatabase.tagDao.insertTags(tagsModels);
+  }
+
+  @override
   Future<void> updateTag(TagEntity tag) async {
     _appDatabase.tagDao.updateTag(TagModel.fromEntity(tag));
   }

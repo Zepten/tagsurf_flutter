@@ -5,6 +5,7 @@ abstract class TagRepository {
   Future<TagEntity?> getTagByName(String name);
   Future<List<TagEntity>> getParentTags(TagEntity childTag);
   Future<void> createTag(TagEntity tag);
+  Future<void> createTags(List<TagEntity> tags);
   Future<void> updateTag(TagEntity tag);
   Future<void> deleteTag(TagEntity tag);
 }

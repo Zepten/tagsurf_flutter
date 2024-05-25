@@ -19,8 +19,8 @@ Future<void> main() async {
     });
 
     test('Create tag', () async {
-      const tag =
-          TagEntity(name: 'test tag', parentTagName: null, colorCode: '#ffffff');
+      const tag = TagEntity(
+          name: 'test tag', parentTagName: null, colorCode: '#ffffff');
 
       // Create tag
       await tagRepository.createTag(tag);
@@ -30,9 +30,26 @@ Future<void> main() async {
       expect(actual, equals(tag));
     });
 
+    test('Create multiple tags', () async {
+      const tags = [
+        TagEntity(
+            name: 'test tag 1', parentTagName: null, colorCode: '#ff0000'),
+        TagEntity(
+            name: 'test tag 2', parentTagName: null, colorCode: '#00ff00'),
+        TagEntity(name: 'test tag 3', parentTagName: null, colorCode: '#0000ff')
+      ];
+
+      // Create tag
+      await tagRepository.createTags(tags);
+
+      // Check if tag is created
+      final actual = await tagRepository.getAllTags();
+      expect(actual, equals(tags));
+    });
+
     test('Update tag', () async {
-      const tag =
-          TagEntity(name: 'test tag', parentTagName: null, colorCode: '#ffffff');
+      const tag = TagEntity(
+          name: 'test tag', parentTagName: null, colorCode: '#ffffff');
 
       // Create tag
       await tagRepository.createTag(tag);
@@ -40,8 +57,8 @@ Future<void> main() async {
       expect(actualCreated, equals(tag));
 
       // Update tag
-      const tagUpdated =
-          TagEntity(name: 'test tag', parentTagName: null, colorCode: '#000000');
+      const tagUpdated = TagEntity(
+          name: 'test tag', parentTagName: null, colorCode: '#000000');
       await tagRepository.updateTag(tagUpdated);
 
       // Check if tag is updated
@@ -50,8 +67,8 @@ Future<void> main() async {
     });
 
     test('Delete tag', () async {
-      const tag =
-          TagEntity(name: 'test tag', parentTagName: null, colorCode: '#ffffff');
+      const tag = TagEntity(
+          name: 'test tag', parentTagName: null, colorCode: '#ffffff');
 
       // Create tag
       await tagRepository.createTag(tag);
@@ -68,9 +85,12 @@ Future<void> main() async {
 
     test('Get all tags', () async {
       const tags = [
-        TagEntity(name: 'test tag 1', parentTagName: null, colorCode: '#ff0000'),
-        TagEntity(name: 'test tag 2', parentTagName: null, colorCode: '#00ff00'),
-        TagEntity(name: 'test tag 3', parentTagName: null, colorCode: '#0000ff'),
+        TagEntity(
+            name: 'test tag 1', parentTagName: null, colorCode: '#ff0000'),
+        TagEntity(
+            name: 'test tag 2', parentTagName: null, colorCode: '#00ff00'),
+        TagEntity(
+            name: 'test tag 3', parentTagName: null, colorCode: '#0000ff'),
       ];
 
       // Create tags

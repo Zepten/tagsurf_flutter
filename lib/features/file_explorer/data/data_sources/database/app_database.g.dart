@@ -169,6 +169,12 @@ class _$FileDao extends FileDao {
   }
 
   @override
+  Future<void> insertFiles(List<FileModel> files) async {
+    await _fileModelInsertionAdapter.insertList(
+        files, OnConflictStrategy.abort);
+  }
+
+  @override
   Future<void> deleteFile(FileModel file) async {
     await _fileModelDeletionAdapter.delete(file);
   }
@@ -250,6 +256,11 @@ class _$TagDao extends TagDao {
   @override
   Future<void> insertTag(TagModel tag) async {
     await _tagModelInsertionAdapter.insert(tag, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertTags(List<TagModel> tags) async {
+    await _tagModelInsertionAdapter.insertList(tags, OnConflictStrategy.abort);
   }
 
   @override

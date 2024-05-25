@@ -6,6 +6,9 @@ abstract class TagDao {
   @Insert()
   Future<void> insertTag(TagModel tag);
 
+  @Insert()
+  Future<void> insertTags(List<TagModel> tags);
+
   @Update()
   Future<void> updateTag(TagModel tag);
 
