@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/file_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tag_widget.dart';
 
 class FileExplorer extends StatelessWidget {
   const FileExplorer({super.key});
@@ -22,13 +24,13 @@ class FileExplorer extends StatelessWidget {
     return AppBar(
       title: const Text(
         'Tagsurf',
-        style: TextStyle(color: Colors.black),
+        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
       backgroundColor: Colors.blue[200],
     );
   }
 
-  _buildBody() {
+  _buildFilesList() {
     return BlocBuilder<FileBloc, FileState>(
       builder: (_, state) {
         if (state is FileLoadingState) {
@@ -37,15 +39,47 @@ class FileExplorer extends StatelessWidget {
         if (state is FileLoadedState) {
           return ListView.builder(
             itemBuilder: (context, index) {
-              return FileWidget(
-                file: state.files![index],
-              );
+              return FileWidget(file: state.files![index]);
             },
             itemCount: state.files!.length,
           );
         }
         return const SizedBox();
       },
+    );
+  }
+
+  _buildTagsList() {
+    return BlocBuilder<TagBloc, TagState>(
+      builder: (_, state) {
+        if (state is TagLoadingState) {
+          return const Center(child: CupertinoActivityIndicator());
+        }
+        if (state is TagLoadedState) {
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              return TagWidget(tag: state.tags![index]);
+            },
+            itemCount: state.tags!.length,
+          );
+        }
+        return const SizedBox();
+      },
+    );
+  }
+
+  _buildBody() {
+    const double tagsListWidth = 300;
+
+    return Row(
+      children: [
+        SizedBox(width: tagsListWidth, child: _buildTagsList()),
+        const VerticalDivider(
+          width: 1,
+          thickness: 1,
+        ),
+        Expanded(child: _buildFilesList()),
+      ],
     );
   }
 
