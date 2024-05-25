@@ -2,17 +2,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_repository_impl.dart';
-import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_tag_repository_impl.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_tag_link_repository_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repository_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 Future<void> main() async {
-  group('Test file-tag associations repository', () {
+  group('Test file-tag associations (linking) repository', () {
     late AppDatabase database;
     late FileRepositoryImpl fileRepository;
     late TagRepositoryImpl tagRepository;
-    late FileTagRepositoryImpl fileTagRepository;
+    late FileTagLinkRepositoryImpl fileTagLinkRepository;
     late FileEntity testFile;
     late TagEntity testTag;
 
@@ -27,7 +27,7 @@ Future<void> main() async {
       tagRepository = TagRepositoryImpl(database);
 
       // File-tag associations repository initialization
-      fileTagRepository = FileTagRepositoryImpl(database);
+      fileTagLinkRepository = FileTagLinkRepositoryImpl(database);
 
       // Create mock file
       testFile = const FileEntity(path: 'test path');
@@ -52,30 +52,30 @@ Future<void> main() async {
     });
 
     test('Link (associate) file and tag', () async {
-      await fileTagRepository.linkFileAndTag(testFile, testTag);
+      await fileTagLinkRepository.linkFileAndTag(testFile, testTag);
 
-      final actualFiles = await fileTagRepository.getFilesByTag(testTag);
+      final actualFiles = await fileTagLinkRepository.getFilesByTag(testTag);
       expect(actualFiles, equals([testFile]));
 
-      final actualTags = await fileTagRepository.getTagsByFile(testFile);
+      final actualTags = await fileTagLinkRepository.getTagsByFile(testFile);
       expect(actualTags, equals([testTag]));
     });
 
     test('Unlink (disassociate) file and tag', () async {
-      await fileTagRepository.linkFileAndTag(testFile, testTag);
+      await fileTagLinkRepository.linkFileAndTag(testFile, testTag);
 
-      final actualFilesLinked = await fileTagRepository.getFilesByTag(testTag);
+      final actualFilesLinked = await fileTagLinkRepository.getFilesByTag(testTag);
       expect(actualFilesLinked, equals([testFile]));
 
-      final actualTagsLinked = await fileTagRepository.getTagsByFile(testFile);
+      final actualTagsLinked = await fileTagLinkRepository.getTagsByFile(testFile);
       expect(actualTagsLinked, equals([testTag]));
 
-      await fileTagRepository.unlinkFileAndTag(testFile, testTag);
+      await fileTagLinkRepository.unlinkFileAndTag(testFile, testTag);
 
-      final actualFilesUnlinked = await fileTagRepository.getFilesByTag(testTag);
+      final actualFilesUnlinked = await fileTagLinkRepository.getFilesByTag(testTag);
       expect(actualFilesUnlinked, isEmpty);
 
-      final actualTagsUnlinked = await fileTagRepository.getTagsByFile(testFile);
+      final actualTagsUnlinked = await fileTagLinkRepository.getTagsByFile(testFile);
       expect(actualTagsUnlinked, isEmpty);
     });
   });
