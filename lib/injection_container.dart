@@ -10,10 +10,16 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_rep
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_all_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_untracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tags.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/get_all_tags.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/update_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_multiple_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -29,7 +35,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<TagRepository>(TagRepositoryImpl(sl()));
   sl.registerSingleton<FileTagLinkRepository>(FileTagLinkRepositoryImpl(sl()));
 
-  // UseCases
+  // File UseCases
   sl.registerSingleton<GetAllFilesFromDirectoryUseCase>(
       GetAllFilesFromDirectoryUseCase(sl()));
   sl.registerSingleton<GetTrackedFilesUseCase>(GetTrackedFilesUseCase(sl()));
@@ -39,6 +45,14 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<TrackFilesUseCase>(TrackFilesUseCase(sl()));
   sl.registerSingleton<UntrackFileUseCase>(UntrackFileUseCase(sl()));
 
+  // Tag UseCases
+  sl.registerSingleton<CreateTagUseCase>(CreateTagUseCase(sl()));
+  sl.registerSingleton<CreateTagsUseCase>(CreateTagsUseCase(sl()));
+  sl.registerSingleton<UpdateTagUseCase>(UpdateTagUseCase(sl()));
+  sl.registerSingleton<DeleteTagUseCase>(DeleteTagUseCase(sl()));
+  sl.registerSingleton<GetAllTagsUseCase>(GetAllTagsUseCase(sl()));
+
   // BloCs
   sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl()));
+  sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl()));
 }
