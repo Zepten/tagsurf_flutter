@@ -6,6 +6,9 @@ abstract class FileDao {
   @Insert()
   Future<void> insertFile(FileModel file);
 
+  @Insert()
+  Future<void> insertFiles(List<FileModel> files);
+
   @delete
   Future<void> deleteFile(FileModel file);
 

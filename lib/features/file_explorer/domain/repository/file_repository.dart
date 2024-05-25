@@ -9,5 +9,6 @@ abstract class FileRepository {
   Future<FileEntity?> getTrackedFileByPath(String path);
   Future<List<FileEntity>> getUntrackedFilesFromDirectory(String targetDir);
   Future<void> trackFile(FileEntity file);
+  Future<void> trackFiles(List<FileEntity> file);
   Future<void> untrackFile(FileEntity file);
 }

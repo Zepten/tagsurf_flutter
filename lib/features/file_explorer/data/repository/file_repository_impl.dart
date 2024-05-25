@@ -27,6 +27,14 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
+  Future<void> trackFiles(List<FileEntity> files) async {
+    final filesModels = files
+        .map((fileEntity) => FileModel.fromEntity(fileEntity))
+        .toList(growable: false);
+    _appDatabase.fileDao.insertFiles(filesModels);
+  }
+
+  @override
   Future<void> untrackFile(FileEntity file) async {
     _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
   }

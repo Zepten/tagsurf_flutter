@@ -108,10 +108,8 @@ Future<void> main() async {
         FileEntity(path: 'test 3')
       ];
 
-      // Track files
-      for (final file in files) {
-        await fileRepository.trackFile(file);
-      }
+      // Batch track files
+      await fileRepository.trackFiles(files);
 
       // Check if files are tracked
       final actual = await fileRepository.getTrackedFiles();

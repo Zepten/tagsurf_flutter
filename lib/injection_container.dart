@@ -11,6 +11,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_track
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_all_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_untracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_multiple_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 
@@ -35,8 +36,9 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetUnrackedFilesFromDirectoryUseCase>(
       GetUnrackedFilesFromDirectoryUseCase(sl()));
   sl.registerSingleton<TrackFileUseCase>(TrackFileUseCase(sl()));
+  sl.registerSingleton<TrackFilesUseCase>(TrackFilesUseCase(sl()));
   sl.registerSingleton<UntrackFileUseCase>(UntrackFileUseCase(sl()));
 
   // BloCs
-  sl.registerFactory<FileBloc>(() => FileBloc(sl()));
+  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl()));
 }
