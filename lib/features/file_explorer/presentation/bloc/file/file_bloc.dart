@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_multiple_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
 
 part 'file_event.dart';
