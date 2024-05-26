@@ -72,11 +72,12 @@ class FileWidget extends StatelessWidget {
             // Расстояние между информацией о файле и панелью тегов
             const SizedBox(width: 10),
             // TODO: Панель тегов файла
+
             // Кнопка удаления файла
             IconButton(
               icon: const Icon(Icons.remove_circle, color: Colors.blue),
               onPressed: () {
-                context.read<FileBloc>().add(UntrackFileEvent(file));
+                context.read<FileBloc>().add(UntrackFileEvent(file: file));
               },
             ),
           ],

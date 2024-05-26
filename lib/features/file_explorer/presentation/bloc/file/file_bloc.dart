@@ -18,7 +18,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
   FileBloc(this._getTrackedFilesUseCase, this._trackFileUseCase,
       this._untrackFileUseCase, this._trackMultipleFilesUseCase)
-      : super(const FileLoadingState()) {
+      : super(FileLoadingState()) {
     on<GetTrackedFilesEvent>(onGetTrackedFiles);
     on<TrackFileEvent>(onTrackFile);
     on<UntrackFileEvent>(onUntrackFile);
@@ -28,27 +28,27 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   void onGetTrackedFiles(
       GetTrackedFilesEvent event, Emitter<FileState> emit) async {
     final files = await _getTrackedFilesUseCase();
-    emit(FileLoadedState(files));
+    emit(FileLoadedState(files: files));
   }
 
   void onTrackFile(
       TrackFileEvent trackFileEvent, Emitter<FileState> emit) async {
     await _trackFileUseCase(params: trackFileEvent.file);
     final files = await _getTrackedFilesUseCase();
-    emit(FileLoadedState(files));
+    emit(FileLoadedState(files: files));
   }
 
   void onTrackFiles(
       TrackFilesEvent trackFilesEvent, Emitter<FileState> emit) async {
     await _trackMultipleFilesUseCase(params: trackFilesEvent.files);
     final files = await _getTrackedFilesUseCase();
-    emit(FileLoadedState(files));
+    emit(FileLoadedState(files: files));
   }
 
   void onUntrackFile(
       UntrackFileEvent untrackFileEvent, Emitter<FileState> emit) async {
     await _untrackFileUseCase(params: untrackFileEvent.file);
     final files = await _getTrackedFilesUseCase();
-    emit(FileLoadedState(files));
+    emit(FileLoadedState(files: files));
   }
 }

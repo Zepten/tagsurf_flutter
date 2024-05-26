@@ -39,9 +39,9 @@ class FileExplorer extends StatelessWidget {
         if (state is FileLoadedState) {
           return ListView.builder(
             itemBuilder: (context, index) {
-              return FileWidget(file: state.files![index]);
+              return FileWidget(file: state.files[index]);
             },
-            itemCount: state.files!.length,
+            itemCount: state.files.length,
           );
         }
         return const SizedBox();
@@ -58,9 +58,9 @@ class FileExplorer extends StatelessWidget {
         if (state is TagLoadedState) {
           return ListView.builder(
             itemBuilder: (context, index) {
-              return TagWidget(tag: state.tags![index]);
+              return TagWidget(tag: state.tags[index]);
             },
-            itemCount: state.tags!.length,
+            itemCount: state.tags.length,
           );
         }
         return const SizedBox();
@@ -91,7 +91,7 @@ class FileExplorer extends StatelessWidget {
       final files = result.files
           .map((file) => FileEntity(path: file.path!))
           .toList();
-      fileBloc.add(TrackFilesEvent(files));
+      fileBloc.add(TrackFilesEvent(files: files));
     }
   }
 

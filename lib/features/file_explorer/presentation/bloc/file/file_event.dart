@@ -1,27 +1,35 @@
 part of 'file_bloc.dart';
 
-abstract class FileEvent extends Equatable {
-  final FileEntity? file;
-  final List<FileEntity>? files;
-
-  const FileEvent({this.file, this.files});
-
-  @override
-  List<Object?> get props => [file!];
-}
+abstract class FileEvent extends Equatable {}
 
 class GetTrackedFilesEvent extends FileEvent {
-  const GetTrackedFilesEvent();
+  @override
+  List<Object?> get props => List.empty();
 }
 
 class TrackFilesEvent extends FileEvent {
-  const TrackFilesEvent(List<FileEntity> files) : super(files: files);
+  final List<FileEntity> files;
+
+  TrackFilesEvent({required this.files});
+
+  @override
+  List<Object?> get props => throw UnimplementedError();
 }
 
 class TrackFileEvent extends FileEvent {
-  const TrackFileEvent(FileEntity file) : super(file: file);
+  final FileEntity file;
+
+  TrackFileEvent({required this.file});
+
+  @override
+  List<Object?> get props => [file];
 }
 
 class UntrackFileEvent extends FileEvent {
-  const UntrackFileEvent(FileEntity file) : super(file: file);
+  final FileEntity file;
+
+  UntrackFileEvent({required this.file});
+
+  @override
+  List<Object?> get props => [file];
 }

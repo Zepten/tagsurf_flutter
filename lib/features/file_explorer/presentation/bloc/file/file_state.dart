@@ -1,18 +1,17 @@
 part of 'file_bloc.dart';
 
-abstract class FileState extends Equatable {
-  final List<FileEntity>? files;
-
-  const FileState({this.files});
-
-  @override
-  List<Object> get props => [files!];
-}
+abstract class FileState extends Equatable {}
 
 final class FileLoadingState extends FileState {
-  const FileLoadingState();
+  @override
+  List<Object?> get props => List.empty();
 }
 
 final class FileLoadedState extends FileState {
-  const FileLoadedState(List<FileEntity> files) : super(files: files);
+  final List<FileEntity> files;
+
+  FileLoadedState({required this.files});
+
+  @override
+  List<Object?> get props => [files];
 }
