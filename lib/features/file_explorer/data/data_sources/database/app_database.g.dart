@@ -100,11 +100,11 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT, PRIMARY KEY (`path`))');
+            'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT NOT NULL, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT, `parent_tag_name` TEXT, `color_code` TEXT NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`name`))');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code` TEXT NOT NULL, PRIMARY KEY (`name`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT, `tag_name` TEXT, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_path`, `tag_name`))');
+            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, PRIMARY KEY (`file_path`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -153,14 +153,14 @@ class _$FileDao extends FileDao {
   Future<List<FileModel>> getAllFiles() async {
     return _queryAdapter.queryList('select * from files',
         mapper: (Map<String, Object?> row) =>
-            FileModel(path: row['path'] as String?));
+            FileModel(path: row['path'] as String));
   }
 
   @override
   Future<FileModel?> getFileByPath(String path) async {
     return _queryAdapter.query('select * from files where path = ?1',
         mapper: (Map<String, Object?> row) =>
-            FileModel(path: row['path'] as String?),
+            FileModel(path: row['path'] as String),
         arguments: [path]);
   }
 
@@ -229,7 +229,7 @@ class _$TagDao extends TagDao {
   Future<List<TagModel>> getAllTags() async {
     return _queryAdapter.queryList('select * from tags',
         mapper: (Map<String, Object?> row) => TagModel(
-            name: row['name'] as String?,
+            name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
             colorCode: row['color_code'] as String));
   }
@@ -238,7 +238,7 @@ class _$TagDao extends TagDao {
   Future<TagModel?> getTagByName(String name) async {
     return _queryAdapter.query('select * from tags where name = ?1',
         mapper: (Map<String, Object?> row) => TagModel(
-            name: row['name'] as String?,
+            name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
             colorCode: row['color_code'] as String),
         arguments: [name]);
@@ -248,7 +248,7 @@ class _$TagDao extends TagDao {
   Future<List<TagModel>> getParentTags(String parentTagName) async {
     return _queryAdapter.queryList('select * from tags where name = ?1',
         mapper: (Map<String, Object?> row) => TagModel(
-            name: row['name'] as String?,
+            name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
             colorCode: row['color_code'] as String),
         arguments: [parentTagName]);
@@ -290,7 +290,7 @@ class _$FileTagLinkDao extends FileTagLinkDao {
         _fileTagLinkModelDeletionAdapter = DeletionAdapter(
             database,
             'file_tag_link',
-            ['file_path', 'tag_name'],
+            ['file_path'],
             (FileTagLinkModel item) => <String, Object?>{
                   'file_path': item.filePath,
                   'tag_name': item.tagName
@@ -310,7 +310,7 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
         'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String?, parentTagName: row['parent_tag_name'] as String?, colorCode: row['color_code'] as String),
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCode: row['color_code'] as String),
         arguments: [filePath]);
   }
 
@@ -318,7 +318,7 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   Future<List<FileModel>> getFilesByTagName(String tagName) async {
     return _queryAdapter.queryList(
         'SELECT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name = ?1',
-        mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String?),
+        mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String),
         arguments: [tagName]);
   }
 

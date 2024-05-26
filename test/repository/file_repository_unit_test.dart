@@ -61,7 +61,8 @@ Future<void> main() async {
 
     // File system methods
     test('Empty directory', () async {
-      final files = await fileRepository.getAllFilesFromDirectory(emptyDir.path);
+      final files =
+          await fileRepository.getAllFilesFromDirectory(emptyDir.path);
       expect(files, isEmpty);
     });
 
@@ -79,7 +80,7 @@ Future<void> main() async {
       await fileRepository.trackFile(file);
 
       // Check if file is tracked
-      final actual = await fileRepository.getTrackedFileByPath(file.path!);
+      final actual = await fileRepository.getTrackedFileByPath(file.path);
       expect(actual, equals(file));
     });
 
@@ -90,14 +91,14 @@ Future<void> main() async {
       await fileRepository.trackFile(file);
 
       // Check if file is tracked
-      final actual1 = await fileRepository.getTrackedFileByPath(file.path!);
+      final actual1 = await fileRepository.getTrackedFileByPath(file.path);
       expect(actual1, equals(file));
 
       // Untrack file
       await fileRepository.untrackFile(file);
 
       // Check if file is untracked
-      final actual2 = await fileRepository.getTrackedFileByPath(file.path!);
+      final actual2 = await fileRepository.getTrackedFileByPath(file.path);
       expect(actual2, isNull);
     });
 
@@ -128,14 +129,20 @@ Future<void> main() async {
 
     test('Get untracked files from target directory with multiple files in DB',
         () async {
-      const trackedFiles = [1, 3, 5];
       final matchFilesUntracked = List.from(matchFilesEntities);
+      final matchFilesTracked = List.empty(growable: true);
+      const trackedFilesIndices = [1, 3, 5];
 
       // Track some files from test files and remove them from untracked match files
-      for (final index in trackedFiles) {
+      for (final index in trackedFilesIndices) {
         await fileRepository.trackFile(matchFilesEntities[index]);
+        matchFilesTracked.add(matchFilesEntities[index]);
         matchFilesUntracked.remove(matchFilesEntities[index]);
       }
+
+      // Check if files are tracked
+      final actualTrackedFiles = await fileRepository.getTrackedFiles();
+      expect(actualTrackedFiles, equals(matchFilesTracked));
 
       // Get untracked files from target directory
       final actual =

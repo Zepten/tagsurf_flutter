@@ -34,7 +34,7 @@ Future<void> main() async {
       await fileRepository.trackFile(testFile);
 
       // Check if file is created
-      final actualFile = await fileRepository.getTrackedFileByPath(testFile.path!);
+      final actualFile = await fileRepository.getTrackedFileByPath(testFile.path);
       expect(actualFile, equals(testFile));
 
       // Create tag
@@ -43,7 +43,7 @@ Future<void> main() async {
       await tagRepository.createTag(testTag);
 
       // Check if tag is created
-      final actualTag = await tagRepository.getTagByName(testTag.name!);
+      final actualTag = await tagRepository.getTagByName(testTag.name);
       expect(actualTag, equals(testTag));
     });
 

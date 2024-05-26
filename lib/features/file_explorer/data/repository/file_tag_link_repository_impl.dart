@@ -12,7 +12,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
   @override
   Future<List<FileEntity>> getFilesByTag(TagEntity tag) async {
     final filesModels =
-        await _appDatabase.fileTagLinkDao.getFilesByTagName(tag.name!);
+        await _appDatabase.fileTagLinkDao.getFilesByTagName(tag.name);
     return filesModels
         .map((fileModel) => FileEntity.fromModel(fileModel))
         .toList(growable: false);
@@ -21,7 +21,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
   @override
   Future<List<TagEntity>> getTagsByFile(FileEntity file) async {
     final tagsModels =
-        await _appDatabase.fileTagLinkDao.getTagsByFilePath(file.path!);
+        await _appDatabase.fileTagLinkDao.getTagsByFilePath(file.path);
     return tagsModels
         .map((tagModel) => TagEntity.fromModel(tagModel))
         .toList(growable: false);

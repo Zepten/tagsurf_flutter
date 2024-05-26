@@ -26,7 +26,7 @@ Future<void> main() async {
       await tagRepository.createTag(tag);
 
       // Check if tag is created
-      final actual = await tagRepository.getTagByName(tag.name!);
+      final actual = await tagRepository.getTagByName(tag.name);
       expect(actual, equals(tag));
     });
 
@@ -53,7 +53,7 @@ Future<void> main() async {
 
       // Create tag
       await tagRepository.createTag(tag);
-      final actualCreated = await tagRepository.getTagByName(tag.name!);
+      final actualCreated = await tagRepository.getTagByName(tag.name);
       expect(actualCreated, equals(tag));
 
       // Update tag
@@ -62,7 +62,7 @@ Future<void> main() async {
       await tagRepository.updateTag(tagUpdated);
 
       // Check if tag is updated
-      final actualUpdated = await tagRepository.getTagByName(tagUpdated.name!);
+      final actualUpdated = await tagRepository.getTagByName(tagUpdated.name);
       expect(actualUpdated, equals(tagUpdated));
     });
 
@@ -72,14 +72,14 @@ Future<void> main() async {
 
       // Create tag
       await tagRepository.createTag(tag);
-      final actualCreated = await tagRepository.getTagByName(tag.name!);
+      final actualCreated = await tagRepository.getTagByName(tag.name);
       expect(actualCreated, equals(tag));
 
       // Delete tag
       await tagRepository.deleteTag(tag);
 
       // Check if tag is deleted
-      final actualDeleted = await tagRepository.getTagByName(tag.name!);
+      final actualDeleted = await tagRepository.getTagByName(tag.name);
       expect(actualDeleted, isNull);
     });
 
