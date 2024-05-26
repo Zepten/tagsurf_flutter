@@ -7,17 +7,17 @@ import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repos
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_all_files_from_directory.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_untracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_all_files_from_directory.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_untracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/get_all_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/update_tag.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_files.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/untrack_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/get_tracked_files.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/track_files.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/untrack_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/untrack_file.dart';
 
 part 'file_event.dart';
 part 'file_state.dart';
