@@ -102,9 +102,9 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT NOT NULL, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code` TEXT NOT NULL, PRIMARY KEY (`name`))');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code_red` INTEGER NOT NULL, `color_code_green` INTEGER NOT NULL, `color_code_blue` INTEGER NOT NULL, PRIMARY KEY (`name`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, PRIMARY KEY (`file_path`))');
+            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, PRIMARY KEY (`file_path`, `tag_name`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -192,7 +192,9 @@ class _$TagDao extends TagDao {
             (TagModel item) => <String, Object?>{
                   'name': item.name,
                   'parent_tag_name': item.parentTagName,
-                  'color_code': item.colorCode
+                  'color_code_red': item.colorCodeRed,
+                  'color_code_green': item.colorCodeGreen,
+                  'color_code_blue': item.colorCodeBlue
                 }),
         _tagModelUpdateAdapter = UpdateAdapter(
             database,
@@ -201,7 +203,9 @@ class _$TagDao extends TagDao {
             (TagModel item) => <String, Object?>{
                   'name': item.name,
                   'parent_tag_name': item.parentTagName,
-                  'color_code': item.colorCode
+                  'color_code_red': item.colorCodeRed,
+                  'color_code_green': item.colorCodeGreen,
+                  'color_code_blue': item.colorCodeBlue
                 }),
         _tagModelDeletionAdapter = DeletionAdapter(
             database,
@@ -210,7 +214,9 @@ class _$TagDao extends TagDao {
             (TagModel item) => <String, Object?>{
                   'name': item.name,
                   'parent_tag_name': item.parentTagName,
-                  'color_code': item.colorCode
+                  'color_code_red': item.colorCodeRed,
+                  'color_code_green': item.colorCodeGreen,
+                  'color_code_blue': item.colorCodeBlue
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -231,7 +237,9 @@ class _$TagDao extends TagDao {
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
-            colorCode: row['color_code'] as String));
+            colorCodeRed: row['color_code_red'] as int,
+            colorCodeGreen: row['color_code_green'] as int,
+            colorCodeBlue: row['color_code_blue'] as int));
   }
 
   @override
@@ -240,7 +248,9 @@ class _$TagDao extends TagDao {
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
-            colorCode: row['color_code'] as String),
+            colorCodeRed: row['color_code_red'] as int,
+            colorCodeGreen: row['color_code_green'] as int,
+            colorCodeBlue: row['color_code_blue'] as int),
         arguments: [name]);
   }
 
@@ -250,7 +260,9 @@ class _$TagDao extends TagDao {
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
-            colorCode: row['color_code'] as String),
+            colorCodeRed: row['color_code_red'] as int,
+            colorCodeGreen: row['color_code_green'] as int,
+            colorCodeBlue: row['color_code_blue'] as int),
         arguments: [parentTagName]);
   }
 
@@ -290,7 +302,7 @@ class _$FileTagLinkDao extends FileTagLinkDao {
         _fileTagLinkModelDeletionAdapter = DeletionAdapter(
             database,
             'file_tag_link',
-            ['file_path'],
+            ['file_path', 'tag_name'],
             (FileTagLinkModel item) => <String, Object?>{
                   'file_path': item.filePath,
                   'tag_name': item.tagName
@@ -310,7 +322,7 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
         'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCode: row['color_code'] as String),
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCodeRed: row['color_code_red'] as int, colorCodeGreen: row['color_code_green'] as int, colorCodeBlue: row['color_code_blue'] as int),
         arguments: [filePath]);
   }
 

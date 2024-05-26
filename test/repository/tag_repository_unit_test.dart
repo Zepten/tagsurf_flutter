@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repository_impl.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 Future<void> main() async {
@@ -20,7 +21,9 @@ Future<void> main() async {
 
     test('Create tag', () async {
       const tag = TagEntity(
-          name: 'test tag', parentTagName: null, colorCode: '#ffffff');
+          name: 'test tag',
+          parentTagName: null,
+          colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create tag
       await tagRepository.createTag(tag);
@@ -33,10 +36,17 @@ Future<void> main() async {
     test('Create multiple tags', () async {
       const tags = [
         TagEntity(
-            name: 'test tag 1', parentTagName: null, colorCode: '#ff0000'),
+            name: 'test tag 1',
+            parentTagName: null,
+            colorCode: ColorCode(red: 255, green: 0, blue: 0)),
         TagEntity(
-            name: 'test tag 2', parentTagName: null, colorCode: '#00ff00'),
-        TagEntity(name: 'test tag 3', parentTagName: null, colorCode: '#0000ff')
+            name: 'test tag 2',
+            parentTagName: null,
+            colorCode: ColorCode(red: 0, green: 255, blue: 0)),
+        TagEntity(
+            name: 'test tag 3',
+            parentTagName: null,
+            colorCode: ColorCode(red: 0, green: 0, blue: 255))
       ];
 
       // Create tag
@@ -49,7 +59,9 @@ Future<void> main() async {
 
     test('Update tag', () async {
       const tag = TagEntity(
-          name: 'test tag', parentTagName: null, colorCode: '#ffffff');
+          name: 'test tag',
+          parentTagName: null,
+          colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create tag
       await tagRepository.createTag(tag);
@@ -58,7 +70,9 @@ Future<void> main() async {
 
       // Update tag
       const tagUpdated = TagEntity(
-          name: 'test tag', parentTagName: null, colorCode: '#000000');
+          name: 'test tag',
+          parentTagName: null,
+          colorCode: ColorCode(red: 0, green: 0, blue: 0));
       await tagRepository.updateTag(tagUpdated);
 
       // Check if tag is updated
@@ -68,7 +82,9 @@ Future<void> main() async {
 
     test('Delete tag', () async {
       const tag = TagEntity(
-          name: 'test tag', parentTagName: null, colorCode: '#ffffff');
+          name: 'test tag',
+          parentTagName: null,
+          colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create tag
       await tagRepository.createTag(tag);
@@ -86,11 +102,17 @@ Future<void> main() async {
     test('Get all tags', () async {
       const tags = [
         TagEntity(
-            name: 'test tag 1', parentTagName: null, colorCode: '#ff0000'),
+            name: 'test tag 1',
+            parentTagName: null,
+            colorCode: ColorCode(red: 255, green: 0, blue: 0)),
         TagEntity(
-            name: 'test tag 2', parentTagName: null, colorCode: '#00ff00'),
+            name: 'test tag 2',
+            parentTagName: null,
+            colorCode: ColorCode(red: 0, green: 255, blue: 0)),
         TagEntity(
-            name: 'test tag 3', parentTagName: null, colorCode: '#0000ff'),
+            name: 'test tag 3',
+            parentTagName: null,
+            colorCode: ColorCode(red: 0, green: 0, blue: 255)),
       ];
 
       // Create tags
@@ -107,11 +129,13 @@ Future<void> main() async {
 
     test('Get parent tag', () async {
       const parentTag = TagEntity(
-          name: 'test parent tag', parentTagName: null, colorCode: '#ffffff');
+          name: 'test parent tag',
+          parentTagName: null,
+          colorCode: ColorCode(red: 255, green: 255, blue: 255));
       const childTag = TagEntity(
           name: 'test child tag',
           parentTagName: 'test parent tag',
-          colorCode: '#ffffff');
+          colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create parent tag
       await tagRepository.createTag(parentTag);

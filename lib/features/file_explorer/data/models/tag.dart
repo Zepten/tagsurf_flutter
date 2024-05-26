@@ -6,26 +6,39 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 class TagModel extends Equatable {
   @PrimaryKey()
   final String name;
+
   @ColumnInfo(name: 'parent_tag_name')
   @ForeignKey(
       childColumns: ['parent_tag_name'],
       parentColumns: ['name'],
       entity: TagModel)
   final String? parentTagName;
-  @ColumnInfo(name: 'color_code')
-  final String colorCode;
+
+  @ColumnInfo(name: 'color_code_red')
+  final int colorCodeRed;
+  @ColumnInfo(name: 'color_code_green')
+  final int colorCodeGreen;
+  @ColumnInfo(name: 'color_code_blue')
+  final int colorCodeBlue;
 
   const TagModel(
-      {required this.name, this.parentTagName, required this.colorCode});
+      {required this.name,
+      this.parentTagName,
+      required this.colorCodeRed,
+      required this.colorCodeGreen,
+      required this.colorCodeBlue});
 
   factory TagModel.fromEntity(TagEntity tagEntity) {
     return TagModel(
       name: tagEntity.name,
       parentTagName: tagEntity.parentTagName,
-      colorCode: tagEntity.colorCode,
+      colorCodeRed: tagEntity.colorCode.red,
+      colorCodeGreen: tagEntity.colorCode.green,
+      colorCodeBlue: tagEntity.colorCode.blue,
     );
   }
 
   @override
-  List<Object?> get props => [name, parentTagName, colorCode];
+  List<Object?> get props =>
+      [name, parentTagName, colorCodeRed, colorCodeGreen, colorCodeBlue];
 }
