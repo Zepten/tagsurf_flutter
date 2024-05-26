@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_untagged_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
@@ -19,13 +20,15 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   final TrackFilesUseCase _trackMultipleFilesUseCase;
   // File-tag linking UseCases
   final GetFilesByTagUseCase _getFilesByTagUseCase;
+  final GetUntaggedFilesUseCase _getUntaggedFilesUseCase;
 
   FileBloc(
       this._getTrackedFilesUseCase,
       this._trackFileUseCase,
       this._untrackFileUseCase,
       this._trackMultipleFilesUseCase,
-      this._getFilesByTagUseCase)
+      this._getFilesByTagUseCase,
+      this._getUntaggedFilesUseCase)
       : super(FileLoadingState()) {
     // File events
     on<GetTrackedFilesEvent>(onGetTrackedFiles);
@@ -35,6 +38,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
     // File-tag linking events
     on<GetFilesByTagEvent>(onGetFilesByTag);
+    on<GetUntaggedFilesEvent>(onGetUntaggedFiles);
   }
 
   // File business logic
@@ -66,6 +70,12 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   void onGetFilesByTag(
       GetFilesByTagEvent event, Emitter<FileState> emit) async {
     final files = await _getFilesByTagUseCase(params: event.tag);
+    emit(FilesLoadedState(files: files));
+  }
+
+  void onGetUntaggedFiles(
+      GetUntaggedFilesEvent event, Emitter<FileState> emit) async {
+    final files = await _getUntaggedFilesUseCase();
     emit(FilesLoadedState(files: files));
   }
 }

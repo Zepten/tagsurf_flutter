@@ -66,7 +66,7 @@ class FileExplorer extends StatelessWidget {
               } else if (index == 1) {
                 return TextButton(
                     onPressed: () =>
-                        context.read<FileBloc>().add(GetTrackedFilesEvent()),
+                        context.read<FileBloc>().add(GetUntaggedFilesEvent()),
                     child: const Text('Без тегов'));
               } else {
                 final tagIndex = index - 2;

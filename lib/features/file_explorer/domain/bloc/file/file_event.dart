@@ -44,3 +44,8 @@ class GetFilesByTagEvent extends FileEvent {
   @override
   List<Object?> get props => [tag];
 }
+
+class GetUntaggedFilesEvent extends FileEvent {
+  @override
+  List<Object?> get props => List.empty();
+}

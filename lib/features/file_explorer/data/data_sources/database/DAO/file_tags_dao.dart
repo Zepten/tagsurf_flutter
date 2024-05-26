@@ -21,4 +21,7 @@ abstract class FileTagLinkDao {
   @Query(
       'SELECT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name = :tagName')
   Future<List<FileModel>> getFilesByTagName(String tagName);
+
+  @Query('SELECT f.* FROM files f LEFT JOIN file_tag_link ftl ON f.path = ftl.file_path WHERE ftl.file_path IS NULL')
+  Future<List<FileModel>> getUntaggedFiles();
 }

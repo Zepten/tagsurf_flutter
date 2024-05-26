@@ -335,6 +335,14 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   }
 
   @override
+  Future<List<FileModel>> getUntaggedFiles() async {
+    return _queryAdapter.queryList(
+        'SELECT f.* FROM files f LEFT JOIN file_tag_link ftl ON f.path = ftl.file_path WHERE ftl.file_path IS NULL',
+        mapper: (Map<String, Object?> row) =>
+            FileModel(path: row['path'] as String));
+  }
+
+  @override
   Future<void> insertFileTagLink(FileTagLinkModel fileTagLink) async {
     await _fileTagLinkModelInsertionAdapter.insert(
         fileTagLink, OnConflictStrategy.abort);
