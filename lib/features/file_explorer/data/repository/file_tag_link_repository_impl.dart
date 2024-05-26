@@ -15,27 +15,25 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
         await _appDatabase.fileTagLinkDao.getFilesByTagName(tag.name);
     return filesModels
         .map((fileModel) => FileEntity.fromModel(fileModel))
-        .toList(growable: false);
+        .toList();
   }
 
   @override
   Future<List<TagEntity>> getTagsByFile(FileEntity file) async {
     final tagsModels =
         await _appDatabase.fileTagLinkDao.getTagsByFilePath(file.path);
-    return tagsModels
-        .map((tagModel) => TagEntity.fromModel(tagModel))
-        .toList(growable: false);
+    return tagsModels.map((tagModel) => TagEntity.fromModel(tagModel)).toList();
   }
 
   @override
   Future<void> linkFileAndTag(FileEntity file, TagEntity tag) async {
-    _appDatabase.fileTagLinkDao
-        .insertFileTagLink(FileTagLinkModel(filePath: file.path, tagName: tag.name));
+    _appDatabase.fileTagLinkDao.insertFileTagLink(
+        FileTagLinkModel(filePath: file.path, tagName: tag.name));
   }
 
   @override
   Future<void> unlinkFileAndTag(FileEntity file, TagEntity tag) async {
-    _appDatabase.fileTagLinkDao
-        .deleteFileTagLink(FileTagLinkModel(filePath: file.path, tagName: tag.name));
+    _appDatabase.fileTagLinkDao.deleteFileTagLink(
+        FileTagLinkModel(filePath: file.path, tagName: tag.name));
   }
 }

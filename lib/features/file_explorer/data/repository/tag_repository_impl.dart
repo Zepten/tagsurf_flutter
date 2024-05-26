@@ -15,9 +15,8 @@ class TagRepositoryImpl implements TagRepository {
 
   @override
   Future<void> createTags(List<TagEntity> tags) async {
-    final tagsModels = tags
-        .map((tagEntity) => TagModel.fromEntity(tagEntity))
-        .toList(growable: false);
+    final tagsModels =
+        tags.map((tagEntity) => TagModel.fromEntity(tagEntity)).toList();
     _appDatabase.tagDao.insertTags(tagsModels);
   }
 
@@ -34,9 +33,7 @@ class TagRepositoryImpl implements TagRepository {
   @override
   Future<List<TagEntity>> getAllTags() async {
     final tagsModels = await _appDatabase.tagDao.getAllTags();
-    return tagsModels
-        .map((tagModel) => TagEntity.fromModel(tagModel))
-        .toList(growable: false);
+    return tagsModels.map((tagModel) => TagEntity.fromModel(tagModel)).toList();
   }
 
   @override
@@ -54,7 +51,7 @@ class TagRepositoryImpl implements TagRepository {
           await _appDatabase.tagDao.getParentTags(childTag.parentTagName!);
       return tagsModels
           .map((tagModel) => TagEntity.fromModel(tagModel))
-          .toList(growable: false);
+          .toList();
     }
   }
 }

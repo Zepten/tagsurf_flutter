@@ -17,7 +17,7 @@ class FileRepositoryImpl implements FileRepository {
         await _fileSystemService.getFilesFromDirectory(targetDir);
     return filesModels
         .map((fileModel) => FileEntity.fromModel(fileModel))
-        .toList(growable: false);
+        .toList();
   }
 
   // Database methods implementation for files
@@ -28,9 +28,8 @@ class FileRepositoryImpl implements FileRepository {
 
   @override
   Future<void> trackFiles(List<FileEntity> files) async {
-    final filesModels = files
-        .map((fileEntity) => FileModel.fromEntity(fileEntity))
-        .toList(growable: false);
+    final filesModels =
+        files.map((fileEntity) => FileModel.fromEntity(fileEntity)).toList();
     _appDatabase.fileDao.insertFiles(filesModels);
   }
 
@@ -44,7 +43,7 @@ class FileRepositoryImpl implements FileRepository {
     final filesModels = await _appDatabase.fileDao.getAllFiles();
     return filesModels
         .map((fileModel) => FileEntity.fromModel(fileModel))
-        .toList(growable: false);
+        .toList();
   }
 
   @override
@@ -62,6 +61,6 @@ class FileRepositoryImpl implements FileRepository {
     return filesModelsFromFs
         .where((fileModel) => !filesModelsFromDb.contains(fileModel))
         .map((fileModel) => FileEntity.fromModel(fileModel))
-        .toList(growable: false);
+        .toList();
   }
 }
