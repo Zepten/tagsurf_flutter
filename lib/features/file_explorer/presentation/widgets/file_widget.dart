@@ -9,9 +9,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class FileWidget extends StatelessWidget {
-  final FileEntity? file;
+  final FileEntity file;
 
-  const FileWidget({super.key, this.file});
+  const FileWidget({super.key, required this.file});
 
   _openFile(String filePath) async {
     final fileUri = Uri.file(filePath);
@@ -29,7 +29,7 @@ class FileWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(12.0),
       child: GestureDetector(
-        onDoubleTap: () => _openFile(file!.path),
+        onDoubleTap: () => _openFile(file.path),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -48,7 +48,7 @@ class FileWidget extends StatelessWidget {
                 children: [
                   // Название файла
                   Text(
-                    FileUtils.basename(file!.path),
+                    FileUtils.basename(file.path),
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -59,7 +59,7 @@ class FileWidget extends StatelessWidget {
                   const SizedBox(height: 2),
                   // Путь к файлу
                   Text(
-                    file!.path,
+                    file.path,
                     style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.normal,
@@ -76,7 +76,7 @@ class FileWidget extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.remove_circle, color: Colors.blue),
               onPressed: () {
-                context.read<FileBloc>().add(UntrackFileEvent(file!));
+                context.read<FileBloc>().add(UntrackFileEvent(file));
               },
             ),
           ],
