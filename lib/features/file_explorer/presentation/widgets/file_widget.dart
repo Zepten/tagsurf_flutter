@@ -29,7 +29,7 @@ class FileWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(12.0),
       child: GestureDetector(
-        onDoubleTap: () => _openFile(file!.path!),
+        onDoubleTap: () => _openFile(file!.path),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -48,7 +48,7 @@ class FileWidget extends StatelessWidget {
                 children: [
                   // Название файла
                   Text(
-                    FileUtils.basename(file!.path!),
+                    FileUtils.basename(file!.path),
                     style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
@@ -59,7 +59,7 @@ class FileWidget extends StatelessWidget {
                   const SizedBox(height: 2),
                   // Путь к файлу
                   Text(
-                    file!.path!,
+                    file!.path,
                     style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.normal,
@@ -69,6 +69,9 @@ class FileWidget extends StatelessWidget {
                 ],
               ),
             ),
+            // Расстояние между информацией о файле и панелью тегов
+            const SizedBox(width: 10),
+            // TODO: Панель тегов файла
             // Кнопка удаления файла
             IconButton(
               icon: const Icon(Icons.remove_circle, color: Colors.blue),

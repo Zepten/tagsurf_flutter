@@ -89,7 +89,7 @@ class FileExplorer extends StatelessWidget {
         allowMultiple: true, dialogTitle: 'Добавить файлы в Tagsurf');
     if (result != null && result.files.isNotEmpty) {
       final files = result.files
-          .map((file) => FileEntity(path: file.path))
+          .map((file) => FileEntity(path: file.path!))
           .toList(growable: false);
       fileBloc.add(TrackFilesEvent(files));
     }

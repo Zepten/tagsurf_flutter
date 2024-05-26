@@ -20,7 +20,7 @@ class TagWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            tag!.name!,
+            tag!.name,
             style: const TextStyle(
               // TODO: contrast tag name color
               color: Colors.black,
