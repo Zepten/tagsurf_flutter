@@ -63,6 +63,6 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetTagsByFileUseCase>(GetTagsByFileUseCase(sl()));
 
   // BloCs
-  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl()));
-  sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl()));
 }

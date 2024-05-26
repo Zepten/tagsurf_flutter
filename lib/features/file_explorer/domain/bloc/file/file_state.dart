@@ -7,10 +7,10 @@ final class FileLoadingState extends FileState {
   List<Object?> get props => List.empty();
 }
 
-final class FileLoadedState extends FileState {
+final class FilesLoadedState extends FileState {
   final List<FileEntity> files;
 
-  FileLoadedState({required this.files});
+  FilesLoadedState({required this.files});
 
   @override
   List<Object?> get props => [files];

@@ -2,6 +2,7 @@ part of 'file_bloc.dart';
 
 abstract class FileEvent extends Equatable {}
 
+// File events
 class GetTrackedFilesEvent extends FileEvent {
   @override
   List<Object?> get props => List.empty();
@@ -32,4 +33,14 @@ class UntrackFileEvent extends FileEvent {
 
   @override
   List<Object?> get props => [file];
+}
+
+// File-tag linking events
+class GetFilesByTagEvent extends FileEvent {
+  final TagEntity tag;
+
+  GetFilesByTagEvent({required this.tag});
+
+  @override
+  List<Object?> get props => [tag];
 }

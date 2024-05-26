@@ -2,6 +2,7 @@ part of 'tag_bloc.dart';
 
 abstract class TagEvent extends Equatable {}
 
+// Tag events
 class GetAllTagsEvent extends TagEvent {
   @override
   List<Object?> get props => List.empty();
@@ -41,4 +42,14 @@ class DeleteTagEvent extends TagEvent {
 
   @override
   List<Object?> get props => [tag];
+}
+
+// File-tag linking events
+class GetTagsByFileEvent extends TagEvent {
+  final FileEntity file;
+
+  GetTagsByFileEvent({required this.file});
+
+  @override
+  List<Object?> get props => [file];
 }

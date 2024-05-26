@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -72,7 +72,6 @@ class FileWidget extends StatelessWidget {
             // Расстояние между информацией о файле и панелью тегов
             const SizedBox(width: 10),
             // TODO: Панель тегов файла
-
             // Кнопка удаления файла
             IconButton(
               icon: const Icon(Icons.remove_circle, color: Colors.blue),

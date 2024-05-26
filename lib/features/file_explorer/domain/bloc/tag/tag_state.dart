@@ -7,10 +7,10 @@ final class TagLoadingState extends TagState {
   List<Object?> get props => List.empty();
 }
 
-final class TagLoadedState extends TagState {
+final class TagsLoadedState extends TagState {
   final List<TagEntity> tags;
 
-  TagLoadedState({required this.tags});
+  TagsLoadedState({required this.tags});
 
   @override
   List<Object?> get props => [tags];
