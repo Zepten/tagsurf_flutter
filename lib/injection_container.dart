@@ -4,6 +4,7 @@ import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_sy
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_repository_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_tag_link_repository_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repository_impl.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/common/file_tag_bloc_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
@@ -67,4 +68,5 @@ Future<void> initializeDependencies() async {
   // BloCs
   sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerSingleton<FileTagBlocRepository>(FileTagBlocRepository(sl(), sl(), sl(), sl()));
 }
