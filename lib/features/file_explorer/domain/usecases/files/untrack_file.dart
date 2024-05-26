@@ -8,7 +8,7 @@ class UntrackFileUseCase implements UseCase<void, FileEntity> {
   UntrackFileUseCase(this._fileRepository);
 
   @override
-  Future<void> call({FileEntity? params}) {
-    return _fileRepository.untrackFile(params!);
+  Future<void> call({required FileEntity params}) {
+    return _fileRepository.untrackFile(file: params);
   }
 }

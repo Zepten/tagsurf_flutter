@@ -2,9 +2,9 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
 abstract class FileTagLinkRepository {
-  Future<List<FileEntity>> getFilesByTag(TagEntity tag);
-  Future<List<TagEntity>> getTagsByFile(FileEntity file);
-  Future<void> linkFileAndTag(FileEntity file, TagEntity tag);
-  Future<void> unlinkFileAndTag(FileEntity file, TagEntity tag);
+  Future<List<FileEntity>> getFilesByTag({required TagEntity tag});
+  Future<List<TagEntity>> getTagsByFile({required FileEntity file});
+  Future<void> linkFileAndTag({required FileEntity file, required TagEntity tag});
+  Future<void> unlinkFileAndTag({required FileEntity file, required TagEntity tag});
   // TODO: batch insert methods
 }

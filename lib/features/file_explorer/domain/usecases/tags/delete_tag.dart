@@ -8,7 +8,7 @@ class DeleteTagUseCase implements UseCase<void, TagEntity> {
   DeleteTagUseCase(this._tagRepository);
 
   @override
-  Future<void> call({TagEntity? params}) {
-    return _tagRepository.deleteTag(params!);
+  Future<void> call({required TagEntity params}) {
+    return _tagRepository.deleteTag(tag: params);
   }
 }

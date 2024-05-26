@@ -9,7 +9,7 @@ class GetTagsByFileUseCase implements UseCase<List<TagEntity>, FileEntity> {
   GetTagsByFileUseCase(this._fileTagLinkRepository);
 
   @override
-  Future<List<TagEntity>> call({FileEntity? params}) {
-    return _fileTagLinkRepository.getTagsByFile(params!);
+  Future<List<TagEntity>> call({required FileEntity params}) {
+    return _fileTagLinkRepository.getTagsByFile(file: params);
   }
 }

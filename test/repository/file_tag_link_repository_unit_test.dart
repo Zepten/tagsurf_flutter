@@ -32,11 +32,11 @@ Future<void> main() async {
 
       // Create mock file
       testFile = const FileEntity(path: 'test path');
-      await fileRepository.trackFile(testFile);
+      await fileRepository.trackFile(file: testFile);
 
       // Check if file is created
       final actualFile =
-          await fileRepository.getTrackedFileByPath(testFile.path);
+          await fileRepository.getTrackedFileByPath(path: testFile.path);
       expect(actualFile, equals(testFile));
 
       // Create tag
@@ -44,10 +44,10 @@ Future<void> main() async {
           name: 'test tag',
           parentTagName: null,
           colorCode: ColorCode(red: 255, green: 255, blue: 255));
-      await tagRepository.createTag(testTag);
+      await tagRepository.createTag(tag: testTag);
 
       // Check if tag is created
-      final actualTag = await tagRepository.getTagByName(testTag.name);
+      final actualTag = await tagRepository.getTagByName(name: testTag.name);
       expect(actualTag, equals(testTag));
     });
 
@@ -56,34 +56,37 @@ Future<void> main() async {
     });
 
     test('Link (associate) file and tag', () async {
-      await fileTagLinkRepository.linkFileAndTag(testFile, testTag);
+      await fileTagLinkRepository.linkFileAndTag(file: testFile, tag: testTag);
 
-      final actualFiles = await fileTagLinkRepository.getFilesByTag(testTag);
+      final actualFiles =
+          await fileTagLinkRepository.getFilesByTag(tag: testTag);
       expect(actualFiles, equals([testFile]));
 
-      final actualTags = await fileTagLinkRepository.getTagsByFile(testFile);
+      final actualTags =
+          await fileTagLinkRepository.getTagsByFile(file: testFile);
       expect(actualTags, equals([testTag]));
     });
 
     test('Unlink (disassociate) file and tag', () async {
-      await fileTagLinkRepository.linkFileAndTag(testFile, testTag);
+      await fileTagLinkRepository.linkFileAndTag(file: testFile, tag: testTag);
 
       final actualFilesLinked =
-          await fileTagLinkRepository.getFilesByTag(testTag);
+          await fileTagLinkRepository.getFilesByTag(tag: testTag);
       expect(actualFilesLinked, equals([testFile]));
 
       final actualTagsLinked =
-          await fileTagLinkRepository.getTagsByFile(testFile);
+          await fileTagLinkRepository.getTagsByFile(file: testFile);
       expect(actualTagsLinked, equals([testTag]));
 
-      await fileTagLinkRepository.unlinkFileAndTag(testFile, testTag);
+      await fileTagLinkRepository.unlinkFileAndTag(
+          file: testFile, tag: testTag);
 
       final actualFilesUnlinked =
-          await fileTagLinkRepository.getFilesByTag(testTag);
+          await fileTagLinkRepository.getFilesByTag(tag: testTag);
       expect(actualFilesUnlinked, isEmpty);
 
       final actualTagsUnlinked =
-          await fileTagLinkRepository.getTagsByFile(testFile);
+          await fileTagLinkRepository.getTagsByFile(file: testFile);
       expect(actualTagsUnlinked, isEmpty);
     });
   });

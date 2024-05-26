@@ -2,13 +2,13 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_enti
 
 abstract class FileRepository {
   // File system methods for files
-  Future<List<FileEntity>> getAllFilesFromDirectory(String targetDir);
+  Future<List<FileEntity>> getAllFilesFromDirectory({required String targetDir});
 
   // Database methods for files
   Future<List<FileEntity>> getTrackedFiles();
-  Future<FileEntity?> getTrackedFileByPath(String path);
-  Future<List<FileEntity>> getUntrackedFilesFromDirectory(String targetDir);
-  Future<void> trackFile(FileEntity file);
-  Future<void> trackFiles(List<FileEntity> file);
-  Future<void> untrackFile(FileEntity file);
+  Future<FileEntity?> getTrackedFileByPath({required String path});
+  Future<List<FileEntity>> getUntrackedFilesFromDirectory({required String targetDir});
+  Future<void> trackFile({required FileEntity file});
+  Future<void> trackFiles({required List<FileEntity> files});
+  Future<void> untrackFile({required FileEntity file});
 }

@@ -26,10 +26,10 @@ Future<void> main() async {
           colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create tag
-      await tagRepository.createTag(tag);
+      await tagRepository.createTag(tag: tag);
 
       // Check if tag is created
-      final actual = await tagRepository.getTagByName(tag.name);
+      final actual = await tagRepository.getTagByName(name: tag.name);
       expect(actual, equals(tag));
     });
 
@@ -50,7 +50,7 @@ Future<void> main() async {
       ];
 
       // Create tag
-      await tagRepository.createTags(tags);
+      await tagRepository.createTags(tags: tags);
 
       // Check if tag is created
       final actual = await tagRepository.getAllTags();
@@ -64,8 +64,8 @@ Future<void> main() async {
           colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create tag
-      await tagRepository.createTag(tag);
-      final actualCreated = await tagRepository.getTagByName(tag.name);
+      await tagRepository.createTag(tag: tag);
+      final actualCreated = await tagRepository.getTagByName(name: tag.name);
       expect(actualCreated, equals(tag));
 
       // Update tag
@@ -73,10 +73,11 @@ Future<void> main() async {
           name: 'test tag',
           parentTagName: null,
           colorCode: ColorCode(red: 0, green: 0, blue: 0));
-      await tagRepository.updateTag(tagUpdated);
+      await tagRepository.updateTag(tag: tagUpdated);
 
       // Check if tag is updated
-      final actualUpdated = await tagRepository.getTagByName(tagUpdated.name);
+      final actualUpdated =
+          await tagRepository.getTagByName(name: tagUpdated.name);
       expect(actualUpdated, equals(tagUpdated));
     });
 
@@ -87,15 +88,15 @@ Future<void> main() async {
           colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create tag
-      await tagRepository.createTag(tag);
-      final actualCreated = await tagRepository.getTagByName(tag.name);
+      await tagRepository.createTag(tag: tag);
+      final actualCreated = await tagRepository.getTagByName(name: tag.name);
       expect(actualCreated, equals(tag));
 
       // Delete tag
-      await tagRepository.deleteTag(tag);
+      await tagRepository.deleteTag(tag: tag);
 
       // Check if tag is deleted
-      final actualDeleted = await tagRepository.getTagByName(tag.name);
+      final actualDeleted = await tagRepository.getTagByName(name: tag.name);
       expect(actualDeleted, isNull);
     });
 
@@ -117,7 +118,7 @@ Future<void> main() async {
 
       // Create tags
       for (final tag in tags) {
-        await tagRepository.createTag(tag);
+        await tagRepository.createTag(tag: tag);
       }
 
       // Get all tags
@@ -138,27 +139,29 @@ Future<void> main() async {
           colorCode: ColorCode(red: 255, green: 255, blue: 255));
 
       // Create parent tag
-      await tagRepository.createTag(parentTag);
+      await tagRepository.createTag(tag: parentTag);
 
       // Check if parent tag is created
       final actualParentCreated =
-          await tagRepository.getTagByName('test parent tag');
+          await tagRepository.getTagByName(name: 'test parent tag');
       expect(actualParentCreated, equals(parentTag));
 
       // Create child tag
-      await tagRepository.createTag(childTag);
+      await tagRepository.createTag(tag: childTag);
 
       // Check if child tag is created
       final actualChildCreated =
-          await tagRepository.getTagByName('test child tag');
+          await tagRepository.getTagByName(name: 'test child tag');
       expect(actualChildCreated, equals(childTag));
 
       // Get parent tag of child tag
-      final actualParents = await tagRepository.getParentTags(childTag);
+      final actualParents =
+          await tagRepository.getParentTags(childTag: childTag);
       expect(actualParents, equals([parentTag]));
 
       // Get parent tag of parent tag
-      final actualParentParents = await tagRepository.getParentTags(parentTag);
+      final actualParentParents =
+          await tagRepository.getParentTags(childTag: parentTag);
       expect(actualParentParents, isEmpty);
     });
   });

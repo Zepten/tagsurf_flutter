@@ -9,7 +9,7 @@ class GetAllFilesFromDirectoryUseCase
   GetAllFilesFromDirectoryUseCase(this._fileRepository);
 
   @override
-  Future<List<FileEntity>> call({String? params}) {
-    return _fileRepository.getAllFilesFromDirectory(params!);
+  Future<List<FileEntity>> call({required String params}) {
+    return _fileRepository.getAllFilesFromDirectory(targetDir: params);
   }
 }

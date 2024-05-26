@@ -8,7 +8,7 @@ class CreateTagsUseCase implements UseCase<void, List<TagEntity>> {
   CreateTagsUseCase(this._tagRepository);
 
   @override
-  Future<void> call({List<TagEntity>? params}) {
-    return _tagRepository.createTags(params!);
+  Future<void> call({required List<TagEntity> params}) {
+    return _tagRepository.createTags(tags: params);
   }
 }

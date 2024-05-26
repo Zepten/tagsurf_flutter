@@ -8,7 +8,7 @@ class UpdateTagUseCase implements UseCase<void, TagEntity> {
   UpdateTagUseCase(this._tagRepository);
 
   @override
-  Future<void> call({TagEntity? params}) {
-    return _tagRepository.updateTag(params!);
+  Future<void> call({required TagEntity params}) {
+    return _tagRepository.updateTag(tag: params);
   }
 }

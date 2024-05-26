@@ -12,7 +12,8 @@ class FileRepositoryImpl implements FileRepository {
 
   // File system methods implementation for files
   @override
-  Future<List<FileEntity>> getAllFilesFromDirectory(String targetDir) async {
+  Future<List<FileEntity>> getAllFilesFromDirectory(
+      {required String targetDir}) async {
     final filesModels =
         await _fileSystemService.getFilesFromDirectory(targetDir);
     return filesModels
@@ -22,19 +23,19 @@ class FileRepositoryImpl implements FileRepository {
 
   // Database methods implementation for files
   @override
-  Future<void> trackFile(FileEntity file) async {
+  Future<void> trackFile({required FileEntity file}) async {
     _appDatabase.fileDao.insertFile(FileModel.fromEntity(file));
   }
 
   @override
-  Future<void> trackFiles(List<FileEntity> files) async {
+  Future<void> trackFiles({required List<FileEntity> files}) async {
     final filesModels =
         files.map((fileEntity) => FileModel.fromEntity(fileEntity)).toList();
     _appDatabase.fileDao.insertFiles(filesModels);
   }
 
   @override
-  Future<void> untrackFile(FileEntity file) async {
+  Future<void> untrackFile({required FileEntity file}) async {
     _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
   }
 
@@ -47,14 +48,14 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
-  Future<FileEntity?> getTrackedFileByPath(String path) async {
+  Future<FileEntity?> getTrackedFileByPath({required String path}) async {
     final fileModel = await _appDatabase.fileDao.getFileByPath(path);
     return fileModel == null ? null : FileEntity.fromModel(fileModel);
   }
 
   @override
   Future<List<FileEntity>> getUntrackedFilesFromDirectory(
-      String targetDir) async {
+      {required String targetDir}) async {
     final filesModelsFromFs =
         await _fileSystemService.getFilesFromDirectory(targetDir);
     final filesModelsFromDb = await _appDatabase.fileDao.getAllFiles();

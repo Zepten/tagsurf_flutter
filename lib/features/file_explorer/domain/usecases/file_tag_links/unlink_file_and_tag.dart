@@ -8,7 +8,7 @@ class UnlinkFileAndTagUseCase implements UseCase<void, FileAndTagParams> {
   UnlinkFileAndTagUseCase(this._fileTagLinkRepository);
 
   @override
-  Future<void> call({FileAndTagParams? params}) {
-    return _fileTagLinkRepository.unlinkFileAndTag(params!.file, params.tag);
+  Future<void> call({required FileAndTagParams params}) {
+    return _fileTagLinkRepository.unlinkFileAndTag(file: params.file, tag: params.tag);
   }
 }
