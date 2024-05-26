@@ -7,6 +7,10 @@ import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repos
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_tags_by_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/link_file_and_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/unlink_file_and_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_all_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_untracked_files.dart';
@@ -51,6 +55,12 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<UpdateTagUseCase>(UpdateTagUseCase(sl()));
   sl.registerSingleton<DeleteTagUseCase>(DeleteTagUseCase(sl()));
   sl.registerSingleton<GetAllTagsUseCase>(GetAllTagsUseCase(sl()));
+
+  // File-tag association (linking) UseCases
+  sl.registerSingleton<LinkFileAndTagUseCase>(LinkFileAndTagUseCase(sl()));
+  sl.registerSingleton<UnlinkFileAndTagUseCase>(UnlinkFileAndTagUseCase(sl()));
+  sl.registerSingleton<GetFilesByTagUseCase>(GetFilesByTagUseCase(sl()));
+  sl.registerSingleton<GetTagsByFileUseCase>(GetTagsByFileUseCase(sl()));
 
   // BloCs
   sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl()));
