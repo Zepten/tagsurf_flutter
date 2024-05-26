@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
 
