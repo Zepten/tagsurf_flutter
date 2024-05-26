@@ -22,8 +22,8 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/upda
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/untrack_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 
 final sl = GetIt.instance;
 
