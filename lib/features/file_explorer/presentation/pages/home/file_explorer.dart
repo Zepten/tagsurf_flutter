@@ -90,7 +90,7 @@ class FileExplorer extends StatelessWidget {
     if (result != null && result.files.isNotEmpty) {
       final files = result.files
           .map((file) => FileEntity(path: file.path!))
-          .toList(growable: false);
+          .toList();
       fileBloc.add(TrackFilesEvent(files));
     }
   }
