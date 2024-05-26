@@ -1,12 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:floor/floor.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 
 class TagEntity extends Equatable {
   final String name;
-  @ColumnInfo(name: 'parent_tag_name')
   final String? parentTagName;
-  @ColumnInfo(name: 'color_code')
   final String colorCode;
 
   const TagEntity(
