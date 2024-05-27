@@ -14,19 +14,33 @@ class FileExplorer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(context),
       body: _buildBody(),
-      floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 
-  _buildAppBar() {
+  _buildAppBar(BuildContext context) {
     return AppBar(
       title: const Text(
         'Tagsurf',
         style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
-      backgroundColor: Colors.blue[200],
+      centerTitle: false,
+      actions: [
+        IconButton(
+            onPressed: () {},
+            tooltip: 'Поиск',
+            icon: const Icon(
+              Icons.search,
+              color: Colors.black,
+            )),
+        IconButton(
+          onPressed: () async => await _pickFile(context),
+          tooltip: 'Добавить файлы в Tagsurf',
+          icon: const Icon(Icons.add_circle, color: Colors.black),
+        ),
+      ],
+      backgroundColor: Colors.blue[100],
     );
   }
 
@@ -105,14 +119,5 @@ class FileExplorer extends StatelessWidget {
           result.files.map((file) => FileEntity(path: file.path!)).toList();
       fileBloc.add(TrackFilesEvent(files: files));
     }
-  }
-
-  _buildFloatingActionButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () async => await _pickFile(context),
-      backgroundColor: Colors.blue,
-      tooltip: 'Добавить файлы в Tagsurf',
-      child: const Icon(Icons.add_circle),
-    );
   }
 }
