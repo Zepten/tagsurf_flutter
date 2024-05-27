@@ -42,10 +42,11 @@ class FileTagsChipsWidget extends StatelessWidget {
                   context.read<TagBloc>().add(GetAllTagsEvent());
                   context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
                 },
-                onDeleted: () async {
+                onDeleted: () {
                   sl
                       .get<FileTagBlocRepository>()
-                      .unlinkFileAndTag(file: file, tag: tag);
+                      .unlinkFileAndTag(filePath: file.path, tagName: tag.name);
+                  context.read<TagBloc>().add(GetTagsByFileEvent(file: file));
                 },
                 backgroundColor: getLightShadeFromColorCode(tag.colorCode),
               );
