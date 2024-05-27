@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData theme() {
   return ThemeData(
     primarySwatch: Colors.blue,
-    fontFamily: 'JetBrains Mono NL',
+    fontFamily: 'Rubik',
     appBarTheme: appBarTheme(),
   );
 }
