@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:tagsurf_flutter/config/util/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
@@ -26,50 +27,61 @@ class FileWidget extends StatelessWidget {
     }
   }
 
-  _buildTagChipList() {
+  _buildTagChipList(BuildContext context) {
     final tags = <TagEntity>[
       const TagEntity(
           name: 'Тестовый тег №1',
-          colorCode: ColorCode(red: 255, green: 255, blue: 255)),
+          colorCode: ColorCode(red: 255, green: 0, blue: 0)),
       const TagEntity(
           name: 'Тестовый тег №2',
-          colorCode: ColorCode(red: 250, green: 220, blue: 255)),
+          colorCode: ColorCode(red: 0, green: 255, blue: 0)),
       const TagEntity(
-          name: 'Прикол',
-          colorCode: ColorCode(red: 255, green: 230, blue: 255)),
+          name: 'Прикол', colorCode: ColorCode(red: 0, green: 0, blue: 255)),
       const TagEntity(
-          name: 'Аниме', colorCode: ColorCode(red: 200, green: 255, blue: 220)),
+          name: 'Аниме', colorCode: ColorCode(red: 255, green: 0, blue: 255)),
       const TagEntity(
-          name: 'Треш', colorCode: ColorCode(red: 255, green: 220, blue: 200)),
+          name: 'Треш', colorCode: ColorCode(red: 255, green: 255, blue: 0)),
       const TagEntity(
           name: 'Программирование',
-          colorCode: ColorCode(red: 255, green: 220, blue: 255)),
+          colorCode: ColorCode(red: 0, green: 255, blue: 255)),
       const TagEntity(
-          name: 'Test', colorCode: ColorCode(red: 230, green: 230, blue: 230)),
+          name: 'Оранжевый',
+          colorCode: ColorCode(red: 255, green: 100, blue: 0)),
       const TagEntity(
-          name: 'GitHub',
-          colorCode: ColorCode(red: 240, green: 200, blue: 255)),
+          name: 'Чёрный тег', colorCode: ColorCode(red: 0, green: 0, blue: 0)),
+      const TagEntity(
+          name: 'Белый тег',
+          colorCode: ColorCode(red: 255, green: 255, blue: 255)),
+      const TagEntity(
+          name: 'Серый тег',
+          colorCode: ColorCode(red: 128, green: 128, blue: 128)),
+      const TagEntity(
+          name: 'Почти чёрный тег',
+          colorCode: ColorCode(red: 0, green: 10, blue: 0)),
+      const TagEntity(
+          name: 'Почти белый тег',
+          colorCode: ColorCode(red: 255, green: 254, blue: 255)),
     ];
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
       children: tags.map((TagEntity tag) {
-        return Chip(
+        return RawChip(
+          avatar: Icon(Icons.sell,
+              color: getContrastColorFromColorCode(tag.colorCode)),
           label: Text(tag.name,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12)),
+              style: TextStyle(
+                  color: getContrastColorFromColorCode(tag.colorCode))),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           deleteButtonTooltipMessage: 'Убрать тег',
+          onPressed: () {
+            //TODO: context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
+          },
           onDeleted: () {
             // TODO: Обработка события удаления тега с файла
-            // здесь, возможно, вам придется использовать setState или обращение к bloc,
-            // чтобы управлять состоянием списка тегов и обновлять UI по необходимости.
           },
-          deleteIcon:
-              const Icon(Icons.remove_circle, color: Colors.black, size: 14),
-          backgroundColor: Color.fromARGB(
-              255, tag.colorCode.red, tag.colorCode.green, tag.colorCode.blue),
+          backgroundColor: getLightShadeFromColorCode(tag.colorCode),
         );
       }).toList(),
     );
@@ -97,29 +109,37 @@ class FileWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Название файла
-                  Text(
-                    FileUtils.basename(file.path),
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // Расстояние между названием файла и его путем
-                  const SizedBox(height: 2),
-                  // Путь к файлу
-                  Text(
-                    file.path,
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.black),
-                    overflow: TextOverflow.ellipsis,
+                  GestureDetector(
+                    onDoubleTap: () => _openFile(file.path),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Название файла
+                        Text(
+                          FileUtils.basename(file.path),
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        // Расстояние между названием файла и его путем
+                        const SizedBox(height: 2),
+                        // Путь к файлу
+                        Text(
+                          file.path,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                   // Расстояние между информацией о файле и панелью тегов
                   const SizedBox(height: 10),
-                  _buildTagChipList(),
+                  _buildTagChipList(context),
                 ],
               ),
             ),
