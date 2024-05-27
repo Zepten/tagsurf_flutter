@@ -27,16 +27,16 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
 
   @override
   Future<void> linkFileAndTag(
-      {required FileEntity file, required TagEntity tag}) async {
+      {required String filePath, required String tagName}) async {
     _appDatabase.fileTagLinkDao.insertFileTagLink(
-        FileTagLinkModel(filePath: file.path, tagName: tag.name));
+        FileTagLinkModel(filePath: filePath, tagName: tagName));
   }
 
   @override
   Future<void> unlinkFileAndTag(
-      {required FileEntity file, required TagEntity tag}) async {
+      {required String filePath, required String tagName}) async {
     _appDatabase.fileTagLinkDao.deleteFileTagLink(
-        FileTagLinkModel(filePath: file.path, tagName: tag.name));
+        FileTagLinkModel(filePath: filePath, tagName: tagName));
   }
 
   @override

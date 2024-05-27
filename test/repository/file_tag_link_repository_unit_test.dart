@@ -56,7 +56,8 @@ Future<void> main() async {
     });
 
     test('Link (associate) file and tag', () async {
-      await fileTagLinkRepository.linkFileAndTag(file: testFile, tag: testTag);
+      await fileTagLinkRepository.linkFileAndTag(
+          filePath: testFile.path, tagName: testTag.name);
 
       final actualFiles =
           await fileTagLinkRepository.getFilesByTag(tag: testTag);
@@ -68,7 +69,8 @@ Future<void> main() async {
     });
 
     test('Unlink (disassociate) file and tag', () async {
-      await fileTagLinkRepository.linkFileAndTag(file: testFile, tag: testTag);
+      await fileTagLinkRepository.linkFileAndTag(
+          filePath: testFile.path, tagName: testTag.name);
 
       final actualFilesLinked =
           await fileTagLinkRepository.getFilesByTag(tag: testTag);
@@ -79,7 +81,7 @@ Future<void> main() async {
       expect(actualTagsLinked, equals([testTag]));
 
       await fileTagLinkRepository.unlinkFileAndTag(
-          file: testFile, tag: testTag);
+          filePath: testFile.path, tagName: testTag.name);
 
       final actualFilesUnlinked =
           await fileTagLinkRepository.getFilesByTag(tag: testTag);

@@ -10,7 +10,7 @@ class FilesListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<FileBloc, FileState>(
       builder: (_, state) {
-        if (state is FileLoadingState) {
+        if (state is FilesLoadingState) {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is FilesLoadedState) {

@@ -9,6 +9,6 @@ class LinkFileAndTagUseCase implements UseCase<void, FileAndTagParams> {
 
   @override
   Future<void> call({required FileAndTagParams params}) {
-    return _fileTagLinkRepository.linkFileAndTag(file: params.file, tag: params.tag);
+    return _fileTagLinkRepository.linkFileAndTag(filePath: params.filePath, tagName: params.tagName);
   }
 }

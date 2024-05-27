@@ -13,7 +13,7 @@ class TagsListWidget extends StatelessWidget {
     return BlocBuilder<TagBloc, TagState>(
       buildWhen: (previous, current) => current is TagsLoadedState,
       builder: (_, state) {
-        if (state is TagLoadingState) {
+        if (state is TagsLoadingState) {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is TagsLoadedState) {

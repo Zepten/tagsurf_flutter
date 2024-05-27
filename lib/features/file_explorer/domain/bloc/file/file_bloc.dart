@@ -29,7 +29,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       this._trackMultipleFilesUseCase,
       this._getFilesByTagUseCase,
       this._getUntaggedFilesUseCase)
-      : super(FileLoadingState()) {
+      : super(FilesLoadingState()) {
     // File events
     on<GetTrackedFilesEvent>(onGetTrackedFiles);
     on<TrackFileEvent>(onTrackFile);
@@ -44,23 +44,27 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   // File business logic
   void onGetTrackedFiles(
       GetTrackedFilesEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
     final files = await _getTrackedFilesUseCase();
     emit(FilesLoadedState(files: files));
   }
 
   void onTrackFile(TrackFileEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
     await _trackFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
     emit(FilesLoadedState(files: files));
   }
 
   void onTrackFiles(TrackFilesEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
     await _trackMultipleFilesUseCase(params: event.files);
     final files = await _getTrackedFilesUseCase();
     emit(FilesLoadedState(files: files));
   }
 
   void onUntrackFile(UntrackFileEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
     await _untrackFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
     emit(FilesLoadedState(files: files));
@@ -69,12 +73,14 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   // File-tag linking business logic
   void onGetFilesByTag(
       GetFilesByTagEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
     final files = await _getFilesByTagUseCase(params: event.tag);
     emit(FilesLoadedState(files: files));
   }
 
   void onGetUntaggedFiles(
       GetUntaggedFilesEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
     final files = await _getUntaggedFilesUseCase();
     emit(FilesLoadedState(files: files));
   }
