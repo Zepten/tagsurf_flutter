@@ -23,7 +23,7 @@ class FileExplorer extends StatelessWidget {
     return AppBar(
       title: const Text(
         'Tagsurf',
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       centerTitle: false,
       actions: [
@@ -32,15 +32,15 @@ class FileExplorer extends StatelessWidget {
             tooltip: 'Поиск',
             icon: const Icon(
               Icons.search,
-              color: Colors.black,
+              color: Colors.white,
             )),
         IconButton(
           onPressed: () async => await _pickFile(context),
           tooltip: 'Добавить файлы в Tagsurf',
-          icon: const Icon(Icons.add_circle, color: Colors.black),
+          icon: const Icon(Icons.add_circle, color: Colors.white),
         ),
       ],
-      backgroundColor: Colors.blue[100],
+      //backgroundColor: Colors.blue[100],
     );
   }
 
