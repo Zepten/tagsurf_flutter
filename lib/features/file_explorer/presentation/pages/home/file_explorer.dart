@@ -52,7 +52,7 @@ class FileExplorer extends StatelessWidget {
         }
         if (state is FilesLoadedState) {
           return ListView.builder(
-            itemBuilder: (context, index) {
+            itemBuilder: (_, index) {
               return FileWidget(file: state.files[index]);
             },
             itemCount: state.files.length,
@@ -100,7 +100,11 @@ class FileExplorer extends StatelessWidget {
 
     return Row(
       children: [
-        SizedBox(width: tagsListWidth, child: _buildTagsList()),
+        SizedBox(
+          width: tagsListWidth,
+          child: SizedBox.shrink(),
+        //_buildTagsList()
+        ),
         const VerticalDivider(
           width: 1,
           thickness: 1,

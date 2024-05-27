@@ -73,7 +73,10 @@ class TagBloc extends Bloc<TagEvent, TagState> {
 
   // File-tag linking business logic
   void onGetTagsByFile(GetTagsByFileEvent event, Emitter<TagState> emit) async {
+    emit(TagsForFileLoadingState());
+
     final tags = await _getTagsByFileUseCase(params: event.file);
-    emit(TagsLoadedState(tags: tags));
+
+    emit(TagsForFileLoadedState(file: event.file, tags: tags));
   }
 }
