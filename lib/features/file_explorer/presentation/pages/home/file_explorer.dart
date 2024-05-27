@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/app_bar_widget.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list_widget.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/app_bar_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/files_list_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tags_list_widget.dart';
 
 class FileExplorer extends StatefulWidget {
   const FileExplorer({super.key});

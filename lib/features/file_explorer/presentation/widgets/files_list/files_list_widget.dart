@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/file_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_widget.dart';
 
 class FilesListWidget extends StatelessWidget {
   const FilesListWidget({super.key});
