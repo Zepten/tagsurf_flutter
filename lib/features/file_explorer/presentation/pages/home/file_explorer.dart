@@ -1,127 +1,85 @@
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/file_widget.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tag_widget.dart';
+import 'dart:math';
 
-class FileExplorer extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/app_bar_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list_widget.dart';
+
+class FileExplorer extends StatefulWidget {
   const FileExplorer({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _FileExplorerState();
+}
+
+class _FileExplorerState extends State<FileExplorer>
+    with WidgetsBindingObserver {
+  late double tagsListWidth;
+  final double minTagsListWidth = 200;
+  late double maxTagsListWidth;
+
+  @override
+  void initState() {
+    super.initState();
+    tagsListWidth = 300;
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final double screenWidth = MediaQuery.of(context).size.width;
+    maxTagsListWidth = max(minTagsListWidth, screenWidth / 3);
+    tagsListWidth = tagsListWidth.clamp(minTagsListWidth, maxTagsListWidth);
+  }
+
+  @override
+  void didChangeMetrics() {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    maxTagsListWidth = max(minTagsListWidth, screenWidth / 3);
+    setState(() {
+      tagsListWidth = tagsListWidth.clamp(minTagsListWidth, maxTagsListWidth);
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context),
-      body: _buildBody(),
-    );
-  }
-
-  _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text(
-        'Tagsurf',
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      appBar: appBar(context),
+      body: Row(
+        children: [
+          // Список тегов
+          SizedBox(
+            width: tagsListWidth,
+            child: const TagsListWidget(),
+          ),
+          GestureDetector(
+            onPanUpdate: (DragUpdateDetails details) {
+              setState(() {
+                tagsListWidth += details.delta.dx;
+                tagsListWidth =
+                    tagsListWidth.clamp(minTagsListWidth, maxTagsListWidth);
+              });
+            },
+            child: const MouseRegion(
+              cursor: SystemMouseCursors.resizeColumn,
+              child: VerticalDivider(
+                width: 10,
+                thickness: 1,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          // Список файлов
+          const Expanded(child: FilesListWidget()),
+        ],
       ),
-      centerTitle: false,
-      actions: [
-        IconButton(
-            onPressed: () {},
-            tooltip: 'Поиск',
-            icon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            )),
-        IconButton(
-          onPressed: () async => await _pickFile(context),
-          tooltip: 'Добавить файлы в Tagsurf',
-          icon: const Icon(Icons.add_circle, color: Colors.white),
-        ),
-      ],
-      //backgroundColor: Colors.blue[100],
     );
-  }
-
-  _buildFilesList() {
-    return BlocBuilder<FileBloc, FileState>(
-      builder: (_, state) {
-        if (state is FileLoadingState) {
-          return const Center(child: CupertinoActivityIndicator());
-        }
-        if (state is FilesLoadedState) {
-          return ListView.builder(
-            itemBuilder: (_, index) {
-              return FileWidget(file: state.files[index]);
-            },
-            itemCount: state.files.length,
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  }
-
-  _buildTagsList() {
-    return BlocBuilder<TagBloc, TagState>(
-      builder: (_, state) {
-        if (state is TagLoadingState) {
-          return const Center(child: CupertinoActivityIndicator());
-        }
-        if (state is TagsLoadedState) {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return TextButton(
-                    onPressed: () =>
-                        context.read<FileBloc>().add(GetTrackedFilesEvent()),
-                    child: const Text('Все'));
-              } else if (index == 1) {
-                return TextButton(
-                    onPressed: () =>
-                        context.read<FileBloc>().add(GetUntaggedFilesEvent()),
-                    child: const Text('Без тегов'));
-              } else {
-                final tagIndex = index - 2;
-                return TagWidget(tag: state.tags[tagIndex]);
-              }
-            },
-            itemCount: state.tags.length + 2,
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  }
-
-  _buildBody() {
-    const double tagsListWidth = 300;
-
-    return Row(
-      children: [
-        SizedBox(
-          width: tagsListWidth,
-          child: SizedBox.shrink(),
-        //_buildTagsList()
-        ),
-        const VerticalDivider(
-          width: 1,
-          thickness: 1,
-        ),
-        Expanded(child: _buildFilesList()),
-      ],
-    );
-  }
-
-  Future<void> _pickFile(BuildContext context) async {
-    FileBloc fileBloc = context.read<FileBloc>();
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        allowMultiple: true, dialogTitle: 'Добавить файлы в Tagsurf');
-    if (result != null && result.files.isNotEmpty) {
-      final files =
-          result.files.map((file) => FileEntity(path: file.path!)).toList();
-      fileBloc.add(TrackFilesEvent(files: files));
-    }
   }
 }
