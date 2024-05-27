@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/common/file_tag_bloc_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/file_tags_chips_widget.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/open_file.dart';
+import 'package:tagsurf_flutter/injection_container.dart';
 
 class FileWidget extends StatelessWidget {
   final FileEntity file;
@@ -41,35 +43,34 @@ class FileWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MouseRegion(
-                    cursor: WidgetStateMouseCursor.clickable,
-                    child: GestureDetector(
-                      onDoubleTap: () => openFile(file.path),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Название файла
-                          Text(
-                            FileUtils.basename(file.path),
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          // Расстояние между названием файла и его путем
-                          const SizedBox(height: 2),
-                          // Путь к файлу
-                          Text(
-                            file.path,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.black),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+                  GestureDetector(
+                    onTap: () {
+                      // TODO: selection
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Название файла
+                        Text(
+                          FileUtils.basename(file.path),
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        // Расстояние между названием файла и его путем
+                        const SizedBox(height: 2),
+                        // Путь к файлу
+                        Text(
+                          file.path,
+                          style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
                   ),
                   // Расстояние между информацией о файле и панелью тегов
@@ -79,12 +80,42 @@ class FileWidget extends StatelessWidget {
                 ],
               ),
             ),
+            // Кнопка открытия файла
+            IconButton(
+              icon: const Icon(Icons.open_in_new, color: Colors.blue),
+              tooltip: 'Открыть файл',
+              onPressed: () {
+                openFile(file.path);
+              },
+            ),
             // Кнопка добавления тега
             IconButton(
               icon: const Icon(Icons.add_box_rounded, color: Colors.blue),
               tooltip: 'Добавить теги',
               onPressed: () {
-                const AboutDialog();
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Добавить тег'),
+                      content: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'Название тега',
+                            border: OutlineInputBorder()),
+                        onFieldSubmitted: (value) {
+                          if (value.isNotEmpty) {
+                            sl.get<FileTagBlocRepository>().linkFileAndTag(
+                                filePath: file.path, tagName: value);
+                            context
+                                .read<TagBloc>()
+                                .add(GetTagsByFileEvent(file: file));
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  },
+                );
               },
             ),
             // Кнопка добавления в избранное
