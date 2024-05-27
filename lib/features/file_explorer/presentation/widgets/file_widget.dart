@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -22,6 +24,55 @@ class FileWidget extends StatelessWidget {
     } else {
       throw 'Could not open file at path: $filePath'; // TODO: error message
     }
+  }
+
+  _buildTagChipList() {
+    final tags = <TagEntity>[
+      const TagEntity(
+          name: 'Тестовый тег №1',
+          colorCode: ColorCode(red: 255, green: 255, blue: 255)),
+      const TagEntity(
+          name: 'Тестовый тег №2',
+          colorCode: ColorCode(red: 250, green: 220, blue: 255)),
+      const TagEntity(
+          name: 'Прикол',
+          colorCode: ColorCode(red: 255, green: 230, blue: 255)),
+      const TagEntity(
+          name: 'Аниме', colorCode: ColorCode(red: 200, green: 255, blue: 220)),
+      const TagEntity(
+          name: 'Треш', colorCode: ColorCode(red: 255, green: 220, blue: 200)),
+      const TagEntity(
+          name: 'Программирование',
+          colorCode: ColorCode(red: 255, green: 220, blue: 255)),
+      const TagEntity(
+          name: 'Test', colorCode: ColorCode(red: 230, green: 230, blue: 230)),
+      const TagEntity(
+          name: 'GitHub',
+          colorCode: ColorCode(red: 240, green: 200, blue: 255)),
+    ];
+    return Wrap(
+      spacing: 8.0,
+      runSpacing: 8.0,
+      children: tags.map((TagEntity tag) {
+        return Chip(
+          label: Text(tag.name,
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12)),
+          deleteButtonTooltipMessage: 'Убрать тег',
+          onDeleted: () {
+            // TODO: Обработка события удаления тега с файла
+            // здесь, возможно, вам придется использовать setState или обращение к bloc,
+            // чтобы управлять состоянием списка тегов и обновлять UI по необходимости.
+          },
+          deleteIcon:
+              const Icon(Icons.remove_circle, color: Colors.black, size: 14),
+          backgroundColor: Color.fromARGB(
+              255, tag.colorCode.red, tag.colorCode.green, tag.colorCode.blue),
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -51,7 +102,7 @@ class FileWidget extends StatelessWidget {
                     FileUtils.basename(file.path),
                     style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.bold,
                         color: Colors.black),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -66,12 +117,12 @@ class FileWidget extends StatelessWidget {
                         color: Colors.black),
                     overflow: TextOverflow.ellipsis,
                   ),
+                  // Расстояние между информацией о файле и панелью тегов
+                  const SizedBox(height: 10),
+                  _buildTagChipList(),
                 ],
               ),
             ),
-            // Расстояние между информацией о файле и панелью тегов
-            const SizedBox(width: 10),
-            // TODO: Панель тегов файла
             // Кнопка удаления файла
             IconButton(
               icon: const Icon(Icons.remove_circle, color: Colors.blue),
