@@ -1,3 +1,5 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/usecase/usecase.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
@@ -9,7 +11,7 @@ class GetFilesByTagUseCase implements UseCase<List<FileEntity>, TagEntity> {
   GetFilesByTagUseCase(this._fileTagLinkRepository);
 
   @override
-  Future<List<FileEntity>> call({required TagEntity params}) {
-    return _fileTagLinkRepository.getFilesByTag(tag: params);
+  Future<Either<Failure, List<FileEntity>>> call({required TagEntity params}) async {
+    return await _fileTagLinkRepository.getFilesByTag(tag: params);
   }
 }
