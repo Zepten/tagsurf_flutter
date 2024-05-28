@@ -42,6 +42,9 @@ dependencies:
   # Value based equality
   equatable: ^2.0.5
 
+  # Null-safe functional programming in Dart and Flutter (used for Eithers)
+  fpdart: ^1.1.0
+
   # SQLite database abstraction
   floor: ^1.5.0
   sqflite: ^2.3.3+1
