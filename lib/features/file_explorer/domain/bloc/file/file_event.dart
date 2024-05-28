@@ -26,6 +26,15 @@ class TrackFileEvent extends FileEvent {
   List<Object?> get props => [file];
 }
 
+class UpdateFileEvent extends FileEvent {
+  final FileEntity file;
+
+  UpdateFileEvent({required this.file});
+
+  @override
+  List<Object?> get props => [file];
+}
+
 class UntrackFileEvent extends FileEvent {
   final FileEntity file;
 

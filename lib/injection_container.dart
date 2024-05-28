@@ -16,6 +16,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_all_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_untracked_files.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/update_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
@@ -48,6 +49,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetUnrackedFilesFromDirectoryUseCase>(
       GetUnrackedFilesFromDirectoryUseCase(sl()));
   sl.registerSingleton<TrackFileUseCase>(TrackFileUseCase(sl()));
+  sl.registerSingleton<UpdateFileUseCase>(UpdateFileUseCase(sl()));
   sl.registerSingleton<TrackFilesUseCase>(TrackFilesUseCase(sl()));
   sl.registerSingleton<UntrackFileUseCase>(UntrackFileUseCase(sl()));
 
@@ -66,7 +68,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<GetUntaggedFilesUseCase>(GetUntaggedFilesUseCase(sl()));
 
   // BloCs
-  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerSingleton<FileTagBlocRepository>(FileTagBlocRepository(sl(), sl(), sl(), sl()));
 }

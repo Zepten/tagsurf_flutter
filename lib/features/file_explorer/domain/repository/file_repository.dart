@@ -9,8 +9,9 @@ abstract class FileRepository {
   // Database methods for files
   Future<Either<Failure, List<FileEntity>>> getTrackedFiles();
   Future<Either<Failure, FileEntity>> getTrackedFileByPath({required String path});
-  Future<Either<Failure, List<FileEntity>>> getUntrackedFilesFromDirectory({required String targetDir});
+  Future<Either<Failure, List<FileEntity>>> getTrackedFilesByPaths({required List<String> paths});
   Future<Either<Failure, void>> trackFile({required FileEntity file});
+  Future<Either<Failure, void>> updateFile({required FileEntity file});
   Future<Either<Failure, void>> trackFiles({required List<FileEntity> files});
   Future<Either<Failure, void>> untrackFile({required FileEntity file});
 }

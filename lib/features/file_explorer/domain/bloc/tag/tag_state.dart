@@ -8,7 +8,7 @@ class TagsLoadingState extends TagState {
 }
 
 class TagsLoadedState extends TagState {
-  final List<TagEntity> tags;
+  final Either<Failure, List<TagEntity>> tags;
 
   TagsLoadedState({required this.tags});
 
@@ -22,8 +22,8 @@ class TagsForFileLoadingState extends TagState {
 }
 
 class TagsForFileLoadedState extends TagState {
-  final FileEntity file;
-  final List<TagEntity> tags;
+  final Either<Failure, FileEntity> file;
+  final Either<Failure, List<TagEntity>> tags;
 
   TagsForFileLoadedState({required this.file, required this.tags});
 

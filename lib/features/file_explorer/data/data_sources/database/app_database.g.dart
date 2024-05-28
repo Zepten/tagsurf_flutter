@@ -102,9 +102,19 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT NOT NULL, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code_red` INTEGER NOT NULL, `color_code_green` INTEGER NOT NULL, `color_code_blue` INTEGER NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`name`))');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code_red` INTEGER NOT NULL, `color_code_green` INTEGER NOT NULL, `color_code_blue` INTEGER NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE SET NULL, PRIMARY KEY (`name`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`file_path`, `tag_name`))');
+            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE CASCADE, PRIMARY KEY (`file_path`, `tag_name`))');
+        await database
+            .execute('CREATE INDEX `index_files_path` ON `files` (`path`)');
+        await database
+            .execute('CREATE INDEX `index_tags_name` ON `tags` (`name`)');
+        await database.execute(
+            'CREATE INDEX `index_tags_parent_tag_name` ON `tags` (`parent_tag_name`)');
+        await database.execute(
+            'CREATE INDEX `index_file_tag_link_file_path` ON `file_tag_link` (`file_path`)');
+        await database.execute(
+            'CREATE INDEX `index_file_tag_link_tag_name` ON `file_tag_link` (`tag_name`)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -136,6 +146,8 @@ class _$FileDao extends FileDao {
   )   : _queryAdapter = QueryAdapter(database),
         _fileModelInsertionAdapter = InsertionAdapter(database, 'files',
             (FileModel item) => <String, Object?>{'path': item.path}),
+        _fileModelUpdateAdapter = UpdateAdapter(database, 'files', ['path'],
+            (FileModel item) => <String, Object?>{'path': item.path}),
         _fileModelDeletionAdapter = DeletionAdapter(database, 'files', ['path'],
             (FileModel item) => <String, Object?>{'path': item.path});
 
@@ -146,6 +158,8 @@ class _$FileDao extends FileDao {
   final QueryAdapter _queryAdapter;
 
   final InsertionAdapter<FileModel> _fileModelInsertionAdapter;
+
+  final UpdateAdapter<FileModel> _fileModelUpdateAdapter;
 
   final DeletionAdapter<FileModel> _fileModelDeletionAdapter;
 
@@ -165,6 +179,19 @@ class _$FileDao extends FileDao {
   }
 
   @override
+  Future<List<FileModel>> getFilesByPaths(List<String> paths) async {
+    const offset = 1;
+    final _sqliteVariablesForPaths =
+        Iterable<String>.generate(paths.length, (i) => '?${i + offset}')
+            .join(',');
+    return _queryAdapter.queryList(
+        'select * from files where path in (' + _sqliteVariablesForPaths + ')',
+        mapper: (Map<String, Object?> row) =>
+            FileModel(path: row['path'] as String),
+        arguments: [...paths]);
+  }
+
+  @override
   Future<void> insertFile(FileModel file) async {
     await _fileModelInsertionAdapter.insert(file, OnConflictStrategy.abort);
   }
@@ -173,6 +200,11 @@ class _$FileDao extends FileDao {
   Future<void> insertFiles(List<FileModel> files) async {
     await _fileModelInsertionAdapter.insertList(
         files, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateFile(FileModel file) async {
+    await _fileModelUpdateAdapter.update(file, OnConflictStrategy.abort);
   }
 
   @override
@@ -252,6 +284,23 @@ class _$TagDao extends TagDao {
             colorCodeGreen: row['color_code_green'] as int,
             colorCodeBlue: row['color_code_blue'] as int),
         arguments: [name]);
+  }
+
+  @override
+  Future<List<TagModel>> getTagsByNames(List<String> names) async {
+    const offset = 1;
+    final _sqliteVariablesForNames =
+        Iterable<String>.generate(names.length, (i) => '?${i + offset}')
+            .join(',');
+    return _queryAdapter.queryList(
+        'select * from tags where name in (' + _sqliteVariablesForNames + ')',
+        mapper: (Map<String, Object?> row) => TagModel(
+            name: row['name'] as String,
+            parentTagName: row['parent_tag_name'] as String?,
+            colorCodeRed: row['color_code_red'] as int,
+            colorCodeGreen: row['color_code_green'] as int,
+            colorCodeBlue: row['color_code_blue'] as int),
+        arguments: [...names]);
   }
 
   @override

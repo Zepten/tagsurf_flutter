@@ -19,8 +19,10 @@ class TagsurfApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<FileBloc>(create: (context) => sl()..add(GetTrackedFilesEvent())),
-        BlocProvider<TagBloc>(create: (context) => sl()..add(GetAllTagsEvent())),
+        BlocProvider<FileBloc>(
+            create: (context) => sl()..add(GetTrackedFilesEvent())),
+        BlocProvider<TagBloc>(
+            create: (context) => sl()..add(GetAllTagsEvent())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

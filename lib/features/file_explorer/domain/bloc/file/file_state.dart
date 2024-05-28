@@ -8,7 +8,7 @@ final class FilesLoadingState extends FileState {
 }
 
 final class FilesLoadedState extends FileState {
-  final List<FileEntity> files;
+  final Either<Failure, List<FileEntity>> files;
 
   FilesLoadedState({required this.files});
 

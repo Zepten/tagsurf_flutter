@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tag.dart';
@@ -8,6 +10,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/untrack_file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/update_file.dart';
 
 part 'file_event.dart';
 part 'file_state.dart';
@@ -16,6 +19,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   // File UseCases
   final GetTrackedFilesUseCase _getTrackedFilesUseCase;
   final TrackFileUseCase _trackFileUseCase;
+  final UpdateFileUseCase _updateFileUseCase;
   final UntrackFileUseCase _untrackFileUseCase;
   final TrackFilesUseCase _trackMultipleFilesUseCase;
   // File-tag linking UseCases
@@ -23,16 +27,18 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   final GetUntaggedFilesUseCase _getUntaggedFilesUseCase;
 
   FileBloc(
-      this._getTrackedFilesUseCase,
-      this._trackFileUseCase,
-      this._untrackFileUseCase,
-      this._trackMultipleFilesUseCase,
-      this._getFilesByTagUseCase,
-      this._getUntaggedFilesUseCase)
-      : super(FilesLoadingState()) {
+    this._getTrackedFilesUseCase,
+    this._trackFileUseCase,
+    this._updateFileUseCase,
+    this._untrackFileUseCase,
+    this._trackMultipleFilesUseCase,
+    this._getFilesByTagUseCase,
+    this._getUntaggedFilesUseCase,
+  ) : super(FilesLoadingState()) {
     // File events
     on<GetTrackedFilesEvent>(onGetTrackedFiles);
     on<TrackFileEvent>(onTrackFile);
+    on<UpdateFileEvent>(onUpdateFile);
     on<UntrackFileEvent>(onUntrackFile);
     on<TrackFilesEvent>(onTrackFiles);
 
@@ -52,6 +58,13 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   void onTrackFile(TrackFileEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     await _trackFileUseCase(params: event.file);
+    final files = await _getTrackedFilesUseCase();
+    emit(FilesLoadedState(files: files));
+  }
+
+  void onUpdateFile(UpdateFileEvent event, Emitter<FileState> emit) async {
+    emit(FilesLoadingState());
+    await _updateFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
     emit(FilesLoadedState(files: files));
   }
