@@ -8,9 +8,20 @@ import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
   'tag_name'
 ], foreignKeys: [
   ForeignKey(
-      childColumns: ['file_path'], parentColumns: ['path'], entity: FileModel),
+      childColumns: ['file_path'],
+      parentColumns: ['path'],
+      entity: FileModel,
+      onUpdate: ForeignKeyAction.cascade,
+      onDelete: ForeignKeyAction.cascade),
   ForeignKey(
-      childColumns: ['tag_name'], parentColumns: ['name'], entity: TagModel)
+      childColumns: ['tag_name'],
+      parentColumns: ['name'],
+      entity: TagModel,
+      onUpdate: ForeignKeyAction.cascade,
+      onDelete: ForeignKeyAction.cascade),
+], indices: [
+  Index(value: ['file_path']),
+  Index(value: ['tag_name'])
 ])
 class FileTagLinkModel extends Equatable {
   @ColumnInfo(name: 'file_path')

@@ -6,7 +6,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
   ForeignKey(
       childColumns: ['parent_tag_name'],
       parentColumns: ['name'],
-      entity: TagModel)
+      entity: TagModel,
+      onUpdate: ForeignKeyAction.cascade,
+      onDelete: ForeignKeyAction.setNull)
+], indices: [
+  Index(value: ['name']),
+  Index(value: ['parent_tag_name'])
 ])
 class TagModel extends Equatable {
   @PrimaryKey()
