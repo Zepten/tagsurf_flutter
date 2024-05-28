@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tag.dart';
@@ -52,35 +50,50 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       GetTrackedFilesEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     final files = await _getTrackedFilesUseCase();
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 
   void onTrackFile(TrackFileEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     await _trackFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 
   void onUpdateFile(UpdateFileEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     await _updateFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 
   void onTrackFiles(TrackFilesEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     await _trackMultipleFilesUseCase(params: event.files);
     final files = await _getTrackedFilesUseCase();
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 
   void onUntrackFile(UntrackFileEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     await _untrackFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 
   // File-tag linking business logic
@@ -88,13 +101,19 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       GetFilesByTagEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     final files = await _getFilesByTagUseCase(params: event.tag);
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 
   void onGetUntaggedFiles(
       GetUntaggedFilesEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
     final files = await _getUntaggedFilesUseCase();
-    emit(FilesLoadedState(files: files));
+    files.fold(
+      (failure) => throw UnimplementedError(),
+      (files) => emit(FilesLoadedState(files: files)),
+    );
   }
 }

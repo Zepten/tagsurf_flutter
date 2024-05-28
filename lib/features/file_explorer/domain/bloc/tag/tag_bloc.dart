@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_tags_by_file.dart';
@@ -47,42 +45,59 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   void onGetAllTags(GetAllTagsEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
     final tags = await _getAllTagsUseCase();
-    emit(TagsLoadedState(tags: tags));
+    tags.fold(
+      (failure) => throw UnimplementedError(),
+      (tags) => emit(TagsLoadedState(tags: tags)),
+    );
   }
 
   void onCreateTag(CreateTagEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
     await _createTagUseCase(params: event.tag);
     final tags = await _getAllTagsUseCase();
-    emit(TagsLoadedState(tags: tags));
+    tags.fold(
+      (failure) => throw UnimplementedError(),
+      (tags) => emit(TagsLoadedState(tags: tags)),
+    );
   }
 
   void onCreateTags(CreateTagsEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
     await _createTagsUseCase(params: event.tags);
     final tags = await _getAllTagsUseCase();
-    emit(TagsLoadedState(tags: tags));
+    tags.fold(
+      (failure) => throw UnimplementedError(),
+      (tags) => emit(TagsLoadedState(tags: tags)),
+    );
   }
 
   void onUpdateTag(UpdateTagEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
     await _updateTagUseCase(params: event.tag);
     final tags = await _getAllTagsUseCase();
-    emit(TagsLoadedState(tags: tags));
+    tags.fold(
+      (failure) => throw UnimplementedError(),
+      (tags) => emit(TagsLoadedState(tags: tags)),
+    );
   }
 
   void onDeleteTag(DeleteTagEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
     await _deleteTagUseCase(params: event.tag);
     final tags = await _getAllTagsUseCase();
-    emit(TagsLoadedState(tags: tags));
+    tags.fold(
+      (failure) => throw UnimplementedError(),
+      (tags) => emit(TagsLoadedState(tags: tags)),
+    );
   }
 
   // File-tag linking business logic
   void onGetTagsByFile(GetTagsByFileEvent event, Emitter<TagState> emit) async {
     emit(TagsForFileLoadingState());
     final tags = await _getTagsByFileUseCase(params: event.file);
-    // TODO: check if event.file is success
-    emit(TagsForFileLoadedState(file: event.file, tags: tags));
+    tags.fold(
+      (failure) => throw UnimplementedError(),
+      (tags) => emit(TagsForFileLoadedState(file: event.file, tags: tags)),
+    );
   }
 }
