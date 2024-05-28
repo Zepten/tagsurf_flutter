@@ -1,6 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/exceptions.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/error/files_failures.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/file.dart';
