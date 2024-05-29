@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData theme() {
   return ThemeData(
     primarySwatch: Colors.blue,
+    primaryColor: Colors.blue,
     fontFamily: 'Rubik',
     appBarTheme: appBarTheme(),
   );

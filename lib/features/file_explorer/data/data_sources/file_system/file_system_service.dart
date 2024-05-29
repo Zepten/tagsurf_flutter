@@ -28,7 +28,7 @@ class FileSystemServiceImpl implements FileSystemService {
   @override
   Future<List<String>> getNotExistFilesPaths(List<FileModel> files) async {
     final notExistFilePaths = files
-        .filter((file) => File(file.path).existsSync())
+        .filter((file) => !File(file.path).existsSync())
         .map((file) => file.path)
         .toList();
     return notExistFilePaths;

@@ -46,7 +46,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     emit(TagsLoadingState());
     final tags = await _getAllTagsUseCase();
     tags.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (tags) => emit(TagsLoadedState(tags: tags)),
     );
   }
@@ -56,7 +56,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     await _createTagUseCase(params: event.tag);
     final tags = await _getAllTagsUseCase();
     tags.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (tags) => emit(TagsLoadedState(tags: tags)),
     );
   }
@@ -66,7 +66,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     await _createTagsUseCase(params: event.tags);
     final tags = await _getAllTagsUseCase();
     tags.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (tags) => emit(TagsLoadedState(tags: tags)),
     );
   }
@@ -76,7 +76,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     await _updateTagUseCase(params: event.tag);
     final tags = await _getAllTagsUseCase();
     tags.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (tags) => emit(TagsLoadedState(tags: tags)),
     );
   }
@@ -86,7 +86,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     await _deleteTagUseCase(params: event.tag);
     final tags = await _getAllTagsUseCase();
     tags.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (tags) => emit(TagsLoadedState(tags: tags)),
     );
   }
@@ -95,8 +95,9 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   void onGetTagsByFile(GetTagsByFileEvent event, Emitter<TagState> emit) async {
     emit(TagsForFileLoadingState());
     final tags = await _getTagsByFileUseCase(params: event.file);
+    print(tags);
     tags.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (tags) => emit(TagsForFileLoadedState(file: event.file, tags: tags)),
     );
   }

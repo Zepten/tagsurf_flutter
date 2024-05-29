@@ -16,10 +16,11 @@ class FileTagsChipsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Trigger loading of tags whenever the widget is built
     context.read<TagBloc>().add(GetTagsByFileEvent(file: file));
     return BlocBuilder<TagBloc, TagState>(
       buildWhen: (previous, current) =>
-          current is TagsForFileLoadedState && current.file == file,
+          (current is TagsForFileLoadedState && current.file == file),
       builder: (_, state) {
         if (state is TagsForFileLoadingState) {
           return const Center(child: CupertinoActivityIndicator());
@@ -28,29 +29,66 @@ class FileTagsChipsWidget extends StatelessWidget {
           return Wrap(
             spacing: 8.0,
             runSpacing: 8.0,
-            children: tags.map((TagEntity tag) {
-              return RawChip(
-                avatar: Icon(Icons.sell,
-                    color: getContrastColorFromColorCode(tag.colorCode)),
-                label: Text(tag.name,
-                    style: TextStyle(
-                        color: getContrastColorFromColorCode(tag.colorCode))),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0)),
-                deleteButtonTooltipMessage: 'Убрать тег',
+            children: [
+              // Tags chips
+              ...tags.map((TagEntity tag) {
+                return RawChip(
+                  avatar: Icon(Icons.sell,
+                      color: getContrastColorFromColorCode(tag.colorCode)),
+                  label: Text(tag.name,
+                      style: TextStyle(
+                          color: getContrastColorFromColorCode(tag.colorCode))),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0)),
+                  deleteButtonTooltipMessage: 'Убрать тег',
+                  onPressed: () {
+                    context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
+                    context.read<TagBloc>().add(GetAllTagsEvent());
+                  },
+                  onDeleted: () {
+                    sl
+                        .get<FileTagBlocRepository>()
+                        .unlinkFileAndTag(file: file, tag: tag)
+                        .then((_) => context
+                            .read<TagBloc>()
+                            .add(GetTagsByFileEvent(file: file)));
+                  },
+                  backgroundColor: getLightShadeFromColorCode(tag.colorCode),
+                );
+              }),
+              // Add tag button
+              IconButton(
                 onPressed: () {
-                  context.read<TagBloc>().add(GetAllTagsEvent());
-                  context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Добавить тег'),
+                      content: TextFormField(
+                        decoration: const InputDecoration(
+                            labelText: 'Название тега',
+                            border: OutlineInputBorder()),
+                        onFieldSubmitted: (value) {
+                          final tagName = value.trim();
+                          if (tagName.isNotEmpty) {
+                            final tag = TagEntity.fromDefaults(tagName);
+                            // TODO FIX: Not updating automatically
+                            sl
+                                .get<FileTagBlocRepository>()
+                                .linkOrCreateTag(file: file, tag: tag)
+                                .then((_) => context
+                                    .read<TagBloc>()
+                                    .add(GetTagsByFileEvent(file: file)));
+                          }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  );
                 },
-                onDeleted: () {
-                  sl
-                      .get<FileTagBlocRepository>()
-                      .unlinkFileAndTag(filePath: file.path, tagName: tag.name);
-                  context.read<TagBloc>().add(GetTagsByFileEvent(file: file));
-                },
-                backgroundColor: getLightShadeFromColorCode(tag.colorCode),
-              );
-            }).toList(),
+                tooltip: 'Добавить тег',
+                icon: const Icon(Icons.add, color: Colors.blue),
+              ),
+            ],
           );
         }
         return const SizedBox();

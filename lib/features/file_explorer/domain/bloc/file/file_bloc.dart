@@ -51,7 +51,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     emit(FilesLoadingState());
     final files = await _getTrackedFilesUseCase();
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }
@@ -61,7 +61,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     await _trackFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }
@@ -71,7 +71,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     await _updateFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }
@@ -81,7 +81,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     await _trackMultipleFilesUseCase(params: event.files);
     final files = await _getTrackedFilesUseCase();
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }
@@ -91,7 +91,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     await _untrackFileUseCase(params: event.file);
     final files = await _getTrackedFilesUseCase();
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }
@@ -102,7 +102,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     emit(FilesLoadingState());
     final files = await _getFilesByTagUseCase(params: event.tag);
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }
@@ -112,7 +112,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     emit(FilesLoadingState());
     final files = await _getUntaggedFilesUseCase();
     files.fold(
-      (failure) => throw UnimplementedError(),
+      (failure) => print(failure),
       (files) => emit(FilesLoadedState(files: files)),
     );
   }

@@ -368,6 +368,19 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   final DeletionAdapter<FileTagLinkModel> _fileTagLinkModelDeletionAdapter;
 
   @override
+  Future<FileTagLinkModel?> getFileTagLink(
+    String filePath,
+    String tagName,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT * FROM file_tag_link WHERE file_path = ?1 AND tag_name = ?2',
+        mapper: (Map<String, Object?> row) => FileTagLinkModel(
+            filePath: row['file_path'] as String,
+            tagName: row['tag_name'] as String),
+        arguments: [filePath, tagName]);
+  }
+
+  @override
   Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
         'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1',

@@ -21,6 +21,12 @@ class TagEntity extends Equatable {
     );
   }
 
+  factory TagEntity.fromDefaults(String name) {
+    return TagEntity(
+        name: name,
+        colorCode: const ColorCode(red: 255, green: 255, blue: 255));
+  }
+
   @override
   List<Object?> get props => [name, parentTagName, colorCode];
 }

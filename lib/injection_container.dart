@@ -70,5 +70,5 @@ Future<void> initializeDependencies() async {
   sl.registerFactory<TagBloc>(
       () => TagBloc(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerSingleton<FileTagBlocRepository>(
-      FileTagBlocRepository(sl(), sl(), sl(), sl()));
+      FileTagBlocRepository(sl(), sl(), sl(), sl(), sl()));
 }

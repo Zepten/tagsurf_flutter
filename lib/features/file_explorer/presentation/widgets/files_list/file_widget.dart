@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/common/file_tag_bloc_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_tags_chips_widget.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/open_file.dart';
-import 'package:tagsurf_flutter/injection_container.dart';
 
 class FileWidget extends StatelessWidget {
   final FileEntity file;
@@ -86,36 +84,6 @@ class FileWidget extends StatelessWidget {
               tooltip: 'Открыть файл',
               onPressed: () {
                 openFile(file.path);
-              },
-            ),
-            // Кнопка добавления тега
-            IconButton(
-              icon: const Icon(Icons.add_box_rounded, color: Colors.blue),
-              tooltip: 'Добавить теги',
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Добавить тег'),
-                      content: TextFormField(
-                        decoration: const InputDecoration(
-                            labelText: 'Название тега',
-                            border: OutlineInputBorder()),
-                        onFieldSubmitted: (value) {
-                          if (value.isNotEmpty) {
-                            sl.get<FileTagBlocRepository>().linkFileAndTag(
-                                filePath: file.path, tagName: value);
-                            context
-                                .read<TagBloc>()
-                                .add(GetTagsByFileEvent(file: file));
-                          }
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    );
-                  },
-                );
               },
             ),
             // Кнопка добавления в избранное
