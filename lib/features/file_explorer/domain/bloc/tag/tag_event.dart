@@ -53,3 +53,33 @@ class GetTagsByFileEvent extends TagEvent {
   @override
   List<Object?> get props => [file];
 }
+
+class LinkFileAndTagEvent extends TagEvent {
+  final FileEntity file;
+  final String tagName;
+
+  LinkFileAndTagEvent({required this.file, required this.tagName});
+
+  @override
+  List<Object?> get props => [file, tagName];
+}
+
+class LinkOrCreateTagEvent extends TagEvent {
+  final FileEntity file;
+  final String tagName;
+
+  LinkOrCreateTagEvent({required this.file, required this.tagName});
+
+  @override
+  List<Object?> get props => [file, tagName];
+}
+
+class UnlinkFileAndTagEvent extends TagEvent {
+  final FileEntity file;
+  final String tagName;
+
+  UnlinkFileAndTagEvent({required this.file, required this.tagName});
+
+  @override
+  List<Object?> get props => [file, tagName];
+}

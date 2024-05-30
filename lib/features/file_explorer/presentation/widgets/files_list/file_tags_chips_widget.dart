@@ -2,39 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/config/util/color_code.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/common/file_tag_bloc_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
-import 'package:tagsurf_flutter/injection_container.dart';
 
 class FileTagsChipsWidget extends StatelessWidget {
   final FileEntity file;
 
   const FileTagsChipsWidget({super.key, required this.file});
-
-  _unlinkFileAndTag(BuildContext context, FileEntity file, TagEntity tag) {
-    sl
-        .get<FileTagBlocRepository>()
-        .unlinkFileAndTag(file: file, tag: tag)
-        .then((_) => {
-              // Проверка на активность виджета
-              if (context.mounted)
-                context.read<TagBloc>().add(GetTagsByFileEvent(file: file))
-            });
-  }
-
-  _linkOrCreateTag(BuildContext context, FileEntity file, String tagName) {
-    sl
-        .get<FileTagBlocRepository>()
-        .linkOrCreateTag(file: file, tagName: tagName)
-        .then((_) => {
-              // Проверка на активность виджета
-              if (context.mounted)
-                context.read<TagBloc>().add(GetTagsByFileEvent(file: file))
-            });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +43,9 @@ class FileTagsChipsWidget extends StatelessWidget {
                     context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
                   },
                   onDeleted: () {
-                    _unlinkFileAndTag(context, file, tag);
+                    //_unlinkFileAndTag(context, file, tag);
+                    context.read<TagBloc>().add(
+                        UnlinkFileAndTagEvent(file: file, tagName: tag.name));
                   },
                   backgroundColor: getLightShadeFromColorCode(tag.colorCode),
                 );
@@ -77,7 +55,7 @@ class FileTagsChipsWidget extends StatelessWidget {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (BuildContext context) => AlertDialog(
+                    builder: (BuildContext dialogContext) => AlertDialog(
                       title: const Text('Добавить тег'),
                       content: TextFormField(
                         decoration: const InputDecoration(
@@ -86,8 +64,9 @@ class FileTagsChipsWidget extends StatelessWidget {
                         onFieldSubmitted: (value) {
                           final newTagName = value.trim();
                           if (newTagName.isNotEmpty) {
-                            _linkOrCreateTag(context, file, newTagName);
-                            Navigator.of(context).pop();
+                            context.read<TagBloc>().add(LinkOrCreateTagEvent(
+                                file: file, tagName: newTagName));
+                            Navigator.of(dialogContext).pop();
                           }
                         },
                       ),
