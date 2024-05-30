@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 class TagWidget extends StatelessWidget {
@@ -48,6 +49,12 @@ class TagWidget extends StatelessWidget {
                   ),
                 ),
               ),
+            IconButton(
+                onPressed: () {
+                  context.read<TagBloc>().add(DeleteTagEvent(tag: tag));
+                  context.read<FileBloc>().add(GetTrackedFilesEvent());
+                },
+                icon: const Icon(Icons.delete)),
           ],
         ),
       ),
