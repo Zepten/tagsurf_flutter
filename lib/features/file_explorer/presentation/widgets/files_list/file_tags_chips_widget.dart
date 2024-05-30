@@ -65,7 +65,6 @@ class FileTagsChipsWidget extends StatelessWidget {
                   deleteButtonTooltipMessage: 'Убрать тег',
                   onPressed: () {
                     context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
-                    context.read<TagBloc>().add(GetAllTagsEvent());
                   },
                   onDeleted: () {
                     _unlinkFileAndTag(context, file, tag);
