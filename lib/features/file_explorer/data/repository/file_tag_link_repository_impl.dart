@@ -5,6 +5,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/error/file_tag_links
 import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/file_tag_link.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
@@ -45,6 +46,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
   Future<Either<Failure, void>> linkFileAndTag(
       {required String filePath, required String tagName}) async {
     try {
+      // TODO: return failure if tag not exist or file not exist
       final existingLink =
           await _appDatabase.fileTagLinkDao.getFileTagLink(filePath, tagName);
       if (existingLink == null) {
@@ -53,6 +55,26 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
         return const Right(null);
       } else {
         return Left(LinkDuplicateFailure(file: filePath, tag: tagName));
+      }
+    } on DatabaseException {
+      return Left(DatabaseFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> linkOrCreateTag(
+      {required String filePath, required String tagName}) async {
+    try {
+      // TODO: return failure if tag not exist or file not exist
+      final existingTag = await _appDatabase.tagDao.getTagByName(tagName);
+      if (existingTag == null) {
+        final defaultTag = TagEntity.fromDefaults(tagName);
+        await _appDatabase.tagDao.insertTag(TagModel.fromEntity(defaultTag));
+        return await linkFileAndTag(
+            filePath: filePath, tagName: defaultTag.name);
+      } else {
+        return await linkFileAndTag(
+            filePath: filePath, tagName: existingTag.name);
       }
     } on DatabaseException {
       return Left(DatabaseFailure());

@@ -17,8 +17,12 @@ class TagsLoadedState extends TagState {
 }
 
 class TagsForFileLoadingState extends TagState {
+  final FileEntity file;
+
+  TagsForFileLoadingState({required this.file});
+
   @override
-  List<Object?> get props => List.empty();
+  List<Object?> get props => [file];
 }
 
 class TagsForFileLoadedState extends TagState {
