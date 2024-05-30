@@ -14,6 +14,28 @@ class FileTagsChipsWidget extends StatelessWidget {
 
   const FileTagsChipsWidget({super.key, required this.file});
 
+  _unlinkFileAndTag(BuildContext context, FileEntity file, TagEntity tag) {
+    sl
+        .get<FileTagBlocRepository>()
+        .unlinkFileAndTag(file: file, tag: tag)
+        .then((_) => {
+              // Проверка на активность виджета
+              if (context.mounted)
+                context.read<TagBloc>().add(GetTagsByFileEvent(file: file))
+            });
+  }
+
+  _linkOrCreateTag(BuildContext context, FileEntity file, String tagName) {
+    sl
+        .get<FileTagBlocRepository>()
+        .linkOrCreateTag(file: file, tagName: tagName)
+        .then((_) => {
+              // Проверка на активность виджета
+              if (context.mounted)
+                context.read<TagBloc>().add(GetTagsByFileEvent(file: file))
+            });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Trigger loading of tags whenever the widget is built
@@ -46,12 +68,7 @@ class FileTagsChipsWidget extends StatelessWidget {
                     context.read<TagBloc>().add(GetAllTagsEvent());
                   },
                   onDeleted: () {
-                    sl
-                        .get<FileTagBlocRepository>()
-                        .unlinkFileAndTag(file: file, tag: tag)
-                        .then((_) => context
-                            .read<TagBloc>()
-                            .add(GetTagsByFileEvent(file: file)));
+                    _unlinkFileAndTag(context, file, tag);
                   },
                   backgroundColor: getLightShadeFromColorCode(tag.colorCode),
                 );
@@ -68,18 +85,11 @@ class FileTagsChipsWidget extends StatelessWidget {
                             labelText: 'Название тега',
                             border: OutlineInputBorder()),
                         onFieldSubmitted: (value) {
-                          final tagName = value.trim();
-                          if (tagName.isNotEmpty) {
-                            final tag = TagEntity.fromDefaults(tagName);
-                            // TODO FIX: Not updating automatically
-                            sl
-                                .get<FileTagBlocRepository>()
-                                .linkOrCreateTag(file: file, tag: tag)
-                                .then((_) => context
-                                    .read<TagBloc>()
-                                    .add(GetTagsByFileEvent(file: file)));
+                          final newTagName = value.trim();
+                          if (newTagName.isNotEmpty) {
+                            _linkOrCreateTag(context, file, newTagName);
+                            Navigator.of(context).pop();
                           }
-                          Navigator.of(context).pop();
                         },
                       ),
                     ),
