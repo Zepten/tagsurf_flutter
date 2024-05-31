@@ -52,10 +52,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       if (existingLink == null) {
         await _appDatabase.fileTagLinkDao.insertFileTagLink(
             FileTagLinkModel(filePath: filePath, tagName: tagName));
-        return const Right(null);
-      } else {
-        return Left(LinkDuplicateFailure(file: filePath, tag: tagName));
       }
+      return const Right(null);
     } on DatabaseException {
       return Left(DatabaseFailure());
     }

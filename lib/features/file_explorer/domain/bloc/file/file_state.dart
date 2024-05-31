@@ -15,3 +15,12 @@ final class FilesLoadedState extends FileState {
   @override
   List<Object?> get props => [files];
 }
+
+final class FilesErrorState extends FileState {
+  final Failure failure;
+
+  FilesErrorState({required this.failure});
+
+  @override
+  List<Object?> get props => [failure];
+}

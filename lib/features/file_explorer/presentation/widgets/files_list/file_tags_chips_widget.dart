@@ -6,6 +6,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_blo
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
 
 class FileTagsChipsWidget extends StatelessWidget {
   final FileEntity file;
@@ -18,11 +19,13 @@ class FileTagsChipsWidget extends StatelessWidget {
     context.read<TagBloc>().add(GetTagsByFileEvent(file: file));
     return BlocBuilder<TagBloc, TagState>(
       buildWhen: (previous, current) =>
-          (current is TagsForFileLoadedState && current.file == file),
+          (current is TagsForFileLoadedState && current.file == file) &&
+          (current is! TagsLoadingState && current is! TagsLoadedState),
       builder: (_, state) {
         if (state is TagsForFileLoadingState) {
           return const Center(child: CupertinoActivityIndicator());
-        } else if (state is TagsForFileLoadedState && state.file == file) {
+        }
+        if (state is TagsForFileLoadedState && state.file == file) {
           final tags = state.tags;
           return Wrap(
             spacing: 8.0,
@@ -43,7 +46,6 @@ class FileTagsChipsWidget extends StatelessWidget {
                     context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
                   },
                   onDeleted: () {
-                    //_unlinkFileAndTag(context, file, tag);
                     context.read<TagBloc>().add(
                         UnlinkFileAndTagEvent(file: file, tagName: tag.name));
                   },
@@ -77,6 +79,12 @@ class FileTagsChipsWidget extends StatelessWidget {
                 icon: const Icon(Icons.add, color: Colors.blue),
               ),
             ],
+          );
+        }
+        if (state is TagsErrorState) {
+          showErrorDialog(context, state.failure);
+          return const Center(
+            child: Icon(Icons.error, color: Colors.red, size: 50),
           );
         }
         return const SizedBox();

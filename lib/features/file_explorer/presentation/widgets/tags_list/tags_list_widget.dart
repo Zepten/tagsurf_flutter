@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_widget.dart';
 
 class TagsListWidget extends StatelessWidget {
@@ -11,7 +12,8 @@ class TagsListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TagBloc, TagState>(
-      buildWhen: (previous, current) => current is TagsLoadedState,
+      buildWhen: (previous, current) => (current is! TagsForFileLoadingState &&
+          current is! TagsForFileLoadedState),
       builder: (_, state) {
         if (state is TagsLoadingState) {
           return const Center(child: CupertinoActivityIndicator());
@@ -35,6 +37,12 @@ class TagsListWidget extends StatelessWidget {
               }
             },
             itemCount: state.tags.length + 2,
+          );
+        }
+        if (state is TagsErrorState) {
+          showErrorDialog(context, state.failure);
+          return const Center(
+            child: Icon(Icons.error, color: Colors.red, size: 50),
           );
         }
         return const SizedBox();

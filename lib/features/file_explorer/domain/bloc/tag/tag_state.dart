@@ -34,3 +34,12 @@ class TagsForFileLoadedState extends TagState {
   @override
   List<Object?> get props => [file, tags];
 }
+
+final class TagsErrorState extends TagState {
+  final Failure failure;
+
+  TagsErrorState({required this.failure});
+
+  @override
+  List<Object?> get props => [failure];
+}
