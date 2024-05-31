@@ -1,13 +1,5 @@
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
-
-class TagDuplicateFailure extends Failure {
-  final String tag;
-
-  TagDuplicateFailure({required this.tag});
-
-  @override
-  List<Object?> get props => [tag];
-}
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 class TagsDuplicateFailure extends Failure {
   final List<String> tags;
@@ -16,15 +8,6 @@ class TagsDuplicateFailure extends Failure {
 
   @override
   List<Object?> get props => [tags];
-}
-
-class TagNotExistsFailure extends Failure {
-  final String tag;
-
-  TagNotExistsFailure({required this.tag});
-
-  @override
-  List<Object?> get props => [tag];
 }
 
 class TagsNotExistsFailure extends Failure {
@@ -37,6 +20,10 @@ class TagsNotExistsFailure extends Failure {
 }
 
 class InvalidTagFailure extends Failure {
+  final TagEntity tag;
+
+  InvalidTagFailure({required this.tag});
+
   @override
-  List<Object?> get props => List.empty();
+  List<Object?> get props => [];
 }
