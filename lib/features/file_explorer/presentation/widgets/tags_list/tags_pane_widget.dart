@@ -6,13 +6,13 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_tree_widget.dart';
 
-class TagsListWidget extends StatelessWidget {
+class TagsPaneWidget extends StatelessWidget {
   final Set<TagEntity> filters;
   final Function(TagEntity, bool) onTagSelected;
   final Function(List<TagEntity>) onSelectAllFilters;
   final Function() onResetFilters;
 
-  const TagsListWidget(
+  const TagsPaneWidget(
       {super.key,
       required this.filters,
       required this.onTagSelected,
