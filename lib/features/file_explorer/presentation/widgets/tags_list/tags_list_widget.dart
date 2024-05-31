@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_tree_widget.dart';
 
 class TagsListWidget extends StatelessWidget {
   const TagsListWidget({super.key});
