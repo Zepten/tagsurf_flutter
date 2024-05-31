@@ -24,8 +24,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       return Right(filesModels
           .map((fileModel) => FileEntity.fromModel(fileModel))
           .toList());
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -37,8 +37,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
           await _appDatabase.fileTagLinkDao.getTagsByFilePath(file.path);
       return Right(
           tagsModels.map((tagModel) => TagEntity.fromModel(tagModel)).toList());
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -54,8 +54,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
             FileTagLinkModel(filePath: filePath, tagName: tagName));
       }
       return const Right(null);
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -74,8 +74,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
         return await linkFileAndTag(
             filePath: filePath, tagName: existingTag.name);
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -92,8 +92,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       } else {
         return Left(LinkNotExistFailure(file: filePath, tag: tagName));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -104,8 +104,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       return Right(filesModels
           .map((fileModel) => FileEntity.fromModel(fileModel))
           .toList());
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 }
