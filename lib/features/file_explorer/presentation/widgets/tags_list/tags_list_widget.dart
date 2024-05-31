@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
@@ -35,11 +34,13 @@ class TagsListWidget extends StatelessWidget {
               Row(
                 children: [
                   TextButton(
-                      onPressed: () => onSelectAllFilters(state.tags),
-                      child: const Text('Выбрать всё')),
+                    onPressed: () => onSelectAllFilters(state.tags),
+                    child: const Text('Выбрать всё'),
+                  ),
                   TextButton(
-                      onPressed: () => onResetFilters(),
-                      child: const Text('Убрать выделение')),
+                    onPressed: () => onResetFilters(),
+                    child: const Text('Без тегов'),
+                  ),
                 ],
               ),
               TagTreeWidget(
