@@ -58,6 +58,9 @@ dependencies:
   # File opening
   url_launcher: ^6.2.6
 
+  # A widget, that visualises a tree structure, where a node can be any widget
+  flutter_simple_treeview: ^3.0.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
