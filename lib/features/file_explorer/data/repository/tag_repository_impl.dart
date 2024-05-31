@@ -21,10 +21,10 @@ class TagRepositoryImpl implements TagRepository {
         await _appDatabase.tagDao.insertTag(TagModel.fromEntity(tag));
         return const Right(null);
       } else {
-        return Left(TagDuplicateFailure(tag: tag.name));
+        return Left(TagsDuplicateFailure(tags: [tag.name]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -43,8 +43,8 @@ class TagRepositoryImpl implements TagRepository {
         final existingTagsNames = existingTags.map((tag) => tag.name).toList();
         return Left(TagsDuplicateFailure(tags: existingTagsNames));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -56,10 +56,10 @@ class TagRepositoryImpl implements TagRepository {
         await _appDatabase.tagDao.updateTag(TagModel.fromEntity(tag));
         return const Right(null);
       } else {
-        return Left(TagNotExistsFailure(tag: tag.name));
+        return Left(TagsNotExistsFailure(tags: [tag.name]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -71,10 +71,10 @@ class TagRepositoryImpl implements TagRepository {
         await _appDatabase.tagDao.deleteTag(TagModel.fromEntity(tag));
         return const Right(null);
       } else {
-        return Left(TagNotExistsFailure(tag: tag.name));
+        return Left(TagsNotExistsFailure(tags: [tag.name]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -84,8 +84,8 @@ class TagRepositoryImpl implements TagRepository {
       final tagsModels = await _appDatabase.tagDao.getAllTags();
       return Right(
           tagsModels.map((tagModel) => TagEntity.fromModel(tagModel)).toList());
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -97,10 +97,10 @@ class TagRepositoryImpl implements TagRepository {
       if (tagModel != null) {
         return Right(TagEntity.fromModel(tagModel));
       } else {
-        return Left(TagNotExistsFailure(tag: name));
+        return Left(TagsNotExistsFailure(tags: [name]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -116,8 +116,8 @@ class TagRepositoryImpl implements TagRepository {
       } else {
         return Left(TagsNotExistsFailure(tags: names));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -126,7 +126,7 @@ class TagRepositoryImpl implements TagRepository {
       {required TagEntity childTag}) async {
     try {
       if (childTag.name == childTag.parentTagName) {
-        return Left(InvalidTagFailure());
+        return Left(InvalidTagFailure(tag: childTag));
       } else if (childTag.parentTagName == null) {
         return Right(List.empty());
       } else {
@@ -136,8 +136,8 @@ class TagRepositoryImpl implements TagRepository {
             .map((tagModel) => TagEntity.fromModel(tagModel))
             .toList());
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 }

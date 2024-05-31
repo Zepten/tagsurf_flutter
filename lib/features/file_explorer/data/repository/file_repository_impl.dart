@@ -25,8 +25,8 @@ class FileRepositoryImpl implements FileRepository {
       return Right(filesModels
           .map((fileModel) => FileEntity.fromModel(fileModel))
           .toList());
-    } on FileSystemException {
-      return Left(FileSystemFailure());
+    } on FileSystemException catch (e) {
+      return Left(FileSystemFailure(message: e.toString()));
     }
   }
 
@@ -36,16 +36,16 @@ class FileRepositoryImpl implements FileRepository {
     try {
       final existingFile = await _appDatabase.fileDao.getFileByPath(file.path);
       if (existingFile != null) {
-        return Left(FileDuplicateFailure(file: file.path));
+        return Left(FilesDuplicateFailure(files: [file.path]));
       } else if (await _fileSystemService
           .isFileExist(FileModel.fromEntity(file))) {
         await _appDatabase.fileDao.insertFile(FileModel.fromEntity(file));
         return const Right(null);
       } else {
-        return Left(FileNotInFileSystemFailure(file: file.path));
+        return Left(FilesNotInFileSystemFailure(files: [file.path]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -54,16 +54,16 @@ class FileRepositoryImpl implements FileRepository {
     try {
       final existingFile = await _appDatabase.fileDao.getFileByPath(file.path);
       if (existingFile == null) {
-        return Left(FileNotExistsFailure(file: file.path));
+        return Left(FilesNotExistsFailure(files: [file.path]));
       } else if (await _fileSystemService
           .isFileExist(FileModel.fromEntity(file))) {
         await _appDatabase.fileDao.updateFile(FileModel.fromEntity(file));
         return const Right(null);
       } else {
-        return Left(FileNotInFileSystemFailure(file: file.path));
+        return Left(FilesNotInFileSystemFailure(files: [file.path]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -91,8 +91,8 @@ class FileRepositoryImpl implements FileRepository {
           return Left(FilesNotInFileSystemFailure(files: notInFsFilesPaths));
         }
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -101,13 +101,13 @@ class FileRepositoryImpl implements FileRepository {
     try {
       final existingFile = await _appDatabase.fileDao.getFileByPath(file.path);
       if (existingFile == null) {
-        return Left(FileNotExistsFailure(file: file.path));
+        return Left(FilesNotExistsFailure(files: [file.path]));
       } else {
         await _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
         return const Right(null);
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -124,8 +124,8 @@ class FileRepositoryImpl implements FileRepository {
       } else {
         return Left(FilesNotInFileSystemFailure(files: notExistFilesPaths));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -137,10 +137,10 @@ class FileRepositoryImpl implements FileRepository {
       if (fileModel != null) {
         return Right(FileEntity.fromModel(fileModel));
       } else {
-        return Left(FileNotExistsFailure(file: path));
+        return Left(FilesNotExistsFailure(files: [path]));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
@@ -156,8 +156,8 @@ class FileRepositoryImpl implements FileRepository {
       } else {
         return Left(FilesNotExistsFailure(files: paths));
       }
-    } on DatabaseException {
-      return Left(DatabaseFailure());
+    } on DatabaseException catch(e) {
+      return Left(DatabaseFailure(message: e.toString()));
     }
   }
 }
