@@ -38,9 +38,19 @@ class FileTagsChipsWidget extends StatelessWidget {
                       color: getContrastColorFromColorCode(tag.colorCode)),
                   label: Text(tag.name,
                       style: TextStyle(
-                          color: getContrastColorFromColorCode(tag.colorCode))),
+                        color: getContrastColorFromColorCode(tag.colorCode),
+                      )),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
+                    borderRadius: BorderRadius.circular(100.0),
+                  ),
+                  side: const BorderSide(
+                    color: Colors.transparent,
+                  ),
+                  deleteIcon: const Icon(
+                    Icons.remove_circle,
+                    size: 15.0,
+                  ),
+                  deleteIconColor: Colors.red[300],
                   deleteButtonTooltipMessage: 'Убрать тег',
                   onPressed: () {
                     context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
@@ -53,7 +63,17 @@ class FileTagsChipsWidget extends StatelessWidget {
                 );
               }),
               // Add tag button
-              IconButton(
+              RawChip(
+                avatar: const Icon(Icons.add, color: Colors.blue),
+                label: const Text(
+                  'Добавить тег',
+                  style: TextStyle(color: Colors.blue),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100.0),
+                ),
+                side: const BorderSide(color: Colors.transparent),
+                backgroundColor: const Color.fromARGB(255, 235, 235, 255),
                 onPressed: () {
                   showDialog(
                     context: context,
@@ -75,8 +95,6 @@ class FileTagsChipsWidget extends StatelessWidget {
                     ),
                   );
                 },
-                tooltip: 'Добавить тег',
-                icon: const Icon(Icons.add, color: Colors.blue),
               ),
             ],
           );
