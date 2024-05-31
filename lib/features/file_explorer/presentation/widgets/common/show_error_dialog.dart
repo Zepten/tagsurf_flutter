@@ -22,7 +22,7 @@ void showErrorDialog(BuildContext context, Failure failure) {
                   }
                 },
                 child: AlertDialog(
-                  title: const Text('Следующие файлы уже отслеживаются'),
+                  title: const Text('Следующие файлы уже в Tagsurf'),
                   content: SizedBox(
                     height: 300,
                     width: 600,
@@ -93,6 +93,31 @@ void showErrorDialog(BuildContext context, Failure failure) {
                     ),
                   ],
                 ),
+              ),
+            ));
+  } else if (failure is FilesNotInFileSystemFailure) {
+    // TODO: select replacements for not found files
+    Future.delayed(
+        Duration.zero,
+        () => showDialog(
+              context: context,
+              builder: (BuildContext dialogContext) => AlertDialog(
+                title: const Text('Файлы не найдены'),
+                content: Text(failure.toString()),
+                actions: [
+                  TextButton(
+                    child: const Text('Удалить файлы из Tagsurf'),
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Найти и заменить файлы'),
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                  ),
+                ],
               ),
             ));
   } else {
