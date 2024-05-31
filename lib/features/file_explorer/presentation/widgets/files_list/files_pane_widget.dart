@@ -5,8 +5,8 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_blo
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_widget.dart';
 
-class FilesListWidget extends StatelessWidget {
-  const FilesListWidget({super.key});
+class FilesPaneWidget extends StatelessWidget {
+  const FilesPaneWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
