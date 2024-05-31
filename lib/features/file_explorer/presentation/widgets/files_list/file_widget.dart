@@ -33,7 +33,7 @@ class FileWidget extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    // TODO: selection
+                    // TODO: add filter or smth
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
