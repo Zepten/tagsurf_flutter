@@ -5,7 +5,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/tag_chip_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/tag_for_file_chip_widget.dart';
 
 class FileTagsChipsWidget extends StatelessWidget {
   final FileEntity file;
