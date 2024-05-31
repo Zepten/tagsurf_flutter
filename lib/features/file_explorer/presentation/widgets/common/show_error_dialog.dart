@@ -22,7 +22,8 @@ void showErrorDialog(BuildContext context, Failure failure) {
                   }
                 },
                 child: AlertDialog(
-                  title: const Text('Следующие файлы уже отслеживаются'),
+                  title: Text(
+                      'Файлы (${failure.files.length}) уже отслеживаются:'),
                   content: SizedBox(
                     height: 300,
                     width: 600,
