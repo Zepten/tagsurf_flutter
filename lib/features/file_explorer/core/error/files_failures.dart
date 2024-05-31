@@ -11,15 +11,6 @@ class FilesNotInFileSystemFailure extends Failure {
   List<Object?> get props => [files];
 }
 
-class FileNotInFileSystemFailure extends Failure {
-  final String file;
-
-  FileNotInFileSystemFailure({required this.file});
-
-  @override
-  List<Object?> get props => [file];
-}
-
 // Special failures for files (database)
 
 class FilesNotExistsFailure extends Failure {
@@ -29,24 +20,6 @@ class FilesNotExistsFailure extends Failure {
 
   @override
   List<Object?> get props => [files];
-}
-
-class FileNotExistsFailure extends Failure {
-  final String file;
-
-  FileNotExistsFailure({required this.file});
-
-  @override
-  List<Object?> get props => [file];
-}
-
-class FileDuplicateFailure extends Failure {
-  final String file;
-
-  FileDuplicateFailure({required this.file});
-
-  @override
-  List<Object?> get props => [file];
 }
 
 class FilesDuplicateFailure extends Failure {
