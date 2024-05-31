@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/app_bar_widget.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/files_list_widget.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tags_list_widget.dart';
@@ -17,6 +20,8 @@ class _FileExplorerState extends State<FileExplorer>
   late double tagsListWidth;
   final double minTagsListWidth = 200;
   late double maxTagsListWidth;
+
+  Set<TagEntity> filters = {};
 
   @override
   void initState() {
@@ -48,6 +53,31 @@ class _FileExplorerState extends State<FileExplorer>
     super.dispose();
   }
 
+  void updateFilters(TagEntity tag, bool isSelected) {
+    setState(() {
+      if (isSelected) {
+        filters.add(tag);
+      } else {
+        filters.remove(tag);
+      }
+      context.read<FileBloc>().add(GetFilesByTagsEvent(tags: filters.toList()));
+    });
+  }
+
+  void selectAllFilters(List<TagEntity> tags) {
+    setState(() {
+      filters.addAll(tags);
+    });
+    context.read<FileBloc>().add(GetFilesByTagsEvent(tags: filters.toList()));
+  }
+
+  void resetFilters() {
+    setState(() {
+      filters.clear();
+    });
+    context.read<FileBloc>().add(GetUntaggedFilesEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +87,12 @@ class _FileExplorerState extends State<FileExplorer>
           // Список тегов
           SizedBox(
             width: tagsListWidth,
-            child: const TagsListWidget(),
+            child: TagsListWidget(
+              filters: filters,
+              onTagSelected: updateFilters,
+              onSelectAllFilters: selectAllFilters,
+              onResetFilters: resetFilters,
+            ),
           ),
           GestureDetector(
             onPanUpdate: (DragUpdateDetails details) {

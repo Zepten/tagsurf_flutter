@@ -45,13 +45,13 @@ class UntrackFileEvent extends FileEvent {
 }
 
 // File-tag linking events
-class GetFilesByTagEvent extends FileEvent {
-  final TagEntity tag;
+class GetFilesByTagsEvent extends FileEvent {
+  final List<TagEntity> tags;
 
-  GetFilesByTagEvent({required this.tag});
+  GetFilesByTagsEvent({required this.tags});
 
   @override
-  List<Object?> get props => [tag];
+  List<Object?> get props => [tags];
 }
 
 class GetUntaggedFilesEvent extends FileEvent {

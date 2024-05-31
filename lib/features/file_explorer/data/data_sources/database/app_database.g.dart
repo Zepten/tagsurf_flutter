@@ -389,11 +389,17 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   }
 
   @override
-  Future<List<FileModel>> getFilesByTagName(String tagName) async {
+  Future<List<FileModel>> getFilesByTagsNames(List<String> tagsNames) async {
+    const offset = 1;
+    final _sqliteVariablesForTagsNames =
+        Iterable<String>.generate(tagsNames.length, (i) => '?${i + offset}')
+            .join(',');
     return _queryAdapter.queryList(
-        'SELECT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name = ?1',
+        'SELECT DISTINCT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name IN (' +
+            _sqliteVariablesForTagsNames +
+            ')',
         mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String),
-        arguments: [tagName]);
+        arguments: [...tagsNames]);
   }
 
   @override

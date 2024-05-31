@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_untagged_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
@@ -20,7 +20,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   final UntrackFileUseCase _untrackFileUseCase;
   final TrackFilesUseCase _trackMultipleFilesUseCase;
   // File-tag linking UseCases
-  final GetFilesByTagUseCase _getFilesByTagUseCase;
+  final GetFilesByTagsUseCase _getFilesByTagsUseCase;
   final GetUntaggedFilesUseCase _getUntaggedFilesUseCase;
 
   FileBloc(
@@ -28,7 +28,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     this._updateFileUseCase,
     this._untrackFileUseCase,
     this._trackMultipleFilesUseCase,
-    this._getFilesByTagUseCase,
+    this._getFilesByTagsUseCase,
     this._getUntaggedFilesUseCase,
   ) : super(FilesLoadingState()) {
     // File events
@@ -38,7 +38,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     on<UntrackFileEvent>(onUntrackFile);
 
     // File-tag linking events
-    on<GetFilesByTagEvent>(onGetFilesByTag);
+    on<GetFilesByTagsEvent>(onGetFilesByTags);
     on<GetUntaggedFilesEvent>(onGetUntaggedFiles);
   }
 
@@ -99,10 +99,10 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   }
 
   // File-tag linking business logic
-  void onGetFilesByTag(
-      GetFilesByTagEvent event, Emitter<FileState> emit) async {
+  void onGetFilesByTags(
+      GetFilesByTagsEvent event, Emitter<FileState> emit) async {
     emit(FilesLoadingState());
-    final files = await _getFilesByTagUseCase(params: event.tag);
+    final files = await _getFilesByTagsUseCase(params: event.tags);
     files.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
       (files) => emit(FilesLoadedState(files: files)),

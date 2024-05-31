@@ -7,7 +7,7 @@ import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repos
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_tags_by_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_untagged_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/link_file_and_tag.dart';
@@ -59,7 +59,7 @@ Future<void> initializeDependencies() async {
   sl.registerSingleton<LinkFileAndTagUseCase>(LinkFileAndTagUseCase(sl()));
   sl.registerSingleton<LinkOrCreateTagUseCase>(LinkOrCreateTagUseCase(sl()));
   sl.registerSingleton<UnlinkFileAndTagUseCase>(UnlinkFileAndTagUseCase(sl()));
-  sl.registerSingleton<GetFilesByTagUseCase>(GetFilesByTagUseCase(sl()));
+  sl.registerSingleton<GetFilesByTagsUseCase>(GetFilesByTagsUseCase(sl()));
   sl.registerSingleton<GetTagsByFileUseCase>(GetTagsByFileUseCase(sl()));
   sl.registerSingleton<GetUntaggedFilesUseCase>(GetUntaggedFilesUseCase(sl()));
 

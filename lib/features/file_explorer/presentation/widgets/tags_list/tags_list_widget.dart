@@ -3,11 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_tree_widget.dart';
 
 class TagsListWidget extends StatelessWidget {
-  const TagsListWidget({super.key});
+  final Set<TagEntity> filters;
+  final Function(TagEntity, bool) onTagSelected;
+  final Function(List<TagEntity>) onSelectAllFilters;
+  final Function() onResetFilters;
+
+  const TagsListWidget(
+      {super.key,
+      required this.filters,
+      required this.onTagSelected,
+      required this.onSelectAllFilters,
+      required this.onResetFilters});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +35,18 @@ class TagsListWidget extends StatelessWidget {
               Row(
                 children: [
                   TextButton(
-                      onPressed: () =>
-                          context.read<FileBloc>().add(GetTrackedFilesEvent()),
-                      child: const Text('Все')),
+                      onPressed: () => onSelectAllFilters(state.tags),
+                      child: const Text('Выбрать всё')),
                   TextButton(
-                      onPressed: () =>
-                          context.read<FileBloc>().add(GetUntaggedFilesEvent()),
-                      child: const Text('Без тегов')),
+                      onPressed: () => onResetFilters(),
+                      child: const Text('Убрать выделение')),
                 ],
               ),
-              Expanded(child: TagTreeWidget(tags: state.tags)),
+              TagTreeWidget(
+                tags: state.tags,
+                filters: filters,
+                onTagSelected: onTagSelected,
+              ),
             ],
           );
         }

@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tagsurf_flutter/config/util/color_code.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/show_error_dialog.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/tag_chip_widget.dart';
 
 class FileTagsChipsWidget extends StatelessWidget {
   final FileEntity file;
@@ -32,36 +31,8 @@ class FileTagsChipsWidget extends StatelessWidget {
             runSpacing: 8.0,
             children: [
               // Tags chips
-              ...tags.map((TagEntity tag) {
-                return RawChip(
-                  avatar: Icon(Icons.sell,
-                      color: getContrastColorFromColorCode(tag.colorCode)),
-                  label: Text(tag.name,
-                      style: TextStyle(
-                        color: getContrastColorFromColorCode(tag.colorCode),
-                      )),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100.0),
-                  ),
-                  side: const BorderSide(
-                    color: Colors.transparent,
-                  ),
-                  deleteIcon: const Icon(
-                    Icons.remove_circle,
-                    size: 15.0,
-                  ),
-                  deleteIconColor: Colors.red[300],
-                  deleteButtonTooltipMessage: 'Убрать тег',
-                  onPressed: () {
-                    context.read<FileBloc>().add(GetFilesByTagEvent(tag: tag));
-                  },
-                  onDeleted: () {
-                    context.read<TagBloc>().add(
-                        UnlinkFileAndTagEvent(file: file, tagName: tag.name));
-                  },
-                  backgroundColor: getLightShadeFromColorCode(tag.colorCode),
-                );
-              }),
+              ...tags.map(
+                  (TagEntity tag) => TagOfFileChipWidget(file: file, tag: tag)),
               // Add tag button
               RawChip(
                 avatar: const Icon(Icons.add, color: Colors.blue),
