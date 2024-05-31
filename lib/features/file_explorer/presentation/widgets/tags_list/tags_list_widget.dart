@@ -19,24 +19,22 @@ class TagsListWidget extends StatelessWidget {
           return const Center(child: CupertinoActivityIndicator());
         }
         if (state is TagsLoadedState) {
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return TextButton(
-                    onPressed: () =>
-                        context.read<FileBloc>().add(GetTrackedFilesEvent()),
-                    child: const Text('Все'));
-              } else if (index == 1) {
-                return TextButton(
-                    onPressed: () =>
-                        context.read<FileBloc>().add(GetUntaggedFilesEvent()),
-                    child: const Text('Без тегов'));
-              } else {
-                final tagIndex = index - 2;
-                return TagWidget(tag: state.tags[tagIndex]);
-              }
-            },
-            itemCount: state.tags.length + 2,
+          return Column(
+            children: [
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () =>
+                          context.read<FileBloc>().add(GetTrackedFilesEvent()),
+                      child: const Text('Все')),
+                  TextButton(
+                      onPressed: () =>
+                          context.read<FileBloc>().add(GetUntaggedFilesEvent()),
+                      child: const Text('Без тегов')),
+                ],
+              ),
+              Expanded(child: TagTreeWidget(tags: state.tags)),
+            ],
           );
         }
         if (state is TagsErrorState) {
