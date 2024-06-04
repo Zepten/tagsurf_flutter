@@ -8,15 +8,6 @@ class GetAllTagsEvent extends TagEvent {
   List<Object?> get props => List.empty();
 }
 
-class CreateTagsEvent extends TagEvent {
-  final List<TagEntity> tags;
-
-  CreateTagsEvent({required this.tags});
-
-  @override
-  List<Object?> get props => [tags];
-}
-
 class CreateTagEvent extends TagEvent {
   final TagEntity tag;
 
@@ -26,19 +17,40 @@ class CreateTagEvent extends TagEvent {
   List<Object?> get props => [tag];
 }
 
-class UpdateTagEvent extends TagEvent {
+class DeleteTagEvent extends TagEvent {
   final TagEntity tag;
 
-  UpdateTagEvent({required this.tag});
+  DeleteTagEvent({required this.tag});
 
   @override
   List<Object?> get props => [tag];
 }
 
-class DeleteTagEvent extends TagEvent {
+class SetParentTagEvent extends TagEvent {
   final TagEntity tag;
+  final TagEntity? parentTag;
 
-  DeleteTagEvent({required this.tag});
+  SetParentTagEvent({required this.tag, required this.parentTag});
+
+  @override
+  List<Object?> get props => [tag, parentTag];
+}
+
+class RenameTagEvent extends TagEvent {
+  final TagEntity tag;
+  final String newName;
+
+  RenameTagEvent({required this.tag, required this.newName});
+
+  @override
+  List<Object?> get props => [tag];
+}
+
+class ChangeTagColorEvent extends TagEvent {
+  final TagEntity tag;
+  final ColorCode colorCode;
+
+  ChangeTagColorEvent({required this.tag, required this.colorCode});
 
   @override
   List<Object?> get props => [tag];

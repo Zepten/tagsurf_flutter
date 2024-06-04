@@ -6,9 +6,14 @@ class TagEntity extends Equatable {
   final String name;
   final String? parentTagName;
   final ColorCode colorCode;
+  final DateTime dateTimeAdded;
 
-  const TagEntity(
-      {required this.name, this.parentTagName, required this.colorCode});
+  const TagEntity({
+    required this.name,
+    this.parentTagName,
+    required this.colorCode,
+    required this.dateTimeAdded,
+  });
 
   factory TagEntity.fromModel(TagModel tagModel) {
     return TagEntity(
@@ -18,15 +23,18 @@ class TagEntity extends Equatable {
           red: tagModel.colorCodeRed,
           green: tagModel.colorCodeGreen,
           blue: tagModel.colorCodeBlue),
+      dateTimeAdded: tagModel.dateTimeAdded,
     );
   }
 
   factory TagEntity.fromDefaults(String name) {
     return TagEntity(
-        name: name,
-        colorCode: const ColorCode(red: 255, green: 255, blue: 255));
+      name: name,
+      colorCode: ColorCode.fromDefaults(),
+      dateTimeAdded: DateTime.now(),
+    );
   }
 
   @override
-  List<Object?> get props => [name, parentTagName, colorCode];
+  List<Object?> get props => [name, parentTagName, colorCode, dateTimeAdded];
 }

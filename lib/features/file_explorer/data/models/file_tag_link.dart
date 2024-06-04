@@ -30,8 +30,15 @@ class FileTagLinkModel extends Equatable {
   @ColumnInfo(name: 'tag_name')
   final String tagName;
 
-  const FileTagLinkModel({required this.filePath, required this.tagName});
+  @ColumnInfo(name: 'date_time_added')
+  final DateTime dateTimeAdded;
+
+  const FileTagLinkModel({
+    required this.filePath,
+    required this.tagName,
+    required this.dateTimeAdded,
+  });
 
   @override
-  List<Object?> get props => [filePath, tagName];
+  List<Object?> get props => [filePath, tagName, dateTimeAdded];
 }

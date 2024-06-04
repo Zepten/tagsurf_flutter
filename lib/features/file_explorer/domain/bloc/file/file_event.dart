@@ -2,34 +2,50 @@ part of 'file_bloc.dart';
 
 abstract class FileEvent extends Equatable {}
 
-// File events
-class GetTrackedFilesEvent extends FileEvent {
+class GetFilesEvent extends FileEvent {
+  final bool isFiltering;
+  final List<String> filters;
+  final String searchQuery;
+
+  GetFilesEvent({
+    required this.isFiltering,
+    required this.filters,
+    required this.searchQuery,
+  });
+
   @override
-  List<Object?> get props => List.empty();
+  List<Object?> get props => [filters];
 }
 
 class TrackFilesEvent extends FileEvent {
   final List<FileEntity> files;
+  final bool isFiltering;
+  final List<String> filters;
+  final String searchQuery;
 
-  TrackFilesEvent({required this.files});
+  TrackFilesEvent({
+    required this.files,
+    required this.isFiltering,
+    required this.filters,
+    required this.searchQuery,
+  });
 
   @override
-  List<Object?> get props => throw UnimplementedError();
-}
-
-class TrackFileEvent extends FileEvent {
-  final FileEntity file;
-
-  TrackFileEvent({required this.file});
-
-  @override
-  List<Object?> get props => [file];
+  List<Object?> get props => [files, isFiltering, filters];
 }
 
 class UpdateFileEvent extends FileEvent {
   final FileEntity file;
+  final bool isFiltering;
+  final List<String> filters;
+  final String searchQuery;
 
-  UpdateFileEvent({required this.file});
+  UpdateFileEvent({
+    required this.file,
+    required this.isFiltering,
+    required this.filters,
+    required this.searchQuery,
+  });
 
   @override
   List<Object?> get props => [file];
@@ -37,24 +53,26 @@ class UpdateFileEvent extends FileEvent {
 
 class UntrackFileEvent extends FileEvent {
   final FileEntity file;
+  final bool isFiltering;
+  final List<String> filters;
+  final String searchQuery;
 
-  UntrackFileEvent({required this.file});
+  UntrackFileEvent({
+    required this.file,
+    required this.isFiltering,
+    required this.filters,
+    required this.searchQuery,
+  });
 
   @override
   List<Object?> get props => [file];
 }
 
-// File-tag linking events
-class GetFilesByTagsEvent extends FileEvent {
-  final List<TagEntity> tags;
+class OpenFileEvent extends FileEvent {
+  final FileEntity file;
 
-  GetFilesByTagsEvent({required this.tags});
+  OpenFileEvent({required this.file});
 
   @override
-  List<Object?> get props => [tags];
-}
-
-class GetUntaggedFilesEvent extends FileEvent {
-  @override
-  List<Object?> get props => List.empty();
+  List<Object?> get props => [file];
 }

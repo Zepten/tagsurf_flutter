@@ -27,3 +27,12 @@ class InvalidTagFailure extends Failure {
   @override
   List<Object?> get props => [];
 }
+
+class TagsCyclicDependencyFailure extends Failure {
+  final List<TagEntity> tags;
+
+  TagsCyclicDependencyFailure({required this.tags});
+
+  @override
+  List<Object?> get props => [tags];
+}

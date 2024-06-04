@@ -17,15 +17,12 @@ abstract class FileTagLinkDao {
   @Query('SELECT * FROM file_tag_link WHERE file_path = :filePath AND tag_name = :tagName')
   Future<FileTagLinkModel?> getFileTagLink(String filePath, String tagName);
 
-  @Query(
-      'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = :filePath')
+  @Query('SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = :filePath ORDER BY ft.date_time_added ASC')
   Future<List<TagModel>> getTagsByFilePath(String filePath);
 
-  @Query(
-      'SELECT DISTINCT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name IN (:tagsNames)')
-  Future<List<FileModel>> getFilesByTagsNames(List<String> tagsNames);
+  @Query('SELECT DISTINCT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name IN (:tagsNames) AND f.name LIKE :searchQuery ORDER BY f.date_time_added DESC')
+  Future<List<FileModel>> getFilesByTagsNames(List<String> tagsNames, String searchQuery);
 
-  @Query(
-      'SELECT f.* FROM files f LEFT JOIN file_tag_link ftl ON f.path = ftl.file_path WHERE ftl.file_path IS NULL')
-  Future<List<FileModel>> getUntaggedFiles();
+  @Query('SELECT f.* FROM files f LEFT JOIN file_tag_link ftl ON f.path = ftl.file_path WHERE ftl.file_path IS NULL AND f.name LIKE :searchQuery ORDER BY f.date_time_added DESC')
+  Future<List<FileModel>> getUntaggedFiles(String searchQuery);
 }

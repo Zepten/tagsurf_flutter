@@ -7,7 +7,7 @@ Color getColorFromColorCode(ColorCode colorCode) {
 
 Color getLightShadeFromColorCode(ColorCode colorCode) {
   final color = getColorFromColorCode(colorCode);
-  return Color.lerp(color, Colors.white, 0.85)!;
+  return Color.lerp(color, Colors.white, 0.75)!;
 }
 
 Color getContrastColorFromColorCode(ColorCode colorCode) {
@@ -15,6 +15,6 @@ Color getContrastColorFromColorCode(ColorCode colorCode) {
   if (color == Colors.white || color == Colors.black) {
     return Colors.black;
   } else {
-    return Color.lerp(color, Colors.black, 0.4)!;
+    return Color.lerp(color, Colors.black, 0.5)!;
   }
 }
