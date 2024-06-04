@@ -4,11 +4,11 @@ import 'package:tagsurf_flutter/config/theme/app_themes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/pages/home/file_explorer.dart';
-import 'package:tagsurf_flutter/injection_container.dart';
+import 'package:tagsurf_flutter/injection_container.dart' as di;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDependencies();
+  await di.init();
   runApp(const TagsurfApp());
 }
 
@@ -20,9 +20,14 @@ class TagsurfApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<FileBloc>(
-            create: (context) => sl()..add(GetTrackedFilesEvent())),
+            create: (context) => di.sl<FileBloc>()
+              ..add(GetFilesEvent(
+                isFiltering: false,
+                filters: List.empty(),
+                searchQuery: '',
+              ))),
         BlocProvider<TagBloc>(
-            create: (context) => sl()..add(GetAllTagsEvent())),
+            create: (context) => di.sl<TagBloc>()..add(GetAllTagsEvent())),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
