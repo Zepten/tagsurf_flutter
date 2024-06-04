@@ -3,6 +3,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/error/exceptions.dar
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/files_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failures.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/file.dart';
@@ -37,6 +38,20 @@ class FileRepositoryImpl implements FileRepository {
       final filesModels =
           await _fileSystemService.getFilesFromDirectory(targetDir);
       return Right(_toFilesEntities(filesModels));
+    } on FileSystemException catch (e) {
+      return Left(FileSystemFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> openFile({required FileEntity file}) async {
+    try {
+      final fileModel = FileModel.fromEntity(file);
+      final isFileExist = await _fileSystemService.isFileExist(fileModel);
+      if (!isFileExist) {
+        return Left(FilesNotInFileSystemFailure(files: [file.path]));
+      }
+      return Right(await _fileSystemService.openFile(fileModel));
     } on FileSystemException catch (e) {
       return Left(FileSystemFailure(message: e.toString()));
     }
@@ -97,6 +112,10 @@ class FileRepositoryImpl implements FileRepository {
   @override
   Future<Either<Failure, void>> untrackFile({required FileEntity file}) async {
     try {
+      final existingFile = await _appDatabase.fileDao.getFileByPath(file.path);
+      if (existingFile != null) {
+        await _appDatabase.fileDao.deleteFile(existingFile);
+      }
       await _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
       return const Right(null);
     } on DatabaseException catch (e) {
@@ -105,9 +124,13 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
-  Future<Either<Failure, List<FileEntity>>> getTrackedFiles() async {
+  Future<Either<Failure, List<FileEntity>>> getTrackedFiles(
+      {required String searchQuery}) async {
     try {
-      final filesModels = await _appDatabase.fileDao.getAllFiles();
+      final formattedSearchQuery =
+          SearchQueryFormatter.formatForSql(searchQuery);
+      final filesModels =
+          await _appDatabase.fileDao.getAllFiles(formattedSearchQuery);
       final notInFsFilesPaths =
           await _fileSystemService.getNotExistFilesPaths(filesModels);
       // Check if files are exist in file system

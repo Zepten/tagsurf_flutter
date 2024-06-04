@@ -4,15 +4,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
-Future<void> pickFile(BuildContext context) async {
+Future<void> pickFile(
+  BuildContext context,
+  bool isFiltering,
+  List<String> filters,
+  String searchQuery,
+) async {
   FileBloc fileBloc = context.read<FileBloc>();
   FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       dialogTitle: 'Добавить файлы в Tagsurf',
       lockParentWindow: true);
   if (result != null && result.files.isNotEmpty) {
-    final files =
-        result.files.map((file) => FileEntity(path: file.path!)).toList();
-    fileBloc.add(TrackFilesEvent(files: files));
+    final files = result.files
+        .map((file) => FileEntity(
+              path: file.path!,
+              dateTimeAdded: DateTime.now(),
+            ))
+        .toList();
+    fileBloc.add(TrackFilesEvent(
+        files: files,
+        isFiltering: isFiltering,
+        filters: filters,
+        searchQuery: searchQuery));
   }
 }

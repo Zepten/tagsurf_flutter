@@ -100,13 +100,15 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT NOT NULL, PRIMARY KEY (`path`))');
+            'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT NOT NULL, `name` TEXT NOT NULL, `date_time_added` INTEGER NOT NULL, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code_red` INTEGER NOT NULL, `color_code_green` INTEGER NOT NULL, `color_code_blue` INTEGER NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE SET NULL, PRIMARY KEY (`name`))');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code_red` INTEGER NOT NULL, `color_code_green` INTEGER NOT NULL, `color_code_blue` INTEGER NOT NULL, `date_time_added` INTEGER NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE SET NULL, PRIMARY KEY (`name`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE CASCADE, PRIMARY KEY (`file_path`, `tag_name`))');
+            'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, `date_time_added` INTEGER NOT NULL, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE CASCADE, PRIMARY KEY (`file_path`, `tag_name`))');
         await database
             .execute('CREATE INDEX `index_files_path` ON `files` (`path`)');
+        await database
+            .execute('CREATE INDEX `index_files_name` ON `files` (`name`)');
         await database
             .execute('CREATE INDEX `index_tags_name` ON `tags` (`name`)');
         await database.execute(
@@ -144,12 +146,35 @@ class _$FileDao extends FileDao {
     this.database,
     this.changeListener,
   )   : _queryAdapter = QueryAdapter(database),
-        _fileModelInsertionAdapter = InsertionAdapter(database, 'files',
-            (FileModel item) => <String, Object?>{'path': item.path}),
-        _fileModelUpdateAdapter = UpdateAdapter(database, 'files', ['path'],
-            (FileModel item) => <String, Object?>{'path': item.path}),
-        _fileModelDeletionAdapter = DeletionAdapter(database, 'files', ['path'],
-            (FileModel item) => <String, Object?>{'path': item.path});
+        _fileModelInsertionAdapter = InsertionAdapter(
+            database,
+            'files',
+            (FileModel item) => <String, Object?>{
+                  'path': item.path,
+                  'name': item.name,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
+                }),
+        _fileModelUpdateAdapter = UpdateAdapter(
+            database,
+            'files',
+            ['path'],
+            (FileModel item) => <String, Object?>{
+                  'path': item.path,
+                  'name': item.name,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
+                }),
+        _fileModelDeletionAdapter = DeletionAdapter(
+            database,
+            'files',
+            ['path'],
+            (FileModel item) => <String, Object?>{
+                  'path': item.path,
+                  'name': item.name,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -164,17 +189,25 @@ class _$FileDao extends FileDao {
   final DeletionAdapter<FileModel> _fileModelDeletionAdapter;
 
   @override
-  Future<List<FileModel>> getAllFiles() async {
-    return _queryAdapter.queryList('select * from files',
-        mapper: (Map<String, Object?> row) =>
-            FileModel(path: row['path'] as String));
+  Future<List<FileModel>> getAllFiles(String searchQuery) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM FILES WHERE name LIKE ?1 ORDER BY date_time_added DESC',
+        mapper: (Map<String, Object?> row) => FileModel(
+            path: row['path'] as String,
+            name: row['name'] as String,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)),
+        arguments: [searchQuery]);
   }
 
   @override
   Future<FileModel?> getFileByPath(String path) async {
-    return _queryAdapter.query('select * from files where path = ?1',
-        mapper: (Map<String, Object?> row) =>
-            FileModel(path: row['path'] as String),
+    return _queryAdapter.query('SELECT * FROM FILES WHERE path = ?1',
+        mapper: (Map<String, Object?> row) => FileModel(
+            path: row['path'] as String,
+            name: row['name'] as String,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [path]);
   }
 
@@ -185,9 +218,12 @@ class _$FileDao extends FileDao {
         Iterable<String>.generate(paths.length, (i) => '?${i + offset}')
             .join(',');
     return _queryAdapter.queryList(
-        'select * from files where path in (' + _sqliteVariablesForPaths + ')',
-        mapper: (Map<String, Object?> row) =>
-            FileModel(path: row['path'] as String),
+        'SELECT * FROM FILES WHERE path IN (' + _sqliteVariablesForPaths + ')',
+        mapper: (Map<String, Object?> row) => FileModel(
+            path: row['path'] as String,
+            name: row['name'] as String,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [...paths]);
   }
 
@@ -226,18 +262,9 @@ class _$TagDao extends TagDao {
                   'parent_tag_name': item.parentTagName,
                   'color_code_red': item.colorCodeRed,
                   'color_code_green': item.colorCodeGreen,
-                  'color_code_blue': item.colorCodeBlue
-                }),
-        _tagModelUpdateAdapter = UpdateAdapter(
-            database,
-            'tags',
-            ['name'],
-            (TagModel item) => <String, Object?>{
-                  'name': item.name,
-                  'parent_tag_name': item.parentTagName,
-                  'color_code_red': item.colorCodeRed,
-                  'color_code_green': item.colorCodeGreen,
-                  'color_code_blue': item.colorCodeBlue
+                  'color_code_blue': item.colorCodeBlue,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
                 }),
         _tagModelDeletionAdapter = DeletionAdapter(
             database,
@@ -248,7 +275,9 @@ class _$TagDao extends TagDao {
                   'parent_tag_name': item.parentTagName,
                   'color_code_red': item.colorCodeRed,
                   'color_code_green': item.colorCodeGreen,
-                  'color_code_blue': item.colorCodeBlue
+                  'color_code_blue': item.colorCodeBlue,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -259,75 +288,107 @@ class _$TagDao extends TagDao {
 
   final InsertionAdapter<TagModel> _tagModelInsertionAdapter;
 
-  final UpdateAdapter<TagModel> _tagModelUpdateAdapter;
-
   final DeletionAdapter<TagModel> _tagModelDeletionAdapter;
 
   @override
+  Future<void> renameTag(
+    String oldName,
+    String newName,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE tags SET name = ?2 WHERE name = ?1',
+        arguments: [oldName, newName]);
+  }
+
+  @override
+  Future<void> changeTagColor(
+    String tagName,
+    int red,
+    int green,
+    int blue,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE tags SET color_code_red = ?2, color_code_green = ?3, color_code_blue = ?4 WHERE name = ?1',
+        arguments: [tagName, red, green, blue]);
+  }
+
+  @override
+  Future<void> setParentTag(
+    String tagName,
+    String parentTagName,
+  ) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE tags SET parent_tag_name = ?2 WHERE name = ?1',
+        arguments: [tagName, parentTagName]);
+  }
+
+  @override
+  Future<void> removeParentTag(String tagName) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE tags SET parent_tag_name = NULL WHERE name = ?1',
+        arguments: [tagName]);
+  }
+
+  @override
   Future<List<TagModel>> getAllTags() async {
-    return _queryAdapter.queryList('select * from tags',
+    return _queryAdapter.queryList(
+        'SELECT * FROM TAGS ORDER BY date_time_added ASC',
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
             colorCodeRed: row['color_code_red'] as int,
             colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int));
+            colorCodeBlue: row['color_code_blue'] as int,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)));
   }
 
   @override
-  Future<TagModel?> getTagByName(String name) async {
-    return _queryAdapter.query('select * from tags where name = ?1',
+  Future<TagModel?> getTagByName(String tagName) async {
+    return _queryAdapter.query('SELECT * FROM TAGS WHERE name = ?1',
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
             colorCodeRed: row['color_code_red'] as int,
             colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int),
-        arguments: [name]);
+            colorCodeBlue: row['color_code_blue'] as int,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)),
+        arguments: [tagName]);
   }
 
   @override
-  Future<List<TagModel>> getTagsByNames(List<String> names) async {
+  Future<List<TagModel>> getTagsByNames(List<String> tagsNames) async {
     const offset = 1;
-    final _sqliteVariablesForNames =
-        Iterable<String>.generate(names.length, (i) => '?${i + offset}')
+    final _sqliteVariablesForTagsNames =
+        Iterable<String>.generate(tagsNames.length, (i) => '?${i + offset}')
             .join(',');
     return _queryAdapter.queryList(
-        'select * from tags where name in (' + _sqliteVariablesForNames + ')',
+        'SELECT * FROM TAGS WHERE name IN (' +
+            _sqliteVariablesForTagsNames +
+            ')',
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
             colorCodeRed: row['color_code_red'] as int,
             colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int),
-        arguments: [...names]);
+            colorCodeBlue: row['color_code_blue'] as int,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)),
+        arguments: [...tagsNames]);
   }
 
   @override
-  Future<List<TagModel>> getParentTags(String parentTagName) async {
-    return _queryAdapter.queryList('select * from tags where name = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(
-            name: row['name'] as String,
-            parentTagName: row['parent_tag_name'] as String?,
-            colorCodeRed: row['color_code_red'] as int,
-            colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int),
-        arguments: [parentTagName]);
+  Future<TagModel?> getParentByTagName(String tagName) async {
+    return _queryAdapter.query(
+        'SELECT parent.* FROM tags AS child JOIN tags AS parent ON child.parent_tag_name = parent.name WHERE child.name = ?1',
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCodeRed: row['color_code_red'] as int, colorCodeGreen: row['color_code_green'] as int, colorCodeBlue: row['color_code_blue'] as int, dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
+        arguments: [tagName]);
   }
 
   @override
   Future<void> insertTag(TagModel tag) async {
     await _tagModelInsertionAdapter.insert(tag, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> insertTags(List<TagModel> tags) async {
-    await _tagModelInsertionAdapter.insertList(tags, OnConflictStrategy.abort);
-  }
-
-  @override
-  Future<void> updateTag(TagModel tag) async {
-    await _tagModelUpdateAdapter.update(tag, OnConflictStrategy.abort);
   }
 
   @override
@@ -346,7 +407,9 @@ class _$FileTagLinkDao extends FileTagLinkDao {
             'file_tag_link',
             (FileTagLinkModel item) => <String, Object?>{
                   'file_path': item.filePath,
-                  'tag_name': item.tagName
+                  'tag_name': item.tagName,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
                 }),
         _fileTagLinkModelDeletionAdapter = DeletionAdapter(
             database,
@@ -354,7 +417,9 @@ class _$FileTagLinkDao extends FileTagLinkDao {
             ['file_path', 'tag_name'],
             (FileTagLinkModel item) => <String, Object?>{
                   'file_path': item.filePath,
-                  'tag_name': item.tagName
+                  'tag_name': item.tagName,
+                  'date_time_added':
+                      _dateTimeConverter.encode(item.dateTimeAdded)
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -376,38 +441,43 @@ class _$FileTagLinkDao extends FileTagLinkDao {
         'SELECT * FROM file_tag_link WHERE file_path = ?1 AND tag_name = ?2',
         mapper: (Map<String, Object?> row) => FileTagLinkModel(
             filePath: row['file_path'] as String,
-            tagName: row['tag_name'] as String),
+            tagName: row['tag_name'] as String,
+            dateTimeAdded:
+                _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [filePath, tagName]);
   }
 
   @override
   Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
-        'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCodeRed: row['color_code_red'] as int, colorCodeGreen: row['color_code_green'] as int, colorCodeBlue: row['color_code_blue'] as int),
+        'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1 ORDER BY ft.date_time_added ASC',
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCodeRed: row['color_code_red'] as int, colorCodeGreen: row['color_code_green'] as int, colorCodeBlue: row['color_code_blue'] as int, dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [filePath]);
   }
 
   @override
-  Future<List<FileModel>> getFilesByTagsNames(List<String> tagsNames) async {
-    const offset = 1;
+  Future<List<FileModel>> getFilesByTagsNames(
+    List<String> tagsNames,
+    String searchQuery,
+  ) async {
+    const offset = 2;
     final _sqliteVariablesForTagsNames =
         Iterable<String>.generate(tagsNames.length, (i) => '?${i + offset}')
             .join(',');
     return _queryAdapter.queryList(
         'SELECT DISTINCT f.* FROM files f JOIN file_tag_link ft ON f.path = ft.file_path JOIN tags t ON ft.tag_name = t.name WHERE t.name IN (' +
             _sqliteVariablesForTagsNames +
-            ')',
-        mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String),
-        arguments: [...tagsNames]);
+            ') AND f.name LIKE ?1 ORDER BY f.date_time_added DESC',
+        mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String, name: row['name'] as String, dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
+        arguments: [searchQuery, ...tagsNames]);
   }
 
   @override
-  Future<List<FileModel>> getUntaggedFiles() async {
+  Future<List<FileModel>> getUntaggedFiles(String searchQuery) async {
     return _queryAdapter.queryList(
-        'SELECT f.* FROM files f LEFT JOIN file_tag_link ftl ON f.path = ftl.file_path WHERE ftl.file_path IS NULL',
-        mapper: (Map<String, Object?> row) =>
-            FileModel(path: row['path'] as String));
+        'SELECT f.* FROM files f LEFT JOIN file_tag_link ftl ON f.path = ftl.file_path WHERE ftl.file_path IS NULL AND f.name LIKE ?1 ORDER BY f.date_time_added DESC',
+        mapper: (Map<String, Object?> row) => FileModel(path: row['path'] as String, name: row['name'] as String, dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
+        arguments: [searchQuery]);
   }
 
   @override
@@ -427,3 +497,6 @@ class _$FileTagLinkDao extends FileTagLinkDao {
     await _fileTagLinkModelDeletionAdapter.delete(fileTagLink);
   }
 }
+
+// ignore_for_file: unused_element
+final _dateTimeConverter = DateTimeConverter();

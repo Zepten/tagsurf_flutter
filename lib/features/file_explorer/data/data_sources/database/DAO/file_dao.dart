@@ -15,12 +15,12 @@ abstract class FileDao {
   @delete
   Future<void> deleteFile(FileModel file);
 
-  @Query('select * from files')
-  Future<List<FileModel>> getAllFiles();
+  @Query('SELECT * FROM FILES WHERE name LIKE :searchQuery ORDER BY date_time_added DESC')
+  Future<List<FileModel>> getAllFiles(String searchQuery);
 
-  @Query('select * from files where path = :path')
+  @Query('SELECT * FROM FILES WHERE path = :path')
   Future<FileModel?> getFileByPath(String path);
 
-  @Query('select * from files where path in (:paths)')
+  @Query('SELECT * FROM FILES WHERE path IN (:paths)')
   Future<List<FileModel>> getFilesByPaths(List<String> paths);
 }

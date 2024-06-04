@@ -27,12 +27,17 @@ class TagModel extends Equatable {
   @ColumnInfo(name: 'color_code_blue')
   final int colorCodeBlue;
 
-  const TagModel(
-      {required this.name,
-      this.parentTagName,
-      required this.colorCodeRed,
-      required this.colorCodeGreen,
-      required this.colorCodeBlue});
+  @ColumnInfo(name: 'date_time_added')
+  final DateTime dateTimeAdded;
+
+  const TagModel({
+    required this.name,
+    this.parentTagName,
+    required this.colorCodeRed,
+    required this.colorCodeGreen,
+    required this.colorCodeBlue,
+    required this.dateTimeAdded,
+  });
 
   factory TagModel.fromEntity(TagEntity tagEntity) {
     return TagModel(
@@ -41,10 +46,17 @@ class TagModel extends Equatable {
       colorCodeRed: tagEntity.colorCode.red,
       colorCodeGreen: tagEntity.colorCode.green,
       colorCodeBlue: tagEntity.colorCode.blue,
+      dateTimeAdded: tagEntity.dateTimeAdded,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [name, parentTagName, colorCodeRed, colorCodeGreen, colorCodeBlue];
+  List<Object?> get props => [
+        name,
+        parentTagName,
+        colorCodeRed,
+        colorCodeGreen,
+        colorCodeBlue,
+        dateTimeAdded,
+      ];
 }

@@ -4,7 +4,8 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_blo
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/pick_file.dart';
 
-AppBar appBar(BuildContext context) {
+AppBar appBar(BuildContext context, bool isFiltering, List<String> filters,
+    String searchQuery) {
   return AppBar(
     title: const Text(
       'Tagsurf',
@@ -15,7 +16,10 @@ AppBar appBar(BuildContext context) {
       // Кнопка обновления списка файлов и тегов
       IconButton(
         onPressed: () {
-          context.read<FileBloc>().add(GetTrackedFilesEvent());
+          context.read<FileBloc>().add(GetFilesEvent(
+              isFiltering: false,
+              filters: List.empty(),
+              searchQuery: searchQuery));
           context.read<TagBloc>().add(GetAllTagsEvent());
         },
         tooltip: 'Обновить',
@@ -26,16 +30,9 @@ AppBar appBar(BuildContext context) {
       ),
       // Space between buttons
       const SizedBox(width: 20),
-      // Кнопка поиска файла по названию или тегу
       IconButton(
-          onPressed: () {},
-          tooltip: 'Поиск',
-          icon: const Icon(
-            Icons.search,
-            color: Colors.white,
-          )),
-      IconButton(
-        onPressed: () async => await pickFile(context),
+        onPressed: () async =>
+            await pickFile(context, isFiltering, filters, searchQuery),
         tooltip: 'Добавить файлы в Tagsurf',
         icon: const Icon(Icons.add_circle, color: Colors.white),
       ),

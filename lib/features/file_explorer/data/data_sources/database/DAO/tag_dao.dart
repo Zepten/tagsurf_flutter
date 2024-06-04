@@ -6,24 +6,30 @@ abstract class TagDao {
   @Insert()
   Future<void> insertTag(TagModel tag);
 
-  @Insert()
-  Future<void> insertTags(List<TagModel> tags);
+  @Query('UPDATE tags SET name = :newName WHERE name = :oldName')
+  Future<void> renameTag(String oldName, String newName);
 
-  @Update()
-  Future<void> updateTag(TagModel tag);
+  @Query('UPDATE tags SET color_code_red = :red, color_code_green = :green, color_code_blue = :blue WHERE name = :tagName')
+  Future<void> changeTagColor(String tagName, int red, int green, int blue);
+
+  @Query('UPDATE tags SET parent_tag_name = :parentTagName WHERE name = :tagName')
+  Future<void> setParentTag(String tagName, String parentTagName);
+
+  @Query('UPDATE tags SET parent_tag_name = NULL WHERE name = :tagName')
+  Future<void> removeParentTag(String tagName);
 
   @delete
   Future<void> deleteTag(TagModel tag);
 
-  @Query('select * from tags')
+  @Query('SELECT * FROM TAGS ORDER BY date_time_added ASC')
   Future<List<TagModel>> getAllTags();
 
-  @Query('select * from tags where name = :name')
-  Future<TagModel?> getTagByName(String name);
+  @Query('SELECT * FROM TAGS WHERE name = :tagName')
+  Future<TagModel?> getTagByName(String tagName);
 
-  @Query('select * from tags where name in (:names)')
-  Future<List<TagModel>> getTagsByNames(List<String> names);
+  @Query('SELECT * FROM TAGS WHERE name IN (:tagsNames)')
+  Future<List<TagModel>> getTagsByNames(List<String> tagsNames);
 
-  @Query('select * from tags where name = :parentTagName')
-  Future<List<TagModel>> getParentTags(String parentTagName);
+  @Query('SELECT parent.* FROM tags AS child JOIN tags AS parent ON child.parent_tag_name = parent.name WHERE child.name = :tagName')
+  Future<TagModel?> getParentByTagName(String tagName);
 }
