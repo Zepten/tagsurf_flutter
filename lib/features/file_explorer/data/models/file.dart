@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
 @Entity(tableName: 'files', indices: [
   Index(value: ['path']),
@@ -19,14 +17,6 @@ class FileModel extends Equatable {
     required this.name,
     required this.dateTimeAdded,
   });
-
-  factory FileModel.fromEntity(FileEntity fileEntity) {
-    return FileModel(
-      path: fileEntity.path,
-      name: FileUtils.basename(fileEntity.path).toLowerCase(),
-      dateTimeAdded: fileEntity.dateTimeAdded,
-    );
-  }
 
   @override
   List<Object?> get props => [path, name, dateTimeAdded];

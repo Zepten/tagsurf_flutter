@@ -6,7 +6,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failur
 import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service.dart';
-import 'package:tagsurf_flutter/features/file_explorer/data/models/file.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/mapper/file_mapper.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 
@@ -16,20 +16,6 @@ class FileRepositoryImpl implements FileRepository {
 
   FileRepositoryImpl(this._fileSystemService, this._appDatabase);
 
-  // Map file models to file entities
-  List<FileEntity> _toFilesEntities(List<FileModel> filesModels) {
-    return filesModels
-        .map((fileModel) => FileEntity.fromModel(fileModel))
-        .toList();
-  }
-
-  // Map file entities to file models
-  List<FileModel> _toFilesModels(List<FileEntity> filesEntities) {
-    return filesEntities
-        .map((fileEntity) => FileModel.fromEntity(fileEntity))
-        .toList();
-  }
-
   // File system methods implementation for files
   @override
   Future<Either<Failure, List<FileEntity>>> getAllFilesFromDirectory(
@@ -37,7 +23,7 @@ class FileRepositoryImpl implements FileRepository {
     try {
       final filesModels =
           await _fileSystemService.getFilesFromDirectory(targetDir);
-      return Right(_toFilesEntities(filesModels));
+      return Right(FileMapper.toEntities(filesModels));
     } on FileSystemException catch (e) {
       return Left(FileSystemFailure(message: e.toString()));
     }
@@ -46,7 +32,7 @@ class FileRepositoryImpl implements FileRepository {
   @override
   Future<Either<Failure, void>> openFile({required FileEntity file}) async {
     try {
-      final fileModel = FileModel.fromEntity(file);
+      final fileModel = FileMapper.toModel(file);
       final isFileExist = await _fileSystemService.isFileExist(fileModel);
       if (!isFileExist) {
         return Left(FilesNotInFileSystemFailure(files: [file.path]));
@@ -72,7 +58,7 @@ class FileRepositoryImpl implements FileRepository {
         return Left(FilesDuplicateFailure(files: existingFilesPaths));
       }
       // Check if files are exist in file system
-      final filesModels = _toFilesModels(files);
+      final filesModels = FileMapper.toModels(files);
       try {
         final notInFsFilesPaths =
             await _fileSystemService.getNotExistFilesPaths(filesModels);
@@ -99,10 +85,10 @@ class FileRepositoryImpl implements FileRepository {
         return Left(FilesNotExistsFailure(files: [file.path]));
       }
       // Check if file is exists in file system
-      if (!await _fileSystemService.isFileExist(FileModel.fromEntity(file))) {
+      if (!await _fileSystemService.isFileExist(FileMapper.toModel(file))) {
         return Left(FilesNotInFileSystemFailure(files: [file.path]));
       }
-      await _appDatabase.fileDao.updateFile(FileModel.fromEntity(file));
+      await _appDatabase.fileDao.updateFile(FileMapper.toModel(file));
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -116,7 +102,7 @@ class FileRepositoryImpl implements FileRepository {
       if (existingFile != null) {
         await _appDatabase.fileDao.deleteFile(existingFile);
       }
-      await _appDatabase.fileDao.deleteFile(FileModel.fromEntity(file));
+      await _appDatabase.fileDao.deleteFile(FileMapper.toModel(file));
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -137,7 +123,7 @@ class FileRepositoryImpl implements FileRepository {
       if (notInFsFilesPaths.isNotEmpty) {
         return Left(FilesNotInFileSystemFailure(files: notInFsFilesPaths));
       }
-      return Right(_toFilesEntities(filesModels));
+      return Right(FileMapper.toEntities(filesModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }
@@ -151,7 +137,7 @@ class FileRepositoryImpl implements FileRepository {
       if (fileModel == null) {
         return Left(FilesNotExistsFailure(files: [path]));
       }
-      return Right(FileEntity.fromModel(fileModel));
+      return Right(FileMapper.toEntity(fileModel));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }

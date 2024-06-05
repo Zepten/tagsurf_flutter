@@ -7,6 +7,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failur
 import 'package:tagsurf_flutter/features/file_explorer/core/error/tags_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/mapper/file_mapper.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/file_tag_link.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
@@ -26,9 +27,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
           SearchQueryFormatter.formatForSql(searchQuery);
       final filesModels = await _appDatabase.fileTagLinkDao
           .getFilesByTagsNames(tagsNames, formattedSearchQuery);
-      return Right(filesModels
-          .map((fileModel) => FileEntity.fromModel(fileModel))
-          .toList());
+      return Right(FileMapper.toEntities(filesModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }
@@ -122,9 +121,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
           SearchQueryFormatter.formatForSql(searchQuery);
       final filesModels = await _appDatabase.fileTagLinkDao
           .getUntaggedFiles(formattedSearchQuery);
-      return Right(filesModels
-          .map((fileModel) => FileEntity.fromModel(fileModel))
-          .toList());
+      return Right(FileMapper.toEntities(filesModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }
