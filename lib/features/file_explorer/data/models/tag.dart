@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
+import 'package:tagsurf_flutter/config/constants/color_codes.dart';
 
 @Entity(tableName: 'tags', foreignKeys: [
   ForeignKey(
@@ -35,12 +35,11 @@ class TagModel extends Equatable {
     required this.dateTimeAdded,
   });
 
-  factory TagModel.fromEntity(TagEntity tagEntity) {
+  factory TagModel.createDefault(String name) {
     return TagModel(
-      name: tagEntity.name,
-      parentTagName: tagEntity.parentTagName,
-      color: tagEntity.color,
-      dateTimeAdded: tagEntity.dateTimeAdded,
+      name: name,
+      color: defaultTagColor,
+      dateTimeAdded: DateTime.now(),
     );
   }
 

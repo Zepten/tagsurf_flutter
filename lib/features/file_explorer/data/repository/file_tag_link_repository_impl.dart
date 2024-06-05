@@ -8,6 +8,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/error/tags_failures.
 import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/mapper/file_mapper.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/mapper/tag_mapper.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/file_tag_link.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
@@ -39,8 +40,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
     try {
       final tagsModels =
           await _appDatabase.fileTagLinkDao.getTagsByFilePath(file.path);
-      return Right(
-          tagsModels.map((tagModel) => TagEntity.fromModel(tagModel)).toList());
+      return Right(TagMapper.toEntities(tagsModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }
@@ -83,8 +83,8 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       }
       final existingTag = await _appDatabase.tagDao.getTagByName(tagName);
       if (existingTag == null) {
-        final defaultTag = TagEntity.fromDefaults(tagName);
-        await _appDatabase.tagDao.insertTag(TagModel.fromEntity(defaultTag));
+        final defaultTag = TagModel.createDefault(tagName);
+        await _appDatabase.tagDao.insertTag(defaultTag);
         return await linkFileAndTag(
             filePath: filePath, tagName: defaultTag.name);
       } else {

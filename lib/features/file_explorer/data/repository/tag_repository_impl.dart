@@ -6,6 +6,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/tags_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/mapper/tag_mapper.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
@@ -45,7 +46,7 @@ class TagRepositoryImpl implements TagRepository {
         if (isCyclicDependency) {
           return Left(TagsCyclicDependencyFailure(tags: [tag]));
         }
-        await _appDatabase.tagDao.insertTag(TagModel.fromEntity(tag));
+        await _appDatabase.tagDao.insertTag(TagMapper.toModel(tag));
         return const Right(null);
       } else {
         return Left(TagsDuplicateFailure(tags: [tag.name]));
@@ -152,20 +153,20 @@ class TagRepositoryImpl implements TagRepository {
   Future<Either<Failure, List<TagEntity>>> getAllTags() async {
     try {
       final tagsModels = await _appDatabase.tagDao.getAllTags();
-      return Right(
-          tagsModels.map((tagModel) => TagEntity.fromModel(tagModel)).toList());
+      return Right(TagMapper.toEntities(tagsModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, TagEntity>> getTagByName(
-      {required String name}) async {
+  Future<Either<Failure, TagEntity>> getTagByName({
+    required String name,
+  }) async {
     try {
       final tagModel = await _appDatabase.tagDao.getTagByName(name);
       if (tagModel != null) {
-        return Right(TagEntity.fromModel(tagModel));
+        return Right(TagMapper.toEntity(tagModel));
       } else {
         return Left(TagsNotExistsFailure(tags: [name]));
       }
@@ -175,14 +176,13 @@ class TagRepositoryImpl implements TagRepository {
   }
 
   @override
-  Future<Either<Failure, List<TagEntity>>> getTagsByNames(
-      {required List<String> names}) async {
+  Future<Either<Failure, List<TagEntity>>> getTagsByNames({
+    required List<String> names,
+  }) async {
     try {
       final tagsModels = await _appDatabase.tagDao.getTagsByNames(names);
       if (tagsModels.isNotEmpty) {
-        return Right(tagsModels
-            .map((tagModel) => TagEntity.fromModel(tagModel))
-            .toList());
+        return Right(TagMapper.toEntities(tagsModels));
       } else {
         return Left(TagsNotExistsFailure(tags: names));
       }
