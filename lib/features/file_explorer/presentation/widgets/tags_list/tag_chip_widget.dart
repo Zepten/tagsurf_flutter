@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tagsurf_flutter/config/constants/color_codes.dart';
-import 'package:tagsurf_flutter/config/util/color_code.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/color_util.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 enum TagContextMenuActions { changeColor, copyName, rename, moveToRoot, delete }
@@ -12,7 +10,6 @@ class TagChipWidget extends StatelessWidget {
   final Function(TagEntity, bool) onTagSelected;
   final Function(BuildContext, TagEntity, TagEntity) onTagDropped;
   final Function(TagContextMenuActions, TagEntity) onContextMenuAction;
-  final Function(TagEntity, ColorCode) onColorSelected;
 
   const TagChipWidget({
     super.key,
@@ -21,7 +18,6 @@ class TagChipWidget extends StatelessWidget {
     required this.onTagSelected,
     required this.onTagDropped,
     required this.onContextMenuAction,
-    required this.onColorSelected,
   });
 
   @override
@@ -61,7 +57,7 @@ class TagChipWidget extends StatelessWidget {
           child: Text(
             tag.name,
             style: TextStyle(
-              color: getContrastColorFromColorCode(tag.colorCode),
+              color: ColorUtil.getDarkShade(tag.color),
             ),
           ),
         ),
@@ -73,7 +69,7 @@ class TagChipWidget extends StatelessWidget {
         onSelected: (bool value) {
           onTagSelected(tag, value);
         },
-        backgroundColor: getLightShadeFromColorCode(tag.colorCode),
+        backgroundColor: ColorUtil.getLightShade(tag.color),
       ),
     );
   }
@@ -118,52 +114,7 @@ class TagChipWidget extends StatelessWidget {
       ],
     );
     if (result != null) {
-      if (result == TagContextMenuActions.changeColor) {
-        if (!context.mounted) {
-          return;
-        }
-        final color = await _showColorSelectionMenu(context, position);
-        if (color != null) {
-          final colorCode = ColorCode(
-            red: color.red,
-            green: color.green,
-            blue: color.blue,
-          );
-          onColorSelected(tag, colorCode);
-        }
-      }
       onContextMenuAction(result, tag);
     }
   }
-}
-
-Future<Color?> _showColorSelectionMenu(
-  BuildContext context,
-  Offset position,
-) async {
-  return await showMenu<Color>(
-    context: context,
-    position: RelativeRect.fromLTRB(
-        position.dx, position.dy, position.dx, position.dy),
-    items: availableTagColors
-        .map((color) => PopupMenuItem<Color>(
-              value: color,
-              child: _buildColorCircle(color),
-            ))
-        .toList(),
-  );
-}
-
-Widget _buildColorCircle(Color color) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-    child: Container(
-      width: 24.0,
-      height: 24.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-    ),
-  );
 }

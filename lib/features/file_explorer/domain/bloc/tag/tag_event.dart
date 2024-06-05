@@ -48,9 +48,9 @@ class RenameTagEvent extends TagEvent {
 
 class ChangeTagColorEvent extends TagEvent {
   final TagEntity tag;
-  final ColorCode colorCode;
+  final Color color;
 
-  ChangeTagColorEvent({required this.tag, required this.colorCode});
+  ChangeTagColorEvent({required this.tag, required this.color});
 
   @override
   List<Object?> get props => [tag];

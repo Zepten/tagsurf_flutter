@@ -9,8 +9,8 @@ abstract class TagDao {
   @Query('UPDATE tags SET name = :newName WHERE name = :oldName')
   Future<void> renameTag(String oldName, String newName);
 
-  @Query('UPDATE tags SET color_code_red = :red, color_code_green = :green, color_code_blue = :blue WHERE name = :tagName')
-  Future<void> changeTagColor(String tagName, int red, int green, int blue);
+  @Query('UPDATE tags SET color = :colorValue WHERE name = :tagName')
+  Future<void> changeTagColor(String tagName, int colorValue);
 
   @Query('UPDATE tags SET parent_tag_name = :parentTagName WHERE name = :tagName')
   Future<void> setParentTag(String tagName, String parentTagName);

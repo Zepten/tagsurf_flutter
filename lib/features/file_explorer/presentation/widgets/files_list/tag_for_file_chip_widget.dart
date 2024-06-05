@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tagsurf_flutter/config/util/color_code.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/color_util.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
@@ -26,11 +26,10 @@ class TagForFileChipWidget extends StatelessWidget {
     return RawChip(
       elevation: 5.0,
       shadowColor: isSelected ? Colors.blue : Colors.black,
-      avatar: Icon(Icons.sell,
-          color: getContrastColorFromColorCode(tag.colorCode)),
+      avatar: Icon(Icons.sell, color: ColorUtil.getDarkShade(tag.color)),
       label: Text(tag.name,
           style: TextStyle(
-            color: getContrastColorFromColorCode(tag.colorCode),
+            color: ColorUtil.getDarkShade(tag.color),
             overflow: TextOverflow.ellipsis,
           )),
       shape: RoundedRectangleBorder(
@@ -54,7 +53,7 @@ class TagForFileChipWidget extends StatelessWidget {
             .read<TagBloc>()
             .add(UnlinkFileAndTagEvent(file: file, tagName: tag.name));
       },
-      backgroundColor: getLightShadeFromColorCode(tag.colorCode),
+      backgroundColor: ColorUtil.getLightShade(tag.color),
     );
   }
 }

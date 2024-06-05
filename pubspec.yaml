@@ -61,6 +61,9 @@ dependencies:
   # A widget, that visualises a tree structure, where a node can be any widget
   flutter_simple_treeview: ^3.0.2
 
+  # Color picker
+  flutter_colorpicker: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

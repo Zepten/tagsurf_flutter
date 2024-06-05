@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/usecase/file_and_tag_params.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_tags_by_file.dart';
@@ -97,10 +98,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     Emitter<TagState> emit,
   ) async {
     final result = await _changeTagColorUseCase(
-      params: ChangeTagColorUseCaseParams(
-        tag: event.tag,
-        colorCode: event.colorCode,
-      ),
+      params: ChangeTagColorUseCaseParams(tag: event.tag, color: event.color),
     );
     result.fold(
       (failure) => emit(TagsErrorState(failure: failure)),

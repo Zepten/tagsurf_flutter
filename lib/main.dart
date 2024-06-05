@@ -4,7 +4,7 @@ import 'package:tagsurf_flutter/config/theme/app_themes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/pages/home/file_explorer.dart';
-import 'package:tagsurf_flutter/injection_container.dart' as di;
+import 'package:tagsurf_flutter/features/file_explorer/internal/injection_container.dart' as di;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

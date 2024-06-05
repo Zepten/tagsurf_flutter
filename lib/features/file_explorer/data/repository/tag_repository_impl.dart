@@ -1,12 +1,12 @@
+import 'dart:ui';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/exceptions.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/general_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/tags_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
-import 'package:tagsurf_flutter/features/file_explorer/data/models/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 
@@ -83,20 +83,14 @@ class TagRepositoryImpl implements TagRepository {
   @override
   Future<Either<Failure, void>> changeTagColor({
     required TagEntity tag,
-    required ColorCode color,
+    required Color color,
   }) async {
     try {
       final existingTag = await _appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag == null) {
         return Left(TagsNotExistsFailure(tags: [tag.name]));
       }
-      final colorModel = ColorCodeModel.fromEntity(color);
-      await _appDatabase.tagDao.changeTagColor(
-        tag.name,
-        colorModel.red,
-        colorModel.green,
-        colorModel.blue,
-      );
+      await _appDatabase.tagDao.changeTagColor(tag.name, color.value);
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));

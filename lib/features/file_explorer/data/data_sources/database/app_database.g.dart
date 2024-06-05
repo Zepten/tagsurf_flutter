@@ -102,7 +102,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `files` (`path` TEXT NOT NULL, `name` TEXT NOT NULL, `date_time_added` INTEGER NOT NULL, PRIMARY KEY (`path`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color_code_red` INTEGER NOT NULL, `color_code_green` INTEGER NOT NULL, `color_code_blue` INTEGER NOT NULL, `date_time_added` INTEGER NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE SET NULL, PRIMARY KEY (`name`))');
+            'CREATE TABLE IF NOT EXISTS `tags` (`name` TEXT NOT NULL, `parent_tag_name` TEXT, `color` INTEGER NOT NULL, `date_time_added` INTEGER NOT NULL, FOREIGN KEY (`parent_tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE SET NULL, PRIMARY KEY (`name`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `file_tag_link` (`file_path` TEXT NOT NULL, `tag_name` TEXT NOT NULL, `date_time_added` INTEGER NOT NULL, FOREIGN KEY (`file_path`) REFERENCES `files` (`path`) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY (`tag_name`) REFERENCES `tags` (`name`) ON UPDATE CASCADE ON DELETE CASCADE, PRIMARY KEY (`file_path`, `tag_name`))');
         await database
@@ -260,9 +260,7 @@ class _$TagDao extends TagDao {
             (TagModel item) => <String, Object?>{
                   'name': item.name,
                   'parent_tag_name': item.parentTagName,
-                  'color_code_red': item.colorCodeRed,
-                  'color_code_green': item.colorCodeGreen,
-                  'color_code_blue': item.colorCodeBlue,
+                  'color': _colorConverter.encode(item.color),
                   'date_time_added':
                       _dateTimeConverter.encode(item.dateTimeAdded)
                 }),
@@ -273,9 +271,7 @@ class _$TagDao extends TagDao {
             (TagModel item) => <String, Object?>{
                   'name': item.name,
                   'parent_tag_name': item.parentTagName,
-                  'color_code_red': item.colorCodeRed,
-                  'color_code_green': item.colorCodeGreen,
-                  'color_code_blue': item.colorCodeBlue,
+                  'color': _colorConverter.encode(item.color),
                   'date_time_added':
                       _dateTimeConverter.encode(item.dateTimeAdded)
                 });
@@ -303,13 +299,11 @@ class _$TagDao extends TagDao {
   @override
   Future<void> changeTagColor(
     String tagName,
-    int red,
-    int green,
-    int blue,
+    int colorValue,
   ) async {
     await _queryAdapter.queryNoReturn(
-        'UPDATE tags SET color_code_red = ?2, color_code_green = ?3, color_code_blue = ?4 WHERE name = ?1',
-        arguments: [tagName, red, green, blue]);
+        'UPDATE tags SET color = ?2 WHERE name = ?1',
+        arguments: [tagName, colorValue]);
   }
 
   @override
@@ -336,9 +330,7 @@ class _$TagDao extends TagDao {
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
-            colorCodeRed: row['color_code_red'] as int,
-            colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int,
+            color: _colorConverter.decode(row['color'] as int),
             dateTimeAdded:
                 _dateTimeConverter.decode(row['date_time_added'] as int)));
   }
@@ -349,9 +341,7 @@ class _$TagDao extends TagDao {
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
-            colorCodeRed: row['color_code_red'] as int,
-            colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int,
+            color: _colorConverter.decode(row['color'] as int),
             dateTimeAdded:
                 _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [tagName]);
@@ -370,9 +360,7 @@ class _$TagDao extends TagDao {
         mapper: (Map<String, Object?> row) => TagModel(
             name: row['name'] as String,
             parentTagName: row['parent_tag_name'] as String?,
-            colorCodeRed: row['color_code_red'] as int,
-            colorCodeGreen: row['color_code_green'] as int,
-            colorCodeBlue: row['color_code_blue'] as int,
+            color: _colorConverter.decode(row['color'] as int),
             dateTimeAdded:
                 _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [...tagsNames]);
@@ -382,7 +370,7 @@ class _$TagDao extends TagDao {
   Future<TagModel?> getParentByTagName(String tagName) async {
     return _queryAdapter.query(
         'SELECT parent.* FROM tags AS child JOIN tags AS parent ON child.parent_tag_name = parent.name WHERE child.name = ?1',
-        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCodeRed: row['color_code_red'] as int, colorCodeGreen: row['color_code_green'] as int, colorCodeBlue: row['color_code_blue'] as int, dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, color: _colorConverter.decode(row['color'] as int), dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [tagName]);
   }
 
@@ -451,7 +439,7 @@ class _$FileTagLinkDao extends FileTagLinkDao {
   Future<List<TagModel>> getTagsByFilePath(String filePath) async {
     return _queryAdapter.queryList(
         'SELECT t.* FROM tags t JOIN file_tag_link ft ON t.name = ft.tag_name JOIN files f ON ft.file_path = f.path WHERE f.path = ?1 ORDER BY ft.date_time_added ASC',
-        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, colorCodeRed: row['color_code_red'] as int, colorCodeGreen: row['color_code_green'] as int, colorCodeBlue: row['color_code_blue'] as int, dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
+        mapper: (Map<String, Object?> row) => TagModel(name: row['name'] as String, parentTagName: row['parent_tag_name'] as String?, color: _colorConverter.decode(row['color'] as int), dateTimeAdded: _dateTimeConverter.decode(row['date_time_added'] as int)),
         arguments: [filePath]);
   }
 
@@ -500,3 +488,4 @@ class _$FileTagLinkDao extends FileTagLinkDao {
 
 // ignore_for_file: unused_element
 final _dateTimeConverter = DateTimeConverter();
+final _colorConverter = ColorConverter();
