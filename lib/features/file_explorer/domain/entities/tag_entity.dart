@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
+import 'package:tagsurf_flutter/config/constants/color_codes.dart';
 
 class TagEntity extends Equatable {
   final String name;
@@ -14,6 +15,14 @@ class TagEntity extends Equatable {
     required this.color,
     required this.dateTimeAdded,
   });
+
+  factory TagEntity.createDefault(String name) {
+    return TagEntity(
+      name: name,
+      color: defaultTagColor,
+      dateTimeAdded: DateTime.now(),
+    );
+  }
 
   @override
   List<Object?> get props => [name, parentTagName, color, dateTimeAdded];

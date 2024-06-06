@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
-import 'package:tagsurf_flutter/config/constants/color_codes.dart';
 
 @Entity(tableName: 'tags', foreignKeys: [
   ForeignKey(
@@ -34,14 +33,6 @@ class TagModel extends Equatable {
     required this.color,
     required this.dateTimeAdded,
   });
-
-  factory TagModel.createDefault(String name) {
-    return TagModel(
-      name: name,
-      color: defaultTagColor,
-      dateTimeAdded: DateTime.now(),
-    );
-  }
 
   @override
   List<Object?> get props => [name, parentTagName, color, dateTimeAdded];

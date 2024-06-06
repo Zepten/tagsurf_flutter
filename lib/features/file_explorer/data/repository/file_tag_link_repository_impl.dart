@@ -10,7 +10,6 @@ import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/databas
 import 'package:tagsurf_flutter/features/file_explorer/data/mapper/file_mapper.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/mapper/tag_mapper.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/models/file_tag_link.dart';
-import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
@@ -83,10 +82,10 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       }
       final existingTag = await appDatabase.tagDao.getTagByName(tagName);
       if (existingTag == null) {
-        final defaultTag = TagModel.createDefault(tagName);
-        await appDatabase.tagDao.insertTag(defaultTag);
+        final defaultTagEntity = TagEntity.createDefault(tagName);
+        await appDatabase.tagDao.insertTag(TagMapper.toModel(defaultTagEntity));
         return await linkFileAndTag(
-            filePath: filePath, tagName: defaultTag.name);
+            filePath: filePath, tagName: defaultTagEntity.name);
       } else {
         return await linkFileAndTag(
             filePath: filePath, tagName: existingTag.name);
