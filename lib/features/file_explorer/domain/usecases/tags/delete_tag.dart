@@ -5,12 +5,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 
 class DeleteTagUseCase implements UseCase<void, TagEntity> {
-  final TagRepository _tagRepository;
+  final TagRepository tagRepository;
 
-  DeleteTagUseCase(this._tagRepository);
+  DeleteTagUseCase(this.tagRepository);
 
   @override
   Future<Either<Failure, void>> call({required TagEntity params}) async {
-    return await _tagRepository.deleteTag(tag: params);
+    return await tagRepository.deleteTag(tag: params);
   }
 }

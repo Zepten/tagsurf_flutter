@@ -5,12 +5,12 @@ import 'package:tagsurf_flutter/features/file_explorer/core/usecase/usecase.dart
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 
 class LinkFileAndTagUseCase implements UseCase<void, FileAndTagParams> {
-  final FileTagLinkRepository _fileTagLinkRepository;
+  final FileTagLinkRepository fileTagLinkRepository;
 
-  LinkFileAndTagUseCase(this._fileTagLinkRepository);
+  LinkFileAndTagUseCase(this.fileTagLinkRepository);
 
   @override
   Future<Either<Failure, void>> call({required FileAndTagParams params}) async {
-    return await _fileTagLinkRepository.linkFileAndTag(filePath: params.filePath, tagName: params.tagName);
+    return await fileTagLinkRepository.linkFileAndTag(filePath: params.filePath, tagName: params.tagName);
   }
 }

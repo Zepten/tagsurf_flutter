@@ -5,14 +5,14 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_enti
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 
 class GetUntaggedFilesUseCase implements UseCase<List<FileEntity>, String> {
-  final FileTagLinkRepository _fileTagLinkRepository;
+  final FileTagLinkRepository fileTagLinkRepository;
 
-  GetUntaggedFilesUseCase(this._fileTagLinkRepository);
+  GetUntaggedFilesUseCase(this.fileTagLinkRepository);
 
   @override
   Future<Either<Failure, List<FileEntity>>> call({
     required String params,
   }) async {
-    return await _fileTagLinkRepository.getUntaggedFiles(searchQuery: params);
+    return await fileTagLinkRepository.getUntaggedFiles(searchQuery: params);
   }
 }

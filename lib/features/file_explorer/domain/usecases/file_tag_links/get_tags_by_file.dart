@@ -6,12 +6,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 
 class GetTagsByFileUseCase implements UseCase<List<TagEntity>, FileEntity> {
-  final FileTagLinkRepository _fileTagLinkRepository;
+  final FileTagLinkRepository fileTagLinkRepository;
 
-  GetTagsByFileUseCase(this._fileTagLinkRepository);
+  GetTagsByFileUseCase(this.fileTagLinkRepository);
 
   @override
   Future<Either<Failure, List<TagEntity>>> call({required FileEntity params}) async {
-    return await _fileTagLinkRepository.getTagsByFile(file: params);
+    return await fileTagLinkRepository.getTagsByFile(file: params);
   }
 }

@@ -16,23 +16,23 @@ part 'file_state.dart';
 
 class FileBloc extends Bloc<FileEvent, FileState> {
   // File UseCases
-  final GetTrackedFilesUseCase _getTrackedFilesUseCase;
-  final UpdateFileUseCase _updateFileUseCase;
-  final UntrackFileUseCase _untrackFileUseCase;
-  final TrackFilesUseCase _trackMultipleFilesUseCase;
-  final OpenFileUseCase _openFileUseCase;
+  final GetTrackedFilesUseCase getTrackedFilesUseCase;
+  final UpdateFileUseCase updateFileUseCase;
+  final UntrackFileUseCase untrackFileUseCase;
+  final TrackFilesUseCase trackMultipleFilesUseCase;
+  final OpenFileUseCase openFileUseCase;
   // File-tag linking UseCases
-  final GetFilesByTagsUseCase _getFilesByTagsUseCase;
-  final GetUntaggedFilesUseCase _getUntaggedFilesUseCase;
+  final GetFilesByTagsUseCase getFilesByTagsUseCase;
+  final GetUntaggedFilesUseCase getUntaggedFilesUseCase;
 
   FileBloc(
-    this._getTrackedFilesUseCase,
-    this._updateFileUseCase,
-    this._untrackFileUseCase,
-    this._trackMultipleFilesUseCase,
-    this._getFilesByTagsUseCase,
-    this._getUntaggedFilesUseCase,
-    this._openFileUseCase,
+    this.getTrackedFilesUseCase,
+    this.updateFileUseCase,
+    this.untrackFileUseCase,
+    this.trackMultipleFilesUseCase,
+    this.getFilesByTagsUseCase,
+    this.getUntaggedFilesUseCase,
+    this.openFileUseCase,
   ) : super(FilesLoadingState()) {
     on<GetFilesEvent>(onGetFiles);
     on<TrackFilesEvent>(onTrackFiles);
@@ -49,14 +49,14 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     Either<Failure, List<FileEntity>> files;
     if (event.isFiltering) {
       if (event.filters.isEmpty) {
-        files = await _getUntaggedFilesUseCase(params: event.searchQuery);
+        files = await getUntaggedFilesUseCase(params: event.searchQuery);
       } else {
-        files = await _getFilesByTagsUseCase(
+        files = await getFilesByTagsUseCase(
             params: GetFilesByTagsUseCaseParams(
                 tagsNames: event.filters, searchQuery: event.searchQuery));
       }
     } else {
-      files = await _getTrackedFilesUseCase(params: event.searchQuery);
+      files = await getTrackedFilesUseCase(params: event.searchQuery);
     }
     files.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
@@ -68,7 +68,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     TrackFilesEvent event,
     Emitter<FileState> emit,
   ) async {
-    final result = await _trackMultipleFilesUseCase(params: event.files);
+    final result = await trackMultipleFilesUseCase(params: event.files);
     result.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => add(
@@ -85,7 +85,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     UpdateFileEvent event,
     Emitter<FileState> emit,
   ) async {
-    final result = await _updateFileUseCase(params: event.file);
+    final result = await updateFileUseCase(params: event.file);
     result.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => add(
@@ -102,7 +102,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     UntrackFileEvent event,
     Emitter<FileState> emit,
   ) async {
-    final result = await _untrackFileUseCase(params: event.file);
+    final result = await untrackFileUseCase(params: event.file);
     result.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => add(
@@ -116,7 +116,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   }
 
   void onOpenFile(OpenFileEvent event, Emitter<FileState> emit) async {
-    final result = await _openFileUseCase(params: event.file);
+    final result = await openFileUseCase(params: event.file);
     result.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => null,

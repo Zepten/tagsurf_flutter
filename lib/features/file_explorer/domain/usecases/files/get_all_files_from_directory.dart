@@ -6,12 +6,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_re
 
 class GetAllFilesFromDirectoryUseCase
     implements UseCase<List<FileEntity>, String> {
-  final FileRepository _fileRepository;
+  final FileRepository fileRepository;
 
-  GetAllFilesFromDirectoryUseCase(this._fileRepository);
+  GetAllFilesFromDirectoryUseCase(this.fileRepository);
 
   @override
   Future<Either<Failure, List<FileEntity>>> call({required String params}) async {
-    return await _fileRepository.getAllFilesFromDirectory(targetDir: params);
+    return await fileRepository.getAllFilesFromDirectory(targetDir: params);
   }
 }

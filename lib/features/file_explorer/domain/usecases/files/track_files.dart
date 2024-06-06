@@ -5,12 +5,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_enti
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 
 class TrackFilesUseCase implements UseCase<void, List<FileEntity>> {
-  final FileRepository _fileRepository;
+  final FileRepository fileRepository;
 
-  TrackFilesUseCase(this._fileRepository);
+  TrackFilesUseCase(this.fileRepository);
 
   @override
   Future<Either<Failure, void>> call({required List<FileEntity> params}) async {
-    return await _fileRepository.trackFiles(files: params);
+    return await fileRepository.trackFiles(files: params);
   }
 }

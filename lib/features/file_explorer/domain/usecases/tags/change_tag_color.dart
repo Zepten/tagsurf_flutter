@@ -8,15 +8,15 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_rep
 
 class ChangeTagColorUseCase
     implements UseCase<void, ChangeTagColorUseCaseParams> {
-  final TagRepository _tagRepository;
+  final TagRepository tagRepository;
 
-  ChangeTagColorUseCase(this._tagRepository);
+  ChangeTagColorUseCase(this.tagRepository);
 
   @override
   Future<Either<Failure, void>> call({
     required ChangeTagColorUseCaseParams params,
   }) async {
-    return await _tagRepository.changeTagColor(
+    return await tagRepository.changeTagColor(
       tag: params.tag,
       color: params.color,
     );

@@ -12,9 +12,9 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 
 class TagRepositoryImpl implements TagRepository {
-  final AppDatabase _appDatabase;
+  final AppDatabase appDatabase;
 
-  TagRepositoryImpl(this._appDatabase);
+  TagRepositoryImpl(this.appDatabase);
 
   Future<bool> _isCyclicDependency(
       String tagName, String? parentTagName) async {
@@ -24,13 +24,13 @@ class TagRepositoryImpl implements TagRepository {
       return true;
     }
     TagModel? currentTag =
-        await _appDatabase.tagDao.getParentByTagName(parentTagName);
+        await appDatabase.tagDao.getParentByTagName(parentTagName);
     while (currentTag != null) {
       if (currentTag.name == tagName) {
         return true;
       }
       currentTag = currentTag.parentTagName != null
-          ? await _appDatabase.tagDao.getParentByTagName(currentTag.name)
+          ? await appDatabase.tagDao.getParentByTagName(currentTag.name)
           : null;
     }
     return false;
@@ -39,14 +39,14 @@ class TagRepositoryImpl implements TagRepository {
   @override
   Future<Either<Failure, void>> createTag({required TagEntity tag}) async {
     try {
-      final existingTag = await _appDatabase.tagDao.getTagByName(tag.name);
+      final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag == null) {
         final isCyclicDependency =
             await _isCyclicDependency(tag.name, tag.parentTagName);
         if (isCyclicDependency) {
           return Left(TagsCyclicDependencyFailure(tags: [tag]));
         }
-        await _appDatabase.tagDao.insertTag(TagMapper.toModel(tag));
+        await appDatabase.tagDao.insertTag(TagMapper.toModel(tag));
         return const Right(null);
       } else {
         return Left(TagsDuplicateFailure(tags: [tag.name]));
@@ -62,7 +62,7 @@ class TagRepositoryImpl implements TagRepository {
     required String newName,
   }) async {
     try {
-      final existingTag = await _appDatabase.tagDao.getTagByName(tag.name);
+      final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag == null) {
         return Left(TagsNotExistsFailure(tags: [tag.name]));
       }
@@ -70,11 +70,11 @@ class TagRepositoryImpl implements TagRepository {
         return const Right(null);
       }
       final newNameExistingTag =
-          await _appDatabase.tagDao.getTagByName(newName);
+          await appDatabase.tagDao.getTagByName(newName);
       if (newNameExistingTag != null) {
         return Left(TagsDuplicateFailure(tags: [newName]));
       }
-      await _appDatabase.tagDao.renameTag(tag.name, newName);
+      await appDatabase.tagDao.renameTag(tag.name, newName);
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -87,11 +87,11 @@ class TagRepositoryImpl implements TagRepository {
     required Color color,
   }) async {
     try {
-      final existingTag = await _appDatabase.tagDao.getTagByName(tag.name);
+      final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag == null) {
         return Left(TagsNotExistsFailure(tags: [tag.name]));
       }
-      await _appDatabase.tagDao.changeTagColor(tag.name, color.value);
+      await appDatabase.tagDao.changeTagColor(tag.name, color.value);
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -105,13 +105,13 @@ class TagRepositoryImpl implements TagRepository {
   }) async {
     try {
       List<String> notExistingTags = [];
-      final existingTag = await _appDatabase.tagDao.getTagByName(tag.name);
+      final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag == null) {
         notExistingTags.add(tag.name);
       }
       if (parentTag != null) {
         final existingParentTag =
-            await _appDatabase.tagDao.getTagByName(parentTag.name);
+            await appDatabase.tagDao.getTagByName(parentTag.name);
         if (existingParentTag == null) {
           notExistingTags.add(parentTag.name);
         }
@@ -123,9 +123,9 @@ class TagRepositoryImpl implements TagRepository {
           await _isCyclicDependency(tag.name, parentTag?.name);
       if (!isCyclicDependency) {
         if (parentTag == null) {
-          await _appDatabase.tagDao.removeParentTag(tag.name);
+          await appDatabase.tagDao.removeParentTag(tag.name);
         } else {
-          await _appDatabase.tagDao.setParentTag(tag.name, parentTag.name);
+          await appDatabase.tagDao.setParentTag(tag.name, parentTag.name);
         }
       }
       return const Right(null);
@@ -137,9 +137,9 @@ class TagRepositoryImpl implements TagRepository {
   @override
   Future<Either<Failure, void>> deleteTag({required TagEntity tag}) async {
     try {
-      final existingTag = await _appDatabase.tagDao.getTagByName(tag.name);
+      final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag != null) {
-        await _appDatabase.tagDao.deleteTag(existingTag);
+        await appDatabase.tagDao.deleteTag(existingTag);
         return const Right(null);
       } else {
         return Left(TagsNotExistsFailure(tags: [tag.name]));
@@ -152,7 +152,7 @@ class TagRepositoryImpl implements TagRepository {
   @override
   Future<Either<Failure, List<TagEntity>>> getAllTags() async {
     try {
-      final tagsModels = await _appDatabase.tagDao.getAllTags();
+      final tagsModels = await appDatabase.tagDao.getAllTags();
       return Right(TagMapper.toEntities(tagsModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -164,7 +164,7 @@ class TagRepositoryImpl implements TagRepository {
     required String name,
   }) async {
     try {
-      final tagModel = await _appDatabase.tagDao.getTagByName(name);
+      final tagModel = await appDatabase.tagDao.getTagByName(name);
       if (tagModel != null) {
         return Right(TagMapper.toEntity(tagModel));
       } else {
@@ -180,7 +180,7 @@ class TagRepositoryImpl implements TagRepository {
     required List<String> names,
   }) async {
     try {
-      final tagsModels = await _appDatabase.tagDao.getTagsByNames(names);
+      final tagsModels = await appDatabase.tagDao.getTagsByNames(names);
       if (tagsModels.isNotEmpty) {
         return Right(TagMapper.toEntities(tagsModels));
       } else {

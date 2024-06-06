@@ -5,13 +5,13 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 
 class SetParentTagUseCase implements UseCase<void, SetParentTagUseCaseParams> {
-  final TagRepository _tagRepository;
+  final TagRepository tagRepository;
 
-  SetParentTagUseCase(this._tagRepository);
+  SetParentTagUseCase(this.tagRepository);
 
   @override
   Future<Either<Failure, void>> call({required SetParentTagUseCaseParams params}) async {
-    return await _tagRepository.setParentTag(
+    return await tagRepository.setParentTag(
       tag: params.tag,
       parentTag: params.parentTag,
     );

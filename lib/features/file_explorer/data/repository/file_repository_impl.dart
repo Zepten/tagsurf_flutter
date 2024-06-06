@@ -11,10 +11,10 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_enti
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 
 class FileRepositoryImpl implements FileRepository {
-  final FileSystemService _fileSystemService;
-  final AppDatabase _appDatabase;
+  final FileSystemService fileSystemService;
+  final AppDatabase appDatabase;
 
-  FileRepositoryImpl(this._fileSystemService, this._appDatabase);
+  FileRepositoryImpl(this.fileSystemService, this.appDatabase);
 
   // File system methods implementation for files
   @override
@@ -22,7 +22,7 @@ class FileRepositoryImpl implements FileRepository {
       {required String targetDir}) async {
     try {
       final filesModels =
-          await _fileSystemService.getFilesFromDirectory(targetDir);
+          await fileSystemService.getFilesFromDirectory(targetDir);
       return Right(FileMapper.toEntities(filesModels));
     } on FileSystemException catch (e) {
       return Left(FileSystemFailure(message: e.toString()));
@@ -33,11 +33,11 @@ class FileRepositoryImpl implements FileRepository {
   Future<Either<Failure, void>> openFile({required FileEntity file}) async {
     try {
       final fileModel = FileMapper.toModel(file);
-      final isFileExist = await _fileSystemService.isFileExist(fileModel);
+      final isFileExist = await fileSystemService.isFileExist(fileModel);
       if (!isFileExist) {
         return Left(FilesNotInFileSystemFailure(files: [file.path]));
       }
-      return Right(await _fileSystemService.openFile(fileModel));
+      return Right(await fileSystemService.openFile(fileModel));
     } on FileSystemException catch (e) {
       return Left(FileSystemFailure(message: e.toString()));
     }
@@ -50,7 +50,7 @@ class FileRepositoryImpl implements FileRepository {
     try {
       final filesPaths = files.map((file) => file.path).toList();
       final existingFiles =
-          await _appDatabase.fileDao.getFilesByPaths(filesPaths);
+          await appDatabase.fileDao.getFilesByPaths(filesPaths);
       // Check if there are already existing files in DB
       if (existingFiles.isNotEmpty) {
         final existingFilesPaths =
@@ -61,7 +61,7 @@ class FileRepositoryImpl implements FileRepository {
       final filesModels = FileMapper.toModels(files);
       try {
         final notInFsFilesPaths =
-            await _fileSystemService.getNotExistFilesPaths(filesModels);
+            await fileSystemService.getNotExistFilesPaths(filesModels);
         if (notInFsFilesPaths.isNotEmpty) {
           return Left(FilesNotInFileSystemFailure(files: notInFsFilesPaths));
         }
@@ -69,7 +69,7 @@ class FileRepositoryImpl implements FileRepository {
         return Left(FileSystemFailure(message: e.toString()));
       }
       // Track files
-      await _appDatabase.fileDao.insertFiles(filesModels);
+      await appDatabase.fileDao.insertFiles(filesModels);
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -79,16 +79,16 @@ class FileRepositoryImpl implements FileRepository {
   @override
   Future<Either<Failure, void>> updateFile({required FileEntity file}) async {
     try {
-      final existingFile = await _appDatabase.fileDao.getFileByPath(file.path);
+      final existingFile = await appDatabase.fileDao.getFileByPath(file.path);
       // Check if file exists in DB
       if (existingFile == null) {
         return Left(FilesNotExistsFailure(files: [file.path]));
       }
       // Check if file is exists in file system
-      if (!await _fileSystemService.isFileExist(FileMapper.toModel(file))) {
+      if (!await fileSystemService.isFileExist(FileMapper.toModel(file))) {
         return Left(FilesNotInFileSystemFailure(files: [file.path]));
       }
-      await _appDatabase.fileDao.updateFile(FileMapper.toModel(file));
+      await appDatabase.fileDao.updateFile(FileMapper.toModel(file));
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -98,11 +98,11 @@ class FileRepositoryImpl implements FileRepository {
   @override
   Future<Either<Failure, void>> untrackFile({required FileEntity file}) async {
     try {
-      final existingFile = await _appDatabase.fileDao.getFileByPath(file.path);
+      final existingFile = await appDatabase.fileDao.getFileByPath(file.path);
       if (existingFile != null) {
-        await _appDatabase.fileDao.deleteFile(existingFile);
+        await appDatabase.fileDao.deleteFile(existingFile);
       }
-      await _appDatabase.fileDao.deleteFile(FileMapper.toModel(file));
+      await appDatabase.fileDao.deleteFile(FileMapper.toModel(file));
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -116,9 +116,9 @@ class FileRepositoryImpl implements FileRepository {
       final formattedSearchQuery =
           SearchQueryFormatter.formatForSql(searchQuery);
       final filesModels =
-          await _appDatabase.fileDao.getAllFiles(formattedSearchQuery);
+          await appDatabase.fileDao.getAllFiles(formattedSearchQuery);
       final notInFsFilesPaths =
-          await _fileSystemService.getNotExistFilesPaths(filesModels);
+          await fileSystemService.getNotExistFilesPaths(filesModels);
       // Check if files are exist in file system
       if (notInFsFilesPaths.isNotEmpty) {
         return Left(FilesNotInFileSystemFailure(files: notInFsFilesPaths));
@@ -133,7 +133,7 @@ class FileRepositoryImpl implements FileRepository {
   Future<Either<Failure, FileEntity>> getTrackedFileByPath(
       {required String path}) async {
     try {
-      final fileModel = await _appDatabase.fileDao.getFileByPath(path);
+      final fileModel = await appDatabase.fileDao.getFileByPath(path);
       if (fileModel == null) {
         return Left(FilesNotExistsFailure(files: [path]));
       }

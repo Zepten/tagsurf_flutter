@@ -6,15 +6,15 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_ta
 
 class GetFilesByTagsUseCase
     implements UseCase<List<FileEntity>, GetFilesByTagsUseCaseParams> {
-  final FileTagLinkRepository _fileTagLinkRepository;
+  final FileTagLinkRepository fileTagLinkRepository;
 
-  GetFilesByTagsUseCase(this._fileTagLinkRepository);
+  GetFilesByTagsUseCase(this.fileTagLinkRepository);
 
   @override
   Future<Either<Failure, List<FileEntity>>> call({
     required GetFilesByTagsUseCaseParams params,
   }) async {
-    return await _fileTagLinkRepository.getFilesByTags(
+    return await fileTagLinkRepository.getFilesByTags(
       tagsNames: params.tagsNames,
       searchQuery: params.searchQuery,
     );

@@ -5,12 +5,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_enti
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_repository.dart';
 
 class UpdateFileUseCase implements UseCase<void, FileEntity> {
-  final FileRepository _fileRepository;
+  final FileRepository fileRepository;
 
-  UpdateFileUseCase(this._fileRepository);
+  UpdateFileUseCase(this.fileRepository);
 
   @override
   Future<Either<Failure, void>> call({required FileEntity params}) async {
-    return await _fileRepository.updateFile(file: params);
+    return await fileRepository.updateFile(file: params);
   }
 }

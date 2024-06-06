@@ -16,9 +16,9 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/file_tag_link_repository.dart';
 
 class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
-  final AppDatabase _appDatabase;
+  final AppDatabase appDatabase;
 
-  FileTagLinkRepositoryImpl(this._appDatabase);
+  FileTagLinkRepositoryImpl(this.appDatabase);
 
   @override
   Future<Either<Failure, List<FileEntity>>> getFilesByTags(
@@ -26,7 +26,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
     try {
       final formattedSearchQuery =
           SearchQueryFormatter.formatForSql(searchQuery);
-      final filesModels = await _appDatabase.fileTagLinkDao
+      final filesModels = await appDatabase.fileTagLinkDao
           .getFilesByTagsNames(tagsNames, formattedSearchQuery);
       return Right(FileMapper.toEntities(filesModels));
     } on DatabaseException catch (e) {
@@ -39,7 +39,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       {required FileEntity file}) async {
     try {
       final tagsModels =
-          await _appDatabase.fileTagLinkDao.getTagsByFilePath(file.path);
+          await appDatabase.fileTagLinkDao.getTagsByFilePath(file.path);
       return Right(TagMapper.toEntities(tagsModels));
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
@@ -50,18 +50,18 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
   Future<Either<Failure, void>> linkFileAndTag(
       {required String filePath, required String tagName}) async {
     try {
-      final existingFile = await _appDatabase.fileDao.getFileByPath(filePath);
+      final existingFile = await appDatabase.fileDao.getFileByPath(filePath);
       if (existingFile == null) {
         return Left(FilesNotExistsFailure(files: [filePath]));
       }
-      final existingTag = await _appDatabase.tagDao.getTagByName(tagName);
+      final existingTag = await appDatabase.tagDao.getTagByName(tagName);
       if (existingTag == null) {
         return Left(TagsNotExistsFailure(tags: [tagName]));
       }
       final existingLink =
-          await _appDatabase.fileTagLinkDao.getFileTagLink(filePath, tagName);
+          await appDatabase.fileTagLinkDao.getFileTagLink(filePath, tagName);
       if (existingLink == null) {
-        await _appDatabase.fileTagLinkDao.insertFileTagLink(FileTagLinkModel(
+        await appDatabase.fileTagLinkDao.insertFileTagLink(FileTagLinkModel(
           filePath: filePath,
           tagName: tagName,
           dateTimeAdded: DateTime.now(),
@@ -77,14 +77,14 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
   Future<Either<Failure, void>> linkOrCreateTag(
       {required String filePath, required String tagName}) async {
     try {
-      final existingFile = await _appDatabase.fileDao.getFileByPath(filePath);
+      final existingFile = await appDatabase.fileDao.getFileByPath(filePath);
       if (existingFile == null) {
         return Left(FilesNotExistsFailure(files: [filePath]));
       }
-      final existingTag = await _appDatabase.tagDao.getTagByName(tagName);
+      final existingTag = await appDatabase.tagDao.getTagByName(tagName);
       if (existingTag == null) {
         final defaultTag = TagModel.createDefault(tagName);
-        await _appDatabase.tagDao.insertTag(defaultTag);
+        await appDatabase.tagDao.insertTag(defaultTag);
         return await linkFileAndTag(
             filePath: filePath, tagName: defaultTag.name);
       } else {
@@ -101,9 +101,9 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       {required String filePath, required String tagName}) async {
     try {
       final existingLink =
-          await _appDatabase.fileTagLinkDao.getFileTagLink(filePath, tagName);
+          await appDatabase.fileTagLinkDao.getFileTagLink(filePath, tagName);
       if (existingLink != null) {
-        await _appDatabase.fileTagLinkDao.deleteFileTagLink(existingLink);
+        await appDatabase.fileTagLinkDao.deleteFileTagLink(existingLink);
         return const Right(null);
       } else {
         return Left(LinkNotExistFailure(file: filePath, tag: tagName));
@@ -119,7 +119,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
     try {
       final formattedSearchQuery =
           SearchQueryFormatter.formatForSql(searchQuery);
-      final filesModels = await _appDatabase.fileTagLinkDao
+      final filesModels = await appDatabase.fileTagLinkDao
           .getUntaggedFiles(formattedSearchQuery);
       return Right(FileMapper.toEntities(filesModels));
     } on DatabaseException catch (e) {

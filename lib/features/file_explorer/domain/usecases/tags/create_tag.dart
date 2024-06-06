@@ -5,12 +5,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 
 class CreateTagUseCase implements UseCase<void, TagEntity> {
-  final TagRepository _tagRepository;
+  final TagRepository tagRepository;
 
-  CreateTagUseCase(this._tagRepository);
+  CreateTagUseCase(this.tagRepository);
 
   @override
   Future<Either<Failure, void>> call({required TagEntity params}) async {
-    return await _tagRepository.createTag(tag: params);
+    return await tagRepository.createTag(tag: params);
   }
 }

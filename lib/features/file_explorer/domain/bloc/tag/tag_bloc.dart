@@ -22,29 +22,29 @@ part 'tag_state.dart';
 
 class TagBloc extends Bloc<TagEvent, TagState> {
   // Tag UseCases
-  final GetAllTagsUseCase _getAllTagsUseCase;
-  final CreateTagUseCase _createTagUseCase;
-  final RenameTagUseCase _renameTagUseCase;
-  final ChangeTagColorUseCase _changeTagColorUseCase;
-  final SetParentTagUseCase _setParentTagUseCase;
-  final DeleteTagUseCase _deleteTagUseCase;
+  final GetAllTagsUseCase getAllTagsUseCase;
+  final CreateTagUseCase createTagUseCase;
+  final RenameTagUseCase renameTagUseCase;
+  final ChangeTagColorUseCase changeTagColorUseCase;
+  final SetParentTagUseCase setParentTagUseCase;
+  final DeleteTagUseCase deleteTagUseCase;
   // File-tag linking UseCases
-  final GetTagsByFileUseCase _getTagsByFileUseCase;
-  final LinkFileAndTagUseCase _linkFileAndTagUseCase;
-  final LinkOrCreateTagUseCase _linkOrCreateTagUseCase;
-  final UnlinkFileAndTagUseCase _unlinkFileAndTagUseCase;
+  final GetTagsByFileUseCase getTagsByFileUseCase;
+  final LinkFileAndTagUseCase linkFileAndTagUseCase;
+  final LinkOrCreateTagUseCase linkOrCreateTagUseCase;
+  final UnlinkFileAndTagUseCase unlinkFileAndTagUseCase;
 
   TagBloc(
-      this._getAllTagsUseCase,
-      this._createTagUseCase,
-      this._deleteTagUseCase,
-      this._renameTagUseCase,
-      this._changeTagColorUseCase,
-      this._getTagsByFileUseCase,
-      this._linkFileAndTagUseCase,
-      this._linkOrCreateTagUseCase,
-      this._unlinkFileAndTagUseCase,
-      this._setParentTagUseCase)
+      this.getAllTagsUseCase,
+      this.createTagUseCase,
+      this.deleteTagUseCase,
+      this.renameTagUseCase,
+      this.changeTagColorUseCase,
+      this.getTagsByFileUseCase,
+      this.linkFileAndTagUseCase,
+      this.linkOrCreateTagUseCase,
+      this.unlinkFileAndTagUseCase,
+      this.setParentTagUseCase)
       : super(TagsLoadingState()) {
     // Tag events
     on<GetAllTagsEvent>(onGetAllTags);
@@ -64,7 +64,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   // Tag business logic
   void onGetAllTags(GetAllTagsEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
-    final tags = await _getAllTagsUseCase();
+    final tags = await getAllTagsUseCase();
     print('GetAllTagsEvent, tags: $tags');
     tags.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
@@ -73,7 +73,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   }
 
   void onCreateTag(CreateTagEvent event, Emitter<TagState> emit) async {
-    final result = await _createTagUseCase(params: event.tag);
+    final result = await createTagUseCase(params: event.tag);
     result.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
       (success) => add(GetAllTagsEvent()),
@@ -81,7 +81,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   }
 
   void onRenameTag(RenameTagEvent event, Emitter<TagState> emit) async {
-    final result = await _renameTagUseCase(
+    final result = await renameTagUseCase(
       params: RenameTagUseCaseParams(
         tag: event.tag,
         newName: event.newName,
@@ -97,7 +97,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     ChangeTagColorEvent event,
     Emitter<TagState> emit,
   ) async {
-    final result = await _changeTagColorUseCase(
+    final result = await changeTagColorUseCase(
       params: ChangeTagColorUseCaseParams(tag: event.tag, color: event.color),
     );
     result.fold(
@@ -107,7 +107,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   }
 
   void onSetParentTag(SetParentTagEvent event, Emitter<TagState> emit) async {
-    final result = await _setParentTagUseCase(
+    final result = await setParentTagUseCase(
         params: SetParentTagUseCaseParams(
       tag: event.tag,
       parentTag: event.parentTag,
@@ -119,7 +119,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   }
 
   void onDeleteTag(DeleteTagEvent event, Emitter<TagState> emit) async {
-    final result = await _deleteTagUseCase(params: event.tag);
+    final result = await deleteTagUseCase(params: event.tag);
     result.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
       (success) => add(GetAllTagsEvent()),
@@ -132,7 +132,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     Emitter<TagState> emit,
   ) async {
     emit(TagsForFileLoadingState(file: event.file));
-    final tags = await _getTagsByFileUseCase(params: event.file);
+    final tags = await getTagsByFileUseCase(params: event.file);
     print('GetTagsByFileEvent: ${event.file.path} : $tags');
     tags.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
@@ -144,7 +144,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     LinkFileAndTagEvent event,
     Emitter<TagState> emit,
   ) async {
-    final result = await _linkFileAndTagUseCase(
+    final result = await linkFileAndTagUseCase(
       params: FileAndTagParams(
         filePath: event.file.path,
         tagName: event.tagName,
@@ -160,7 +160,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     LinkOrCreateTagEvent event,
     Emitter<TagState> emit,
   ) async {
-    final result = await _linkOrCreateTagUseCase(
+    final result = await linkOrCreateTagUseCase(
       params: FileAndTagParams(
         filePath: event.file.path,
         tagName: event.tagName,
@@ -179,7 +179,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     UnlinkFileAndTagEvent event,
     Emitter<TagState> emit,
   ) async {
-    final result = await _unlinkFileAndTagUseCase(
+    final result = await unlinkFileAndTagUseCase(
       params: FileAndTagParams(
         filePath: event.file.path,
         tagName: event.tagName,

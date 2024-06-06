@@ -5,12 +5,12 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entit
 import 'package:tagsurf_flutter/features/file_explorer/domain/repository/tag_repository.dart';
 
 class GetAllTagsUseCase implements UseCase<List<TagEntity>, void> {
-  final TagRepository _tagRepository;
+  final TagRepository tagRepository;
 
-  GetAllTagsUseCase(this._tagRepository);
+  GetAllTagsUseCase(this.tagRepository);
 
   @override
   Future<Either<Failure, List<TagEntity>>> call({void params}) async {
-    return await _tagRepository.getAllTags();
+    return await tagRepository.getAllTags();
   }
 }
