@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,16 +35,26 @@ class _FileTagsChipsWidgetState extends State<FileTagsChipsWidget> {
   bool isAddingTag = false;
   bool isFieldExpanded = false;
   final animationDuration = const Duration(milliseconds: 200);
+  Timer animationTimer = Timer(Duration.zero, () {});
 
   void shrink() {
     setState(() {
       isFieldExpanded = false;
     });
-    Future.delayed(animationDuration, () {
+    animationTimer = Timer(animationDuration, () {
       setState(() {
         isAddingTag = false;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    if (animationTimer.isActive) {
+      animationTimer.cancel();
+    }
+    isAddingTag = false;
+    super.dispose();
   }
 
   @override
