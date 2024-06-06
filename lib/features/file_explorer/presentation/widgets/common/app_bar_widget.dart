@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/pick_file.dart';
 
 AppBar appBar(BuildContext context, bool isFiltering, List<String> filters,

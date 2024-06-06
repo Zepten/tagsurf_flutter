@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/file/file_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';

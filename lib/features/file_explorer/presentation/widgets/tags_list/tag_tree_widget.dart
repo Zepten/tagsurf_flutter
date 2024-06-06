@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/bloc/tag/tag_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/delete_tag_confirmation.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/pick_color_dialog.dart';
