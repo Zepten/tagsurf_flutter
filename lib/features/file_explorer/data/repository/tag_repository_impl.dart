@@ -16,7 +16,7 @@ class TagRepositoryImpl implements TagRepository {
 
   TagRepositoryImpl(this.appDatabase);
 
-  Future<bool> _isCyclicDependency(
+  Future<bool> checkForCyclicDependency(
       String tagName, String? parentTagName) async {
     if (parentTagName == null) {
       return false;
@@ -42,7 +42,7 @@ class TagRepositoryImpl implements TagRepository {
       final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
       if (existingTag == null) {
         final isCyclicDependency =
-            await _isCyclicDependency(tag.name, tag.parentTagName);
+            await checkForCyclicDependency(tag.name, tag.parentTagName);
         if (isCyclicDependency) {
           return Left(TagsCyclicDependencyFailure(tags: [tag]));
         }
@@ -120,7 +120,7 @@ class TagRepositoryImpl implements TagRepository {
         return Left(TagsNotExistsFailure(tags: notExistingTags));
       }
       final isCyclicDependency =
-          await _isCyclicDependency(tag.name, parentTag?.name);
+          await checkForCyclicDependency(tag.name, parentTag?.name);
       if (!isCyclicDependency) {
         if (parentTag == null) {
           await appDatabase.tagDao.removeParentTag(tag.name);
