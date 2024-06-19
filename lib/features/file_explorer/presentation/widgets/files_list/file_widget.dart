@@ -157,8 +157,8 @@ class FileWidget extends StatelessWidget {
                 icon: const Icon(Icons.remove_circle, color: Colors.blue),
                 tooltip: 'Убрать файл',
                 onPressed: () {
-                  context.read<FileBloc>().add(UntrackFileEvent(
-                      file: file,
+                  context.read<FileBloc>().add(UntrackFilesEvent(
+                      files: [file],
                       isFiltering: isFiltering,
                       filters: filters.toList(),
                       searchQuery: searchQuery));

@@ -19,5 +19,5 @@ class FileModel extends Equatable {
   });
 
   @override
-  List<Object?> get props => [path, name, dateTimeAdded];
+  List<Object?> get props => [path, name];
 }

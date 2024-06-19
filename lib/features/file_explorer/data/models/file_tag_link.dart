@@ -40,5 +40,5 @@ class FileTagLinkModel extends Equatable {
   });
 
   @override
-  List<Object?> get props => [filePath, tagName, dateTimeAdded];
+  List<Object?> get props => [filePath, tagName];
 }

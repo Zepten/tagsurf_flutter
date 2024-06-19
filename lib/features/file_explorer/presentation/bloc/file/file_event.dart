@@ -34,38 +34,21 @@ class TrackFilesEvent extends FileEvent {
   List<Object?> get props => [files, isFiltering, filters];
 }
 
-class UpdateFileEvent extends FileEvent {
-  final FileEntity file;
+class UntrackFilesEvent extends FileEvent {
+  final List<FileEntity> files;
   final bool isFiltering;
   final List<String> filters;
   final String searchQuery;
 
-  UpdateFileEvent({
-    required this.file,
+  UntrackFilesEvent({
+    required this.files,
     required this.isFiltering,
     required this.filters,
     required this.searchQuery,
   });
 
   @override
-  List<Object?> get props => [file];
-}
-
-class UntrackFileEvent extends FileEvent {
-  final FileEntity file;
-  final bool isFiltering;
-  final List<String> filters;
-  final String searchQuery;
-
-  UntrackFileEvent({
-    required this.file,
-    required this.isFiltering,
-    required this.filters,
-    required this.searchQuery,
-  });
-
-  @override
-  List<Object?> get props => [file];
+  List<Object?> get props => [files];
 }
 
 class OpenFileEvent extends FileEvent {

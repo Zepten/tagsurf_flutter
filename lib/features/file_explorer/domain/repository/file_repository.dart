@@ -11,6 +11,5 @@ abstract class FileRepository {
   Future<Either<Failure, List<FileEntity>>> getTrackedFiles({required String searchQuery});
   Future<Either<Failure, FileEntity>> getTrackedFileByPath({required String path});
   Future<Either<Failure, void>> trackFiles({required List<FileEntity> files});
-  Future<Either<Failure, void>> updateFile({required FileEntity file});
-  Future<Either<Failure, void>> untrackFile({required FileEntity file});
+  Future<Either<Failure, void>> untrackFiles({required List<FileEntity> files});
 }

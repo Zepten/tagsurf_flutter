@@ -18,7 +18,6 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_all_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/open_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/update_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/change_tag_color.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
@@ -35,14 +34,13 @@ final sl = GetIt.instance;
 Future<void> init() async {
   //! Features: File Explorer
   //? BLoCs
-  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
   //? Use cases
   // File Use cases
   sl.registerLazySingleton<GetAllFilesFromDirectoryUseCase>(() => GetAllFilesFromDirectoryUseCase(sl()));
   sl.registerLazySingleton<GetTrackedFilesUseCase>(() => GetTrackedFilesUseCase(sl()));
-  sl.registerLazySingleton<UpdateFileUseCase>(() => UpdateFileUseCase(sl()));
   sl.registerLazySingleton<TrackFilesUseCase>(() => TrackFilesUseCase(sl()));
   sl.registerLazySingleton<UntrackFileUseCase>(() => UntrackFileUseCase(sl()));
   sl.registerLazySingleton<OpenFileUseCase>(() => OpenFileUseCase(sl()));

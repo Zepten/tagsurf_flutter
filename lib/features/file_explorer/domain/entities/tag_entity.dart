@@ -25,5 +25,5 @@ class TagEntity extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, parentTagName, color, dateTimeAdded];
+  List<Object?> get props => [name, parentTagName, color.value];
 }

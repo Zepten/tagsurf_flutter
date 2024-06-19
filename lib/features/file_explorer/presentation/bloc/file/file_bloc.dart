@@ -9,7 +9,6 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/open_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/track_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/untrack_file.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/update_file.dart';
 
 part 'file_event.dart';
 part 'file_state.dart';
@@ -17,7 +16,6 @@ part 'file_state.dart';
 class FileBloc extends Bloc<FileEvent, FileState> {
   // File UseCases
   final GetTrackedFilesUseCase getTrackedFilesUseCase;
-  final UpdateFileUseCase updateFileUseCase;
   final UntrackFileUseCase untrackFileUseCase;
   final TrackFilesUseCase trackMultipleFilesUseCase;
   final OpenFileUseCase openFileUseCase;
@@ -27,7 +25,6 @@ class FileBloc extends Bloc<FileEvent, FileState> {
 
   FileBloc(
     this.getTrackedFilesUseCase,
-    this.updateFileUseCase,
     this.untrackFileUseCase,
     this.trackMultipleFilesUseCase,
     this.getFilesByTagsUseCase,
@@ -36,8 +33,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   ) : super(FilesLoadingState()) {
     on<GetFilesEvent>(onGetFiles);
     on<TrackFilesEvent>(onTrackFiles);
-    on<UpdateFileEvent>(onUpdateFile);
-    on<UntrackFileEvent>(onUntrackFile);
+    on<UntrackFilesEvent>(onUntrackFile);
     on<OpenFileEvent>(onOpenFile);
   }
 
@@ -81,28 +77,11 @@ class FileBloc extends Bloc<FileEvent, FileState> {
     );
   }
 
-  void onUpdateFile(
-    UpdateFileEvent event,
-    Emitter<FileState> emit,
-  ) async {
-    final result = await updateFileUseCase(params: event.file);
-    result.fold(
-      (failure) => emit(FilesErrorState(failure: failure)),
-      (success) => add(
-        GetFilesEvent(
-          isFiltering: event.isFiltering,
-          filters: event.filters,
-          searchQuery: event.searchQuery,
-        ),
-      ),
-    );
-  }
-
   void onUntrackFile(
-    UntrackFileEvent event,
+    UntrackFilesEvent event,
     Emitter<FileState> emit,
   ) async {
-    final result = await untrackFileUseCase(params: event.file);
+    final result = await untrackFileUseCase(params: event.files);
     result.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => add(

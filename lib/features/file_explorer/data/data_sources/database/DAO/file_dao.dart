@@ -4,16 +4,10 @@ import 'package:tagsurf_flutter/features/file_explorer/data/models/file.dart';
 @dao
 abstract class FileDao {
   @Insert()
-  Future<void> insertFile(FileModel file);
-
-  @Insert()
   Future<void> insertFiles(List<FileModel> files);
 
-  @Update()
-  Future<void> updateFile(FileModel file);
-
   @delete
-  Future<void> deleteFile(FileModel file);
+  Future<void> deleteFiles(List<FileModel> files);
 
   @Query('SELECT * FROM FILES WHERE name LIKE :searchQuery ORDER BY date_time_added DESC')
   Future<List<FileModel>> getAllFiles(String searchQuery);
