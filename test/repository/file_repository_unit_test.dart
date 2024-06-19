@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/error/files_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
-import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service.dart';
+import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/file_system/file_system_service_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/file_repository_impl.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
@@ -16,7 +17,7 @@ Future<void> main() async {
     late Directory targetDir;
     late Directory emptyDir;
     late List<File> testFiles;
-    late List<FileEntity> matchFilesEntities;
+    late List<FileEntity> testFilesEntities;
 
     setUp(() async {
       // Database and file repository initialization
@@ -42,7 +43,7 @@ Future<void> main() async {
         File('${targetDir.path}\\folder 1\\folder 1.1\\5.dart'),
         File('${targetDir.path}\\folder 1\\folder 1.2\\6.cpp'),
         File('${targetDir.path}\\folder 2\\folder 2.1\\7.docx'),
-        File('${targetDir.path}\\folder 2\\folder 2.2\\8.html'),
+        File('${targetDir.path}\\folder 2\\folder 2.2\\8.txt'),
       ];
       for (final file in testFiles) {
         if (!await file.exists()) {
@@ -50,8 +51,11 @@ Future<void> main() async {
           debugPrint('Created test file: ${file.path}');
         }
       }
-      matchFilesEntities = testFiles
-          .map((file) => FileEntity(path: file.path))
+      testFilesEntities = testFiles
+          .map((file) => FileEntity(
+                path: file.path,
+                dateTimeAdded: DateTime.now(),
+              ))
           .toList(growable: false);
     });
 
@@ -61,97 +65,134 @@ Future<void> main() async {
 
     // File system methods
     test('Empty directory', () async {
-      final files = await fileRepository.getAllFilesFromDirectory(
-          targetDir: emptyDir.path);
-      expect(files, isEmpty);
+      final result = await fileRepository.getAllFilesFromDirectory(
+        targetDir: emptyDir.path,
+      );
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (files) => expect(files, isEmpty),
+      );
     });
 
     test('Directory with test files', () async {
-      final filesFromDirectory = await fileRepository.getAllFilesFromDirectory(
-          targetDir: targetDir.path);
-      expect(filesFromDirectory, equals(matchFilesEntities));
+      final result = await fileRepository.getAllFilesFromDirectory(
+        targetDir: targetDir.path,
+      );
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (filesFromDirectory) => expect(
+          filesFromDirectory,
+          equals(testFilesEntities),
+        ),
+      );
     });
 
     // Database methods
-    test('Track mock file', () async {
-      const file = FileEntity(path: 'test track');
+    test('Track not existing test file, expecting failure', () async {
+      final file = FileEntity(
+        path: 'not existing test track',
+        dateTimeAdded: DateTime.now(),
+      );
 
       // Track file
-      await fileRepository.trackFile(file: file);
+      await fileRepository.trackFiles(files: [file]);
 
       // Check if file is tracked
-      final actual = await fileRepository.getTrackedFileByPath(path: file.path);
-      expect(actual, equals(file));
+      final result = await fileRepository.getTrackedFileByPath(path: file.path);
+      result.fold(
+        (failure) => expect(failure, isA<FilesNotExistsFailure>()),
+        (files) => fail('Expecting failure'),
+      );
     });
 
-    test('Untrack mock file', () async {
-      const file = FileEntity(path: 'test untrack');
-
-      // Track file
-      await fileRepository.trackFile(file: file);
+    test('Track existing test files', () async {
+      // Track files
+      await fileRepository.trackFiles(files: testFilesEntities);
 
       // Check if file is tracked
-      final actual1 =
-          await fileRepository.getTrackedFileByPath(path: file.path);
-      expect(actual1, equals(file));
+      final result = await fileRepository.getTrackedFiles(searchQuery: '');
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (files) => expect(files, equals(testFilesEntities)),
+      );
+    });
 
-      // Untrack file
-      await fileRepository.untrackFile(file: file);
+    test('Track existing test files while files with same paths exists', () async {
+      // Track files
+      final resultOk = await fileRepository.trackFiles(files: testFilesEntities);
+
+      // Check if file tracking is successful
+      resultOk.fold(
+        (failure) =>
+            fail('Failure on file tracking (expecting success): $failure'),
+        (success) => null,
+      );
+
+      // Check if file is tracked
+      final result = await fileRepository.getTrackedFiles(searchQuery: '');
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (files) => expect(files, equals(testFilesEntities)),
+      );
+
+      // Track same files again
+      final resultNotOk = await fileRepository.trackFiles(files: testFilesEntities);
+
+      // Check if same tag creation is not successful
+      resultNotOk.fold(
+        (failure) => expect(failure, isA<FilesDuplicateFailure>()),
+        (success) => fail('Expecting failure on same files tracking'),
+      );
+    });
+
+    test('Untrack tracked test files', () async {
+      // Track files
+      await fileRepository.trackFiles(files: testFilesEntities);
+
+      // Check if files are tracked
+      final result1 = await fileRepository.getTrackedFiles(searchQuery: '');
+      result1.fold(
+        (failure) => fail('Failure on check if files are tracked: $failure'),
+        (files) => expect(files, equals(testFilesEntities)),
+      );
+
+      // Untrack files
+      await fileRepository.untrackFiles(files: testFilesEntities);
 
       // Check if file is untracked
-      final actual2 =
-          await fileRepository.getTrackedFileByPath(path: file.path);
-      expect(actual2, isNull);
+      final result2 = await fileRepository.getTrackedFiles(searchQuery: '');
+      result2.fold(
+        (failure) => fail('Failure on check if files are untracked: $failure'),
+        (files) => expect(files, isEmpty),
+      );
     });
 
-    test('Track multiple mock files', () async {
-      const files = [
-        FileEntity(path: 'test 1'),
-        FileEntity(path: 'test 2'),
-        FileEntity(path: 'test 3')
+    test('Search tracked test files', () async {
+      // Search result
+      const searchQuery = '.txt';
+      final searchResultFiles = [
+        testFilesEntities[0],
+        testFilesEntities[7],
       ];
 
-      // Batch track files
-      await fileRepository.trackFiles(files: files);
+      // Track files
+      await fileRepository.trackFiles(files: testFilesEntities);
 
       // Check if files are tracked
-      final actual = await fileRepository.getTrackedFiles();
-      expect(actual, equals(files));
-    });
+      final result1 = await fileRepository.getTrackedFiles(searchQuery: '');
+      result1.fold(
+        (failure) => fail('Failure on check if files are tracked: $failure'),
+        (files) => expect(files, equals(testFilesEntities)),
+      );
 
-    test('Get untracked files from target directory with no files in DB',
-        () async {
-      // Get untracked files from target directory
-      final actual = await fileRepository.getUntrackedFilesFromDirectory(
-          targetDir: targetDir.path);
-
-      // Check if untracked files are the same as test files
-      expect(actual, equals(matchFilesEntities));
-    });
-
-    test('Get untracked files from target directory with multiple files in DB',
-        () async {
-      final matchFilesUntracked = List.from(matchFilesEntities);
-      final matchFilesTracked = List.empty(growable: true);
-      const trackedFilesIndices = [1, 3, 5];
-
-      // Track some files from test files and remove them from untracked match files
-      for (final index in trackedFilesIndices) {
-        await fileRepository.trackFile(file: matchFilesEntities[index]);
-        matchFilesTracked.add(matchFilesEntities[index]);
-        matchFilesUntracked.remove(matchFilesEntities[index]);
-      }
-
-      // Check if files are tracked
-      final actualTrackedFiles = await fileRepository.getTrackedFiles();
-      expect(actualTrackedFiles, equals(matchFilesTracked));
-
-      // Get untracked files from target directory
-      final actual = await fileRepository.getUntrackedFilesFromDirectory(
-          targetDir: targetDir.path);
-
-      // Check if returned untracked files are the same as untracked match files
-      expect(actual, equals(matchFilesUntracked));
+      // Search files
+      final result2 = await fileRepository.getTrackedFiles(
+        searchQuery: searchQuery,
+      );
+      result2.fold(
+        (failure) => fail('Failure on search files: $failure'),
+        (files) => expect(files, equals(searchResultFiles)),
+      );
     });
   });
 }

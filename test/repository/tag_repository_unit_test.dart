@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/error/tags_failures.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/data_sources/database/app_database.dart';
 import 'package:tagsurf_flutter/features/file_explorer/data/repository/tag_repository_impl.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/entities/color_code.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 
 Future<void> main() async {
@@ -20,149 +21,121 @@ Future<void> main() async {
     });
 
     test('Create tag', () async {
-      const tag = TagEntity(
-          name: 'test tag',
-          parentTagName: null,
-          colorCode: ColorCode(red: 255, green: 255, blue: 255));
+      final testTag = TagEntity(
+        name: 'test tag',
+        parentTagName: null,
+        color: Colors.red,
+        dateTimeAdded: DateTime.now(),
+      );
 
       // Create tag
-      await tagRepository.createTag(tag: tag);
+      await tagRepository.createTag(tag: testTag);
 
       // Check if tag is created
-      final actual = await tagRepository.getTagByName(name: tag.name);
-      expect(actual, equals(tag));
-    });
-
-    test('Create multiple tags', () async {
-      const tags = [
-        TagEntity(
-            name: 'test tag 1',
-            parentTagName: null,
-            colorCode: ColorCode(red: 255, green: 0, blue: 0)),
-        TagEntity(
-            name: 'test tag 2',
-            parentTagName: null,
-            colorCode: ColorCode(red: 0, green: 255, blue: 0)),
-        TagEntity(
-            name: 'test tag 3',
-            parentTagName: null,
-            colorCode: ColorCode(red: 0, green: 0, blue: 255))
-      ];
-
-      // Create tag
-      await tagRepository.createTags(tags: tags);
-
-      // Check if tag is created
-      final actual = await tagRepository.getAllTags();
-      expect(actual, equals(tags));
-    });
-
-    test('Update tag', () async {
-      const tag = TagEntity(
-          name: 'test tag',
-          parentTagName: null,
-          colorCode: ColorCode(red: 255, green: 255, blue: 255));
-
-      // Create tag
-      await tagRepository.createTag(tag: tag);
-      final actualCreated = await tagRepository.getTagByName(name: tag.name);
-      expect(actualCreated, equals(tag));
-
-      // Update tag
-      const tagUpdated = TagEntity(
-          name: 'test tag',
-          parentTagName: null,
-          colorCode: ColorCode(red: 0, green: 0, blue: 0));
-      await tagRepository.updateTag(tag: tagUpdated);
-
-      // Check if tag is updated
-      final actualUpdated =
-          await tagRepository.getTagByName(name: tagUpdated.name);
-      expect(actualUpdated, equals(tagUpdated));
+      final result = await tagRepository.getTagByName(name: testTag.name);
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (tag) => expect(tag, equals(testTag)),
+      );
     });
 
     test('Delete tag', () async {
-      const tag = TagEntity(
-          name: 'test tag',
-          parentTagName: null,
-          colorCode: ColorCode(red: 255, green: 255, blue: 255));
+      final testTag = TagEntity(
+        name: 'test tag',
+        parentTagName: null,
+        color: Colors.red,
+        dateTimeAdded: DateTime.now(),
+      );
 
       // Create tag
-      await tagRepository.createTag(tag: tag);
-      final actualCreated = await tagRepository.getTagByName(name: tag.name);
-      expect(actualCreated, equals(tag));
+      await tagRepository.createTag(tag: testTag);
+      final createResult = await tagRepository.getTagByName(name: testTag.name);
+      createResult.fold(
+        (failure) => fail('Failure: $failure'),
+        (tag) => expect(tag, equals(testTag)),
+      );
 
       // Delete tag
-      await tagRepository.deleteTag(tag: tag);
+      await tagRepository.deleteTag(tag: testTag);
 
       // Check if tag is deleted
-      final actualDeleted = await tagRepository.getTagByName(name: tag.name);
-      expect(actualDeleted, isNull);
+      final deleteResult = await tagRepository.getTagByName(name: testTag.name);
+      deleteResult.fold(
+        (failure) => expect(failure, isA<TagsNotExistsFailure>()),
+        (tag) => fail('Expecting TagsNotExistsFailure'),
+      );
     });
 
     test('Get all tags', () async {
-      const tags = [
+      final testTags = [
         TagEntity(
-            name: 'test tag 1',
-            parentTagName: null,
-            colorCode: ColorCode(red: 255, green: 0, blue: 0)),
+          name: 'test tag 1',
+          parentTagName: null,
+          color: Colors.red,
+          dateTimeAdded: DateTime.now(),
+        ),
         TagEntity(
-            name: 'test tag 2',
-            parentTagName: null,
-            colorCode: ColorCode(red: 0, green: 255, blue: 0)),
+          name: 'test tag 2',
+          parentTagName: null,
+          color: Colors.green,
+          dateTimeAdded: DateTime.now(),
+        ),
         TagEntity(
-            name: 'test tag 3',
-            parentTagName: null,
-            colorCode: ColorCode(red: 0, green: 0, blue: 255)),
+          name: 'test tag 3',
+          parentTagName: null,
+          color: Colors.blue,
+          dateTimeAdded: DateTime.now(),
+        ),
       ];
 
       // Create tags
-      for (final tag in tags) {
+      for (final tag in testTags) {
         await tagRepository.createTag(tag: tag);
       }
 
       // Get all tags
-      final actual = await tagRepository.getAllTags();
+      final result = await tagRepository.getAllTags();
 
       // Check if returned tags are the same as test tags
-      expect(actual, equals(tags));
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (tags) => expect(tags, equals(testTags)),
+      );
     });
 
-    test('Get parent tag', () async {
-      const parentTag = TagEntity(
-          name: 'test parent tag',
-          parentTagName: null,
-          colorCode: ColorCode(red: 255, green: 255, blue: 255));
-      const childTag = TagEntity(
-          name: 'test child tag',
-          parentTagName: 'test parent tag',
-          colorCode: ColorCode(red: 255, green: 255, blue: 255));
+    test('Create tag while tag with same name exists', () async {
+      final testTag = TagEntity(
+        name: 'test tag',
+        parentTagName: null,
+        color: Colors.red,
+        dateTimeAdded: DateTime.now(),
+      );
 
-      // Create parent tag
-      await tagRepository.createTag(tag: parentTag);
+      // Create tag
+      final resultOk = await tagRepository.createTag(tag: testTag);
 
-      // Check if parent tag is created
-      final actualParentCreated =
-          await tagRepository.getTagByName(name: 'test parent tag');
-      expect(actualParentCreated, equals(parentTag));
+      // Check if tag creation is successful
+      resultOk.fold(
+        (failure) =>
+            fail('Failure on tag creation (expecting success): $failure'),
+        (success) => null,
+      );
 
-      // Create child tag
-      await tagRepository.createTag(tag: childTag);
+      // Check if tag is created
+      final result = await tagRepository.getTagByName(name: testTag.name);
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (tag) => expect(tag, equals(testTag)),
+      );
 
-      // Check if child tag is created
-      final actualChildCreated =
-          await tagRepository.getTagByName(name: 'test child tag');
-      expect(actualChildCreated, equals(childTag));
+      // Create same tag again
+      final resultNotOk = await tagRepository.createTag(tag: testTag);
 
-      // Get parent tag of child tag
-      final actualParents =
-          await tagRepository.getParentTags(childTag: childTag);
-      expect(actualParents, equals([parentTag]));
-
-      // Get parent tag of parent tag
-      final actualParentParents =
-          await tagRepository.getParentTags(childTag: parentTag);
-      expect(actualParentParents, isEmpty);
+      // Check if same tag creation is not successful
+      resultNotOk.fold(
+        (failure) => expect(failure, isA<TagsDuplicateFailure>()),
+        (success) => fail('Expecting failure on same tag creation'),
+      );
     });
   });
 }
