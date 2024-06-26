@@ -1,12 +1,13 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 
 Future<void> pickFile(
   BuildContext context,
-  bool isFiltering,
+  FilteringModes filteringMode,
   List<String> filters,
   String searchQuery,
 ) async {
@@ -24,7 +25,7 @@ Future<void> pickFile(
         .toList();
     fileBloc.add(TrackFilesEvent(
         files: files,
-        isFiltering: isFiltering,
+        filteringMode: filteringMode,
         filters: filters,
         searchQuery: searchQuery));
   }

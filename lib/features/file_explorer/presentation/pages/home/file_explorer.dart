@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/config/constants/sort_by.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/app_bar_widget.dart';
@@ -22,8 +23,11 @@ class _FileExplorerState extends State<FileExplorer>
   final double minTagsListWidth = 250;
   late double maxTagsListWidth;
 
+  // TODO: make separate BLoC for filtering
   Set<String> filters = {};
-  bool isFiltering = false;
+  FilteringModes filteringMode = FilteringModes.all;
+  FilteringModes lastFilteringMode =
+      FilteringModes.all; // For unselect and disable filtration
   String _searchQuery = '';
   List<String> _allTags = List.empty();
   SortBy sortBy = SortBy.dateAddedDesc;
@@ -59,10 +63,9 @@ class _FileExplorerState extends State<FileExplorer>
   }
 
   void reloadFiles() {
-    print(
-        'isFiltering: $isFiltering, filters: $filters, search: $_searchQuery');
+    print('_allTags: $_allTags, filters: $filters, filteringMode: $filteringMode, lastFilteringMode: $lastFilteringMode');
     context.read<FileBloc>().add(GetFilesEvent(
-        isFiltering: isFiltering,
+        filteringMode: filteringMode,
         filters: filters.toList(),
         searchQuery: _searchQuery));
   }
@@ -74,14 +77,20 @@ class _FileExplorerState extends State<FileExplorer>
       } else {
         filters.remove(tag.name);
       }
-      isFiltering = true;
-      reloadFiles();
+      if (_allTags.length == filters.length) {
+        filteringMode = FilteringModes.allTagged;
+      } else if (filters.isEmpty) {
+        filteringMode = lastFilteringMode;
+      } else {
+        filteringMode = FilteringModes.someTagged;
+      }
     });
+    reloadFiles();
   }
 
   void selectAllFilters(List<TagEntity> tags) {
     setState(() {
-      isFiltering = true;
+      filteringMode = FilteringModes.allTagged;
       filters.addAll(tags.map((tag) => tag.name).toList());
     });
     reloadFiles();
@@ -89,7 +98,8 @@ class _FileExplorerState extends State<FileExplorer>
 
   void unselectAllFilters() {
     setState(() {
-      isFiltering = true;
+      filteringMode = FilteringModes.allUntagged;
+      lastFilteringMode = filteringMode;
       filters.clear();
     });
     reloadFiles();
@@ -97,7 +107,8 @@ class _FileExplorerState extends State<FileExplorer>
 
   void disableFiltering() {
     setState(() {
-      isFiltering = false;
+      filteringMode = FilteringModes.all;
+      lastFilteringMode = filteringMode;
       filters.clear();
     });
     reloadFiles();
@@ -127,14 +138,14 @@ class _FileExplorerState extends State<FileExplorer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(context, isFiltering, filters.toList(), _searchQuery),
+      appBar: appBar(context, filteringMode, filters.toList(), _searchQuery),
       body: Row(
         children: [
           // Список тегов
           SizedBox(
             width: tagsListWidth,
             child: TagsPaneWidget(
-              isFiltering: isFiltering,
+              filteringMode: filteringMode,
               filters: filters,
               onTagSelected: updateFilters,
               onSelectAllFilters: selectAllFilters,
@@ -163,7 +174,7 @@ class _FileExplorerState extends State<FileExplorer>
           ),
           // Список файлов
           FilesPaneWidget(
-            isFiltering: isFiltering,
+            filteringMode: filteringMode,
             filters: filters,
             onTagSelected: updateFilters,
             onSearch: searchForFiles,

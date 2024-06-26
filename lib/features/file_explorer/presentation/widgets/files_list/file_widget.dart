@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
@@ -9,7 +10,7 @@ import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/file
 
 class FileWidget extends StatelessWidget {
   final FileEntity file;
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final Set<String> filters;
   final Function(TagEntity, bool) onTagSelected;
   final String searchQuery;
@@ -18,7 +19,7 @@ class FileWidget extends StatelessWidget {
   const FileWidget({
     super.key,
     required this.file,
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.onTagSelected,
     required this.searchQuery,
@@ -126,7 +127,7 @@ class FileWidget extends StatelessWidget {
                     FileTagsChipsWidget(
                       key: ValueKey(file.path),
                       file: file,
-                      isFiltering: isFiltering,
+                      filteringMode: filteringMode,
                       filters: filters,
                       onTagSelected: onTagSelected,
                       searchQuery: searchQuery,
@@ -159,7 +160,7 @@ class FileWidget extends StatelessWidget {
                 onPressed: () {
                   context.read<FileBloc>().add(UntrackFilesEvent(
                       files: [file],
-                      isFiltering: isFiltering,
+                      filteringMode: filteringMode,
                       filters: filters.toList(),
                       searchQuery: searchQuery));
                 },

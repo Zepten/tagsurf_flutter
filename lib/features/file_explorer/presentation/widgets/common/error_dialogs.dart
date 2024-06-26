@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/files_failures.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/info_files_list_widget.dart';
@@ -9,7 +10,7 @@ import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/comm
 void showErrorDialog(
   BuildContext context,
   Failure failure,
-  bool isFiltering,
+  FilteringModes filteringMode,
   List<String> filters,
   String searchQuery,
 ) {
@@ -24,7 +25,7 @@ void showErrorDialog(
                 onPopInvoked: (bool didPop) async {
                   if (didPop) {
                     context.read<FileBloc>().add(GetFilesEvent(
-                          isFiltering: isFiltering,
+                          filteringMode: filteringMode,
                           filters: filters,
                           searchQuery: searchQuery,
                         ));

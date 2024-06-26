@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_tree_widget.dart';
 
 class TagsPaneWidget extends StatelessWidget {
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final Set<String> filters;
   final Function(TagEntity, bool) onTagSelected;
   final Function(List<TagEntity>) onSelectAllFilters;
@@ -19,7 +19,7 @@ class TagsPaneWidget extends StatelessWidget {
 
   const TagsPaneWidget({
     super.key,
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.onTagSelected,
     required this.onSelectAllFilters,
@@ -42,8 +42,8 @@ class TagsPaneWidget extends StatelessWidget {
       listenWhen: (previous, current) => current is TagsErrorState,
       listener: (context, state) {
         if (state is TagsErrorState) {
-          showErrorDialog(context, state.failure, isFiltering, filters.toList(),
-              searchQuery);
+          showErrorDialog(context, state.failure, filteringMode,
+              filters.toList(), searchQuery);
         }
       },
       child: BlocBuilder<TagBloc, TagState>(
@@ -60,11 +60,15 @@ class TagsPaneWidget extends StatelessWidget {
           if (state is TagsLoadedState) {
             onLoadAllTags(state.tags);
             List<bool> isSelected = [
-              state.tags.isNotEmpty &&
-                  isFiltering &&
-                  setEquals(state.tags.map((tag) => tag.name).toSet(), filters),
-              state.tags.isNotEmpty && isFiltering && filters.isEmpty,
-              state.tags.isEmpty || !isFiltering,
+              filteringMode != FilteringModes.someTagged &&
+                  filteringMode == FilteringModes.allTagged &&
+                  state.tags.isNotEmpty,
+              filteringMode != FilteringModes.someTagged &&
+                  filteringMode == FilteringModes.allUntagged &&
+                  state.tags.isNotEmpty,
+              filteringMode != FilteringModes.someTagged &&
+                      filteringMode == FilteringModes.all ||
+                  state.tags.isEmpty,
             ];
             return Column(
               key: const ValueKey('tags_loaded'),

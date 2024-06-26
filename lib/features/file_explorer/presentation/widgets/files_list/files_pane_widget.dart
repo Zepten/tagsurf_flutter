@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_widget.dart';
 
 class FilesPaneWidget extends StatelessWidget {
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final Set<String> filters;
   final Function(TagEntity, bool) onTagSelected;
   final Function(String) onSearch;
@@ -16,7 +17,7 @@ class FilesPaneWidget extends StatelessWidget {
 
   const FilesPaneWidget({
     super.key,
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.onTagSelected,
     required this.onSearch,
@@ -77,7 +78,7 @@ class FilesPaneWidget extends StatelessWidget {
               listenWhen: (previous, current) => current is FilesErrorState,
               listener: (context, state) {
                 if (state is FilesErrorState) {
-                  showErrorDialog(context, state.failure, isFiltering,
+                  showErrorDialog(context, state.failure, filteringMode,
                       filters.toList(), searchQuery);
                 }
               },
@@ -96,7 +97,7 @@ class FilesPaneWidget extends StatelessWidget {
                         return FileWidget(
                           key: ValueKey(state.files[index].path),
                           file: state.files[index],
-                          isFiltering: isFiltering,
+                          filteringMode: filteringMode,
                           filters: filters,
                           onTagSelected: onTagSelected,
                           searchQuery: searchQuery,

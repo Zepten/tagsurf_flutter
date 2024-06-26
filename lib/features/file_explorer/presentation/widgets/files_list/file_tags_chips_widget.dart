@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
@@ -11,7 +12,7 @@ import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/file
 
 class FileTagsChipsWidget extends StatefulWidget {
   final FileEntity file;
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final Set<String> filters;
   final Function(TagEntity, bool) onTagSelected;
   final String searchQuery;
@@ -20,7 +21,7 @@ class FileTagsChipsWidget extends StatefulWidget {
   const FileTagsChipsWidget({
     super.key,
     required this.file,
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.onTagSelected,
     required this.searchQuery,
@@ -69,7 +70,7 @@ class _FileTagsChipsWidgetState extends State<FileTagsChipsWidget> {
       listenWhen: (previous, current) => current is TagsErrorState,
       listener: (context, state) {
         if (state is TagsErrorState) {
-          showErrorDialog(context, state.failure, widget.isFiltering,
+          showErrorDialog(context, state.failure, widget.filteringMode,
               widget.filters.toList(), widget.searchQuery);
         }
       },
