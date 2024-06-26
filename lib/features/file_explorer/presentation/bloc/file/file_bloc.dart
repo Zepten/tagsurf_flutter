@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/error/failure.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_files_by_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/get_untagged_files.dart';
@@ -43,16 +44,24 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   ) async {
     emit(FilesLoadingState());
     Either<Failure, List<FileEntity>> files;
-    if (event.isFiltering) {
-      if (event.filters.isEmpty) {
-        files = await getUntaggedFilesUseCase(params: event.searchQuery);
-      } else {
+    switch (event.filteringMode) {
+      // Все файлы (с тегами и без)
+      case FilteringModes.all:
+        files = await getTrackedFilesUseCase(params: event.searchQuery);
+        break;
+      // Все ИЛИ некоторые файлы у которых есть теги
+      case FilteringModes.allTagged || FilteringModes.someTagged:
         files = await getFilesByTagsUseCase(
-            params: GetFilesByTagsUseCaseParams(
-                tagsNames: event.filters, searchQuery: event.searchQuery));
-      }
-    } else {
-      files = await getTrackedFilesUseCase(params: event.searchQuery);
+          params: GetFilesByTagsUseCaseParams(
+            tagsNames: event.filters,
+            searchQuery: event.searchQuery,
+          ),
+        );
+        break;
+      // Все файлы у которых нет тегов
+      case FilteringModes.allUntagged:
+        files = await getUntaggedFilesUseCase(params: event.searchQuery);
+        break;
     }
     files.fold(
       (failure) => emit(FilesErrorState(failure: failure)),
@@ -69,7 +78,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => add(
         GetFilesEvent(
-          isFiltering: event.isFiltering,
+          filteringMode: event.filteringMode,
           filters: event.filters,
           searchQuery: event.searchQuery,
         ),
@@ -86,7 +95,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
       (failure) => emit(FilesErrorState(failure: failure)),
       (success) => add(
         GetFilesEvent(
-          isFiltering: event.isFiltering,
+          filteringMode: event.filteringMode,
           filters: event.filters,
           searchQuery: event.searchQuery,
         ),
