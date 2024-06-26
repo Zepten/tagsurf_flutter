@@ -6,6 +6,7 @@ import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/fi
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_widget.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/pick_file.dart';
 
 class FilesPaneWidget extends StatelessWidget {
   final FilteringModes filteringMode;
@@ -109,30 +110,55 @@ class FilesPaneWidget extends StatelessWidget {
                       );
                     } else {
                       // TODO: "Добавьте файлы"
-                      return const Center(
-                        key: ValueKey('files_not_found'),
+                      String infoText;
+                      switch (filteringMode) {
+                        case FilteringModes.all:
+                          infoText = 'Добавьте файлы в Tagsurf';
+                          break;
+                        case FilteringModes.someTagged:
+                          infoText = 'Файлы с выбранными тегами не найдены';
+                          break;
+                        case FilteringModes.allTagged:
+                          infoText = 'Файлы с тегами не найдены';
+                          break;
+                        case FilteringModes.allUntagged:
+                          infoText = 'Файлы без тегов не найдены';
+                          break;
+                      }
+                      return Center(
+                        key: const ValueKey('files_not_found'),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                              size: 64,
+                            filteringMode == FilteringModes.all
+                                ? IconButton(
+                                    onPressed: () async => await pickFile(
+                                        context,
+                                        filteringMode,
+                                        filters.toList(),
+                                        searchQuery),
+                                    icon: const Icon(
+                                      Icons.add_circle_rounded,
+                                      color: Colors.blue,
+                                      size: 64,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.search_off_outlined,
+                                    color: Colors.grey,
+                                    size: 64,
+                                  ),
+                            const SizedBox(height: 8),
+                            Text(
+                              infoText,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: (filteringMode == FilteringModes.all
+                                    ? Colors.blue
+                                    : Colors.grey),
+                              ),
                             ),
-                            SizedBox(height: 8),
-                            Text('Файлы не найдены',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
-                                )),
-                            SizedBox(height: 4),
-                            Text('Попробуйте изменить условия поиска',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.grey,
-                                )),
                           ],
                         ),
                       );
