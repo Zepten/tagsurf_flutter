@@ -43,7 +43,7 @@ class RenameTagEvent extends TagEvent {
   RenameTagEvent({required this.tag, required this.newName});
 
   @override
-  List<Object?> get props => [tag];
+  List<Object?> get props => [tag, newName];
 }
 
 class ChangeTagColorEvent extends TagEvent {
@@ -53,7 +53,7 @@ class ChangeTagColorEvent extends TagEvent {
   ChangeTagColorEvent({required this.tag, required this.color});
 
   @override
-  List<Object?> get props => [tag];
+  List<Object?> get props => [tag, color];
 }
 
 // File-tag linking events
