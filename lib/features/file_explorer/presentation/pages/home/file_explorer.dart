@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/config/constants/sort_by.dart';
@@ -23,7 +24,6 @@ class _FileExplorerState extends State<FileExplorer>
   final double minTagsListWidth = 250;
   late double maxTagsListWidth;
 
-  // TODO: make separate BLoC for filtering
   Set<String> filters = {};
   FilteringModes filteringMode = FilteringModes.all;
   FilteringModes lastFilteringMode =
@@ -63,11 +63,22 @@ class _FileExplorerState extends State<FileExplorer>
   }
 
   void reloadFiles() {
-    print('_allTags: $_allTags, filters: $filters, filteringMode: $filteringMode, lastFilteringMode: $lastFilteringMode');
     context.read<FileBloc>().add(GetFilesEvent(
         filteringMode: filteringMode,
         filters: filters.toList(),
         searchQuery: _searchQuery));
+  }
+
+  void updateFilteringMode() {
+    setState(() {
+      if (setEquals(_allTags.toSet(), filters)) {
+        filteringMode = FilteringModes.allTagged;
+      } else if (filters.isEmpty) {
+        filteringMode = lastFilteringMode;
+      } else {
+        filteringMode = FilteringModes.someTagged;
+      }
+    });
   }
 
   void updateFilters(TagEntity tag, bool isSelected) {
@@ -77,14 +88,8 @@ class _FileExplorerState extends State<FileExplorer>
       } else {
         filters.remove(tag.name);
       }
-      if (_allTags.length == filters.length) {
-        filteringMode = FilteringModes.allTagged;
-      } else if (filters.isEmpty) {
-        filteringMode = lastFilteringMode;
-      } else {
-        filteringMode = FilteringModes.someTagged;
-      }
     });
+    updateFilteringMode();
     reloadFiles();
   }
 
@@ -126,6 +131,7 @@ class _FileExplorerState extends State<FileExplorer>
       setState(() {
         _allTags = allTags.map((tag) => tag.name).toList();
       });
+      updateFilteringMode();
     });
   }
 
