@@ -91,21 +91,52 @@ class FilesPaneWidget extends StatelessWidget {
                     );
                   }
                   if (state is FilesLoadedState) {
-                    return ListView.builder(
-                      key: ValueKey(state.files),
-                      itemBuilder: (context, index) {
-                        return FileWidget(
-                          key: ValueKey(state.files[index].path),
-                          file: state.files[index],
-                          filteringMode: filteringMode,
-                          filters: filters,
-                          onTagSelected: onTagSelected,
-                          searchQuery: searchQuery,
-                          allTags: allTags,
-                        );
-                      },
-                      itemCount: state.files.length,
-                    );
+                    if (state.files.isNotEmpty) {
+                      return ListView.builder(
+                        key: ValueKey(state.files),
+                        itemBuilder: (context, index) {
+                          return FileWidget(
+                            key: ValueKey(state.files[index].path),
+                            file: state.files[index],
+                            filteringMode: filteringMode,
+                            filters: filters,
+                            onTagSelected: onTagSelected,
+                            searchQuery: searchQuery,
+                            allTags: allTags,
+                          );
+                        },
+                        itemCount: state.files.length,
+                      );
+                    } else {
+                      // TODO: "Добавьте файлы"
+                      return const Center(
+                        key: ValueKey('files_not_found'),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search,
+                              color: Colors.grey,
+                              size: 64,
+                            ),
+                            SizedBox(height: 8),
+                            Text('Файлы не найдены',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                )),
+                            SizedBox(height: 4),
+                            Text('Попробуйте изменить условия поиска',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.grey,
+                                )),
+                          ],
+                        ),
+                      );
+                    }
                   }
                   return const SizedBox.shrink(
                     key: ValueKey('files_empty'),
