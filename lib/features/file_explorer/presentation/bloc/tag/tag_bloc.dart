@@ -65,7 +65,6 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   void onGetAllTags(GetAllTagsEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
     final tags = await getAllTagsUseCase();
-    print('GetAllTagsEvent, tags: $tags');
     tags.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
       (tags) => emit(TagsLoadedState(tags: tags)),
@@ -133,7 +132,6 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   ) async {
     emit(TagsForFileLoadingState(file: event.file));
     final tags = await getTagsByFileUseCase(params: event.file);
-    print('GetTagsByFileEvent: ${event.file.path} : $tags');
     tags.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
       (tags) => emit(TagsForFileLoadedState(file: event.file, tags: tags)),
