@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
@@ -111,18 +112,27 @@ class FilesPaneWidget extends StatelessWidget {
                     } else {
                       // TODO: "Добавьте файлы"
                       String infoText;
+                      final isSearchQueryEmpty =
+                          SearchQueryFormatter.format(searchQuery).isEmpty;
                       switch (filteringMode) {
                         case FilteringModes.all:
-                          infoText = 'Добавьте файлы в Tagsurf';
+                          if (searchQuery.isEmpty) {
+                            infoText = 'Добавьте файлы в Tagsurf';
+                          } else {
+                            infoText = 'Файлы не найдены по запросу';
+                          }
                           break;
                         case FilteringModes.someTagged:
-                          infoText = 'Файлы с выбранными тегами не найдены';
+                          infoText =
+                              'Файлы с указанными тегами не найдены${isSearchQueryEmpty ? '' : ' по запросу'}';
                           break;
                         case FilteringModes.allTagged:
-                          infoText = 'Файлы с тегами не найдены';
+                          infoText =
+                              'Файлы с тегами не найдены${isSearchQueryEmpty ? '' : ' по запросу'}';
                           break;
                         case FilteringModes.allUntagged:
-                          infoText = 'Файлы без тегов не найдены';
+                          infoText =
+                              'Файлы без тегов не найдены${isSearchQueryEmpty ? '' : ' по запросу'}';
                           break;
                       }
                       return Center(
@@ -130,7 +140,8 @@ class FilesPaneWidget extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            filteringMode == FilteringModes.all
+                            filteringMode == FilteringModes.all &&
+                                    isSearchQueryEmpty
                                 ? IconButton(
                                     onPressed: () async => await pickFile(
                                         context,
@@ -154,7 +165,8 @@ class FilesPaneWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: (filteringMode == FilteringModes.all
+                                color: (filteringMode == FilteringModes.all &&
+                                        isSearchQueryEmpty
                                     ? Colors.blue
                                     : Colors.grey),
                               ),
