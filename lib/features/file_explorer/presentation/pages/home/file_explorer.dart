@@ -71,7 +71,10 @@ class _FileExplorerState extends State<FileExplorer>
 
   void updateFilteringMode() {
     setState(() {
-      if (setEquals(_allTags.toSet(), filters)) {
+      if (_allTags.isEmpty) {
+        filteringMode = FilteringModes.all;
+        lastFilteringMode = filteringMode;
+      } else if (setEquals(_allTags.toSet(), filters)) {
         filteringMode = FilteringModes.allTagged;
       } else if (filters.isEmpty) {
         filteringMode = lastFilteringMode;
