@@ -3,52 +3,52 @@ part of 'file_bloc.dart';
 abstract class FileEvent extends Equatable {}
 
 class GetFilesEvent extends FileEvent {
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final List<String> filters;
   final String searchQuery;
 
   GetFilesEvent({
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.searchQuery,
   });
 
   @override
-  List<Object?> get props => [filters];
+  List<Object?> get props => [filteringMode, filters, searchQuery];
 }
 
 class TrackFilesEvent extends FileEvent {
   final List<FileEntity> files;
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final List<String> filters;
   final String searchQuery;
 
   TrackFilesEvent({
     required this.files,
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.searchQuery,
   });
 
   @override
-  List<Object?> get props => [files, isFiltering, filters];
+  List<Object?> get props => [files, filteringMode, filters, searchQuery];
 }
 
 class UntrackFilesEvent extends FileEvent {
   final List<FileEntity> files;
-  final bool isFiltering;
+  final FilteringModes filteringMode;
   final List<String> filters;
   final String searchQuery;
 
   UntrackFilesEvent({
     required this.files,
-    required this.isFiltering,
+    required this.filteringMode,
     required this.filters,
     required this.searchQuery,
   });
 
   @override
-  List<Object?> get props => [files];
+  List<Object?> get props => [files, filteringMode, filters, searchQuery];
 }
 
 class OpenFileEvent extends FileEvent {
