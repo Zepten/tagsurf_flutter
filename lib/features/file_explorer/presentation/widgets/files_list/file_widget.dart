@@ -6,6 +6,7 @@ import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/fi
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/confirmations/untrack_file_confirmation.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_tags_chips_widget.dart';
 
 class FileWidget extends StatelessWidget {
@@ -157,12 +158,16 @@ class FileWidget extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.remove_circle, color: Colors.blue),
                 tooltip: 'Убрать файл',
-                onPressed: () {
-                  context.read<FileBloc>().add(UntrackFilesEvent(
-                      files: [file],
-                      filteringMode: filteringMode,
-                      filters: filters.toList(),
-                      searchQuery: searchQuery));
+                onPressed: () async {
+                  final shouldUntrack =
+                      await showFileUntrackConfirmation(context, file);
+                  if (context.mounted && shouldUntrack) {
+                    context.read<FileBloc>().add(UntrackFilesEvent(
+                        files: [file],
+                        filteringMode: filteringMode,
+                        filters: filters.toList(),
+                        searchQuery: searchQuery));
+                  }
                 },
               ),
             ],
