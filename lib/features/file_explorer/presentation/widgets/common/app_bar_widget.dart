@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/pick_file.dart';
 
 AppBar appBar(
+  Function reloadLists,
   BuildContext context,
   FilteringModes filteringMode,
   List<String> filters,
@@ -18,16 +18,13 @@ AppBar appBar(
     ),
     centerTitle: false,
     actions: [
-      // Кнопка обновления списка файлов и тегов
+      // Кнопка обновления списков файлов и тегов
       IconButton(
         onPressed: () {
-          context.read<FileBloc>().add(GetFilesEvent(
-              filteringMode: FilteringModes.all,
-              filters: List.empty(),
-              searchQuery: searchQuery));
           context.read<TagBloc>().add(GetAllTagsEvent());
+          reloadLists();
         },
-        tooltip: 'Обновить',
+        tooltip: 'Обновить списки',
         icon: const Icon(
           Icons.refresh,
           color: Colors.white,

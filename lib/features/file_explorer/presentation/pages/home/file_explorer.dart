@@ -62,7 +62,7 @@ class _FileExplorerState extends State<FileExplorer>
     super.dispose();
   }
 
-  void reloadFiles() {
+  void reloadLists() {
     context.read<FileBloc>().add(GetFilesEvent(
         filteringMode: filteringMode,
         filters: filters.toList(),
@@ -93,7 +93,7 @@ class _FileExplorerState extends State<FileExplorer>
       }
     });
     updateFilteringMode();
-    reloadFiles();
+    reloadLists();
   }
 
   void selectAllFilters(List<TagEntity> tags) {
@@ -101,7 +101,7 @@ class _FileExplorerState extends State<FileExplorer>
       filteringMode = FilteringModes.allTagged;
       filters.addAll(tags.map((tag) => tag.name).toList());
     });
-    reloadFiles();
+    reloadLists();
   }
 
   void unselectAllFilters() {
@@ -110,7 +110,7 @@ class _FileExplorerState extends State<FileExplorer>
       lastFilteringMode = filteringMode;
       filters.clear();
     });
-    reloadFiles();
+    reloadLists();
   }
 
   void disableFiltering() {
@@ -119,14 +119,14 @@ class _FileExplorerState extends State<FileExplorer>
       lastFilteringMode = filteringMode;
       filters.clear();
     });
-    reloadFiles();
+    reloadLists();
   }
 
   void searchForFiles(String searchQuery) {
     setState(() {
       _searchQuery = searchQuery;
     });
-    reloadFiles();
+    reloadLists();
   }
 
   void updateAllTags(List<TagEntity> allTags) {
@@ -147,7 +147,13 @@ class _FileExplorerState extends State<FileExplorer>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(context, filteringMode, filters.toList(), _searchQuery),
+      appBar: appBar(
+        reloadLists,
+        context,
+        filteringMode,
+        filters.toList(),
+        _searchQuery,
+      ),
       body: Row(
         children: [
           // Список тегов
