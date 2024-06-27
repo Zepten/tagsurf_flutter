@@ -81,7 +81,8 @@ class TagsPaneWidget extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () async {
-                          final tags = await showCreateTagsDialog(context);
+                          final tags =
+                              await showCreateTagsDialog(context, state.tags);
                           if (context.mounted &&
                               tags != null &&
                               tags.isNotEmpty) {
