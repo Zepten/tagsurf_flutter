@@ -353,8 +353,8 @@ class _$TagDao extends TagDao {
   }
 
   @override
-  Future<void> insertTag(TagModel tag) async {
-    await _tagModelInsertionAdapter.insert(tag, OnConflictStrategy.abort);
+  Future<void> insertTags(List<TagModel> tags) async {
+    await _tagModelInsertionAdapter.insertList(tags, OnConflictStrategy.abort);
   }
 
   @override

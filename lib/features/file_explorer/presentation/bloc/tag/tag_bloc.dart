@@ -12,7 +12,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/unlink_file_and_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/change_tag_color.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/get_all_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/rename_tag.dart';
@@ -24,7 +24,7 @@ part 'tag_state.dart';
 class TagBloc extends Bloc<TagEvent, TagState> {
   // Tag UseCases
   final GetAllTagsUseCase getAllTagsUseCase;
-  final CreateTagUseCase createTagUseCase;
+  final CreateTagsUseCase createTagsUseCase;
   final RenameTagUseCase renameTagUseCase;
   final ChangeTagColorUseCase changeTagColorUseCase;
   final SetParentTagUseCase setParentTagUseCase;
@@ -38,7 +38,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
 
   TagBloc(
       this.getAllTagsUseCase,
-      this.createTagUseCase,
+      this.createTagsUseCase,
       this.deleteTagUseCase,
       this.renameTagUseCase,
       this.changeTagColorUseCase,
@@ -51,7 +51,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
       : super(TagsLoadingState()) {
     // Tag events
     on<GetAllTagsEvent>(onGetAllTags);
-    on<CreateTagEvent>(onCreateTag);
+    on<CreateTagsEvent>(onCreateTag);
     on<RenameTagEvent>(onRenameTag);
     on<ChangeTagColorEvent>(onChangeTagColor);
     on<DeleteTagEvent>(onDeleteTag);
@@ -89,8 +89,8 @@ class TagBloc extends Bloc<TagEvent, TagState> {
     );
   }
 
-  void onCreateTag(CreateTagEvent event, Emitter<TagState> emit) async {
-    final result = await createTagUseCase(params: event.tag);
+  void onCreateTag(CreateTagsEvent event, Emitter<TagState> emit) async {
+    final result = await createTagsUseCase(params: event.tags);
     result.fold(
       (failure) => emit(TagsErrorState(failure: failure)),
       (success) => add(GetAllTagsEvent()),

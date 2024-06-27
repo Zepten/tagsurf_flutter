@@ -8,7 +8,7 @@ abstract class TagRepository {
   Future<Either<Failure, List<TagEntity>>> getAllTags();
   Future<Either<Failure, TagEntity>> getTagByName({required String name});
   Future<Either<Failure, List<TagEntity>>> getTagsByNames({required List<String> names});
-  Future<Either<Failure, void>> createTag({required TagEntity tag});
+  Future<Either<Failure, void>> createTags({required List<TagEntity> tags});
   Future<Either<Failure, void>> renameTag({required TagEntity tag, required String newName});
   Future<Either<Failure, void>> changeTagColor({required TagEntity tag, required Color color});
   Future<Either<Failure, void>> deleteTag({required TagEntity tag});

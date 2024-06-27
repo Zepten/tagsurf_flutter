@@ -8,13 +8,13 @@ class GetAllTagsEvent extends TagEvent {
   List<Object?> get props => List.empty();
 }
 
-class CreateTagEvent extends TagEvent {
-  final TagEntity tag;
+class CreateTagsEvent extends TagEvent {
+  final List<TagEntity> tags;
 
-  CreateTagEvent({required this.tag});
+  CreateTagsEvent({required this.tags});
 
   @override
-  List<Object?> get props => [tag];
+  List<Object?> get props => [tags];
 }
 
 class DeleteTagEvent extends TagEvent {

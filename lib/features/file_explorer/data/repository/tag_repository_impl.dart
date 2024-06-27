@@ -37,20 +37,26 @@ class TagRepositoryImpl implements TagRepository {
   }
 
   @override
-  Future<Either<Failure, void>> createTag({required TagEntity tag}) async {
+  Future<Either<Failure, void>> createTags({
+    required List<TagEntity> tags,
+  }) async {
     try {
-      final existingTag = await appDatabase.tagDao.getTagByName(tag.name);
-      if (existingTag == null) {
-        final isCyclicDependency =
-            await checkForCyclicDependency(tag.name, tag.parentTagName);
-        if (isCyclicDependency) {
-          return Left(TagsCyclicDependencyFailure(tags: [tag]));
-        }
-        await appDatabase.tagDao.insertTag(TagMapper.toModel(tag));
-        return const Right(null);
-      } else {
-        return Left(TagsDuplicateFailure(tags: [tag.name]));
+      final tagsNames = tags.map((tag) => tag.name).toList();
+      final existingTags = await appDatabase.tagDao.getTagsByNames(tagsNames);
+      if (existingTags.isNotEmpty) {
+        return Left(TagsDuplicateFailure(tags: tagsNames));
       }
+      final List<TagEntity> cyclicDependencyTags = [];
+      for (final tag in tags) {
+        if (await checkForCyclicDependency(tag.name, tag.parentTagName)) {
+          cyclicDependencyTags.append(tag);
+        }
+      }
+      if (cyclicDependencyTags.isNotEmpty) {
+        return Left(TagsCyclicDependencyFailure(tags: cyclicDependencyTags));
+      }
+      await appDatabase.tagDao.insertTags(TagMapper.toModels(tags));
+      return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(message: e.toString()));
     }
@@ -69,8 +75,7 @@ class TagRepositoryImpl implements TagRepository {
       if (existingTag.name == newName) {
         return const Right(null);
       }
-      final newNameExistingTag =
-          await appDatabase.tagDao.getTagByName(newName);
+      final newNameExistingTag = await appDatabase.tagDao.getTagByName(newName);
       if (newNameExistingTag != null) {
         return Left(TagsDuplicateFailure(tags: [newName]));
       }

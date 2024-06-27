@@ -4,7 +4,7 @@ import 'package:tagsurf_flutter/features/file_explorer/data/models/tag.dart';
 @dao
 abstract class TagDao {
   @Insert()
-  Future<void> insertTag(TagModel tag);
+  Future<void> insertTags(List<TagModel> tags);
 
   @Query('UPDATE tags SET name = :newName WHERE name = :oldName')
   Future<void> renameTag(String oldName, String newName);
