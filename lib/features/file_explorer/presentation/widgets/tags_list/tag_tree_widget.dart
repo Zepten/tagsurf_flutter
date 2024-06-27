@@ -8,6 +8,7 @@ class TagTreeWidget extends StatelessWidget {
   final Set<String> filters;
   final Function(TagEntity, bool) onTagSelected;
   final Function(BuildContext, TagEntity, TagEntity) onTagDropped;
+  final List<String> existingTagsNames;
 
   const TagTreeWidget({
     super.key,
@@ -15,6 +16,7 @@ class TagTreeWidget extends StatelessWidget {
     required this.filters,
     required this.onTagSelected,
     required this.onTagDropped,
+    required this.existingTagsNames,
   });
 
   @override
@@ -39,6 +41,7 @@ class TagTreeWidget extends StatelessWidget {
         isSelected: filters.contains(tag.name),
         onTagSelected: onTagSelected,
         onTagDropped: onTagDropped,
+        existingTagsNames: existingTagsNames,
       ),
       children: (tagTree[tag] ?? [])
           .map((childTag) => _buildTreeNode(context, childTag, tagTree))

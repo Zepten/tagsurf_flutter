@@ -15,12 +15,15 @@ class TagForFileChipWidget extends StatelessWidget {
   final Set<String> filters;
   final Function(TagEntity, bool) onTagSelected;
 
+  final List<String> existingTagsNames;
+
   const TagForFileChipWidget({
     super.key,
     required this.file,
     required this.tag,
     required this.filters,
     required this.onTagSelected,
+    required this.existingTagsNames,
   });
 
   @override
@@ -28,7 +31,7 @@ class TagForFileChipWidget extends StatelessWidget {
     final bool isSelected = filters.contains(tag.name);
     return GestureDetector(
       onSecondaryTapDown: (TapDownDetails details) {
-        showTagContextMenu(context, details.globalPosition, tag, onTagSelected);
+        showTagContextMenu(context, details.globalPosition, tag, onTagSelected, existingTagsNames);
       },
       child: RawChip(
         elevation: 5.0,
