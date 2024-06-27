@@ -14,6 +14,7 @@ showTagContextMenu(
   Offset position,
   TagEntity tag,
   Function(TagEntity, bool) onTagSelected,
+  List<String> existingTagsNames,
 ) async {
   final result = await showMenu(
     context: context,
@@ -65,7 +66,7 @@ showTagContextMenu(
         }
         break;
       case TagContextMenuActions.rename:
-        final newName = await showRenameTagDialog(context, tag);
+        final newName = await showRenameTagDialog(context, tag, existingTagsNames);
         if (context.mounted && newName != null && newName.isNotEmpty) {
           context
               .read<TagBloc>()

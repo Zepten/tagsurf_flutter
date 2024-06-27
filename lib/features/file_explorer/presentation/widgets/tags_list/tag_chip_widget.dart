@@ -8,6 +8,7 @@ class TagChipWidget extends StatelessWidget {
   final bool isSelected;
   final Function(TagEntity, bool) onTagSelected;
   final Function(BuildContext, TagEntity, TagEntity) onTagDropped;
+  final List<String> existingTagsNames;
 
   const TagChipWidget({
     super.key,
@@ -15,6 +16,7 @@ class TagChipWidget extends StatelessWidget {
     required this.isSelected,
     required this.onTagSelected,
     required this.onTagDropped,
+    required this.existingTagsNames,
   });
 
   @override
@@ -26,8 +28,8 @@ class TagChipWidget extends StatelessWidget {
       builder: (context, candidateData, rejectedData) {
         return GestureDetector(
           onSecondaryTapDown: (TapDownDetails details) {
-            showTagContextMenu(
-                context, details.globalPosition, tag, onTagSelected);
+            showTagContextMenu(context, details.globalPosition, tag,
+                onTagSelected, existingTagsNames);
           },
           child: Draggable<TagEntity>(
             data: tag,

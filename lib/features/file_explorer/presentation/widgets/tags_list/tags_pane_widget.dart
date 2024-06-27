@@ -161,6 +161,8 @@ class TagsPaneWidget extends StatelessWidget {
                                 filters: filters,
                                 onTagSelected: onTagSelected,
                                 onTagDropped: _handleTagDropped,
+                                existingTagsNames:
+                                    state.tags.map((tag) => tag.name).toList(),
                               ),
                             ),
                           ),

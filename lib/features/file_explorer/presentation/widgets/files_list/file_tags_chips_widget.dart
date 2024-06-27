@@ -109,6 +109,7 @@ class _FileTagsChipsWidgetState extends State<FileTagsChipsWidget> {
                       tag: tag,
                       filters: widget.filters,
                       onTagSelected: widget.onTagSelected,
+                      existingTagsNames: widget.allTags,
                     )),
                 // Add tag button
                 Focus(
