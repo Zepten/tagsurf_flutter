@@ -81,11 +81,13 @@ class TagsPaneWidget extends StatelessWidget {
                     children: [
                       IconButton(
                         onPressed: () async {
-                          final tag = await showCreateTagsDialog(context);
-                          if (context.mounted && tag != null) {
+                          final tags = await showCreateTagsDialog(context);
+                          if (context.mounted &&
+                              tags != null &&
+                              tags.isNotEmpty) {
                             context
                                 .read<TagBloc>()
-                                .add(CreateTagEvent(tag: tag));
+                                .add(CreateTagsEvent(tags: tags));
                           }
                         },
                         icon: const Icon(Icons.add_circle_rounded,
