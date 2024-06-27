@@ -62,7 +62,7 @@ Future<void> main() async {
         color: Colors.white,
         dateTimeAdded: DateTime.now(),
       );
-      await tagRepository.createTag(tag: testTagEntity);
+      await tagRepository.createTags(tags: [testTagEntity]);
     });
 
     tearDown(() async {

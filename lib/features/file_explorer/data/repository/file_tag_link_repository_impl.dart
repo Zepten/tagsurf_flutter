@@ -83,7 +83,7 @@ class FileTagLinkRepositoryImpl implements FileTagLinkRepository {
       final existingTag = await appDatabase.tagDao.getTagByName(tagName);
       if (existingTag == null) {
         final defaultTagEntity = TagEntity.createDefault(tagName);
-        await appDatabase.tagDao.insertTag(TagMapper.toModel(defaultTagEntity));
+        await appDatabase.tagDao.insertTags([TagMapper.toModel(defaultTagEntity)]);
         return await linkFileAndTag(
             filePath: filePath, tagName: defaultTagEntity.name);
       } else {

@@ -19,7 +19,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_all_files_from_directory.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/open_file.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/change_tag_color.dart';
-import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/get_all_tags.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/rename_tag.dart';
@@ -34,38 +34,53 @@ final sl = GetIt.instance;
 Future<void> init() async {
   //! Features: File Explorer
   //? BLoCs
-  sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<FileBloc>(
+      () => FileBloc(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<TagBloc>(() => TagBloc(
+      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
   //? Use cases
   // File Use cases
-  sl.registerLazySingleton<GetAllFilesFromDirectoryUseCase>(() => GetAllFilesFromDirectoryUseCase(sl()));
-  sl.registerLazySingleton<GetTrackedFilesUseCase>(() => GetTrackedFilesUseCase(sl()));
+  sl.registerLazySingleton<GetAllFilesFromDirectoryUseCase>(
+      () => GetAllFilesFromDirectoryUseCase(sl()));
+  sl.registerLazySingleton<GetTrackedFilesUseCase>(
+      () => GetTrackedFilesUseCase(sl()));
   sl.registerLazySingleton<TrackFilesUseCase>(() => TrackFilesUseCase(sl()));
   sl.registerLazySingleton<UntrackFileUseCase>(() => UntrackFileUseCase(sl()));
   sl.registerLazySingleton<OpenFileUseCase>(() => OpenFileUseCase(sl()));
   // Tag Use cases
-  sl.registerLazySingleton<CreateTagUseCase>(() => CreateTagUseCase(sl()));
+  sl.registerLazySingleton<CreateTagsUseCase>(() => CreateTagsUseCase(sl()));
   sl.registerLazySingleton<RenameTagUseCase>(() => RenameTagUseCase(sl()));
-  sl.registerLazySingleton<ChangeTagColorUseCase>(() => ChangeTagColorUseCase(sl()));
+  sl.registerLazySingleton<ChangeTagColorUseCase>(
+      () => ChangeTagColorUseCase(sl()));
   sl.registerLazySingleton<DeleteTagUseCase>(() => DeleteTagUseCase(sl()));
   sl.registerLazySingleton<GetAllTagsUseCase>(() => GetAllTagsUseCase(sl()));
-  sl.registerLazySingleton<SetParentTagUseCase>(() => SetParentTagUseCase(sl()));
+  sl.registerLazySingleton<SetParentTagUseCase>(
+      () => SetParentTagUseCase(sl()));
   // File-tag association (linking) Use cases
-  sl.registerLazySingleton<LinkFileAndTagUseCase>(() => LinkFileAndTagUseCase(sl()));
-  sl.registerLazySingleton<LinkOrCreateTagUseCase>(() => LinkOrCreateTagUseCase(sl()));
-  sl.registerLazySingleton<UnlinkFileAndTagUseCase>(() => UnlinkFileAndTagUseCase(sl()));
-  sl.registerLazySingleton<GetFilesByTagsUseCase>(() => GetFilesByTagsUseCase(sl()));
-  sl.registerLazySingleton<GetTagsByFileUseCase>(() => GetTagsByFileUseCase(sl()));
-  sl.registerLazySingleton<GetUntaggedFilesUseCase>(() => GetUntaggedFilesUseCase(sl()));
+  sl.registerLazySingleton<LinkFileAndTagUseCase>(
+      () => LinkFileAndTagUseCase(sl()));
+  sl.registerLazySingleton<LinkOrCreateTagUseCase>(
+      () => LinkOrCreateTagUseCase(sl()));
+  sl.registerLazySingleton<UnlinkFileAndTagUseCase>(
+      () => UnlinkFileAndTagUseCase(sl()));
+  sl.registerLazySingleton<GetFilesByTagsUseCase>(
+      () => GetFilesByTagsUseCase(sl()));
+  sl.registerLazySingleton<GetTagsByFileUseCase>(
+      () => GetTagsByFileUseCase(sl()));
+  sl.registerLazySingleton<GetUntaggedFilesUseCase>(
+      () => GetUntaggedFilesUseCase(sl()));
 
   //? Repository
-  sl.registerLazySingleton<FileRepository>(() => FileRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<FileRepository>(
+      () => FileRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<TagRepository>(() => TagRepositoryImpl(sl()));
-  sl.registerLazySingleton<FileTagLinkRepository>(() => FileTagLinkRepositoryImpl(sl()));
+  sl.registerLazySingleton<FileTagLinkRepository>(
+      () => FileTagLinkRepositoryImpl(sl()));
 
   //? Data sources
-  final database = await $FloorAppDatabase.databaseBuilder(DATABASE_NAME).build();
+  final database =
+      await $FloorAppDatabase.databaseBuilder(DATABASE_NAME).build();
   sl.registerLazySingleton<AppDatabase>(() => database);
   sl.registerLazySingleton<FileSystemService>(() => FileSystemServiceImpl());
 }
