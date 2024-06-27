@@ -5,7 +5,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_
 import 'package:tagsurf_flutter/features/file_explorer/core/util/search_query_formatter.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/file/file_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/dialogs/error_dialogs.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/files_list/file_widget.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/pick_file.dart';
 

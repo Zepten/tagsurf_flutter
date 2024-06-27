@@ -5,7 +5,7 @@ import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/create_tags_dialog.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/dialogs/error_dialogs.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_tree_widget.dart';
 
 class TagsPaneWidget extends StatelessWidget {

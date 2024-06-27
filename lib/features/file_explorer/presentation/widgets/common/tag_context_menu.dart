@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/delete_tag_confirmation.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/pick_color_dialog.dart';
-import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/rename_dialog.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/confirmations/delete_tag_confirmation.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/dialogs/pick_color_dialog.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/dialogs/rename_dialog.dart';
 
 enum TagContextMenuActions { changeColor, copyName, rename, moveToRoot, delete }
 
@@ -124,8 +124,6 @@ showTagContextMenu(
             ),
           );
         }
-        break;
-      default:
         break;
     }
   }

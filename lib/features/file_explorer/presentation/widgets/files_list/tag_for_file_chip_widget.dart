@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/core/util/file_utils.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/confirmations/unlink_tag_confirmation.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/tag_context_menu.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/color_util.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
@@ -49,14 +51,28 @@ class TagForFileChipWidget extends StatelessWidget {
           size: 15.0,
         ),
         deleteIconColor: Colors.red[300],
-        deleteButtonTooltipMessage: 'Убрать тег',
+        deleteButtonTooltipMessage: 'Отвязать тег',
         onPressed: () {
           onTagSelected(tag, !isSelected);
         },
-        onDeleted: () {
-          context
-              .read<TagBloc>()
-              .add(UnlinkFileAndTagEvent(file: file, tagName: tag.name));
+        onDeleted: () async {
+          final shouldUnlink =
+              await showTagUnlinkConfirmation(context, tag, file);
+          if (context.mounted && shouldUnlink) {
+            context
+                .read<TagBloc>()
+                .add(UnlinkFileAndTagEvent(file: file, tagName: tag.name));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                showCloseIcon: true,
+                elevation: 10.0,
+                content: Text(
+                    'Удалена связь между тегом "${tag.name}" и файлом "${FileUtils.basename(file.path)}"'),
+                backgroundColor: Colors.blue,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
         },
         backgroundColor: ColorUtil.getLightShade(tag.color),
       ),
