@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/create_tags_dialog.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/error_dialogs.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/tags_list/tag_tree_widget.dart';
 
@@ -79,8 +80,13 @@ class TagsPaneWidget extends StatelessWidget {
                   child: Row(
                     children: [
                       IconButton(
-                        onPressed: () => {
-                          // TODO: add new tag
+                        onPressed: () async {
+                          final tag = await showCreateTagsDialog(context);
+                          if (context.mounted && tag != null) {
+                            context
+                                .read<TagBloc>()
+                                .add(CreateTagEvent(tag: tag));
+                          }
                         },
                         icon: const Icon(Icons.add_circle_rounded,
                             color: Colors.blue),
