@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/tag_context_menu.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/color_util.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/tag_entity.dart';
-
-enum TagContextMenuActions { changeColor, copyName, rename, moveToRoot, delete }
 
 class TagChipWidget extends StatelessWidget {
   final TagEntity tag;
   final bool isSelected;
   final Function(TagEntity, bool) onTagSelected;
   final Function(BuildContext, TagEntity, TagEntity) onTagDropped;
-  final Function(TagContextMenuActions, TagEntity) onContextMenuAction;
 
   const TagChipWidget({
     super.key,
@@ -17,7 +15,6 @@ class TagChipWidget extends StatelessWidget {
     required this.isSelected,
     required this.onTagSelected,
     required this.onTagDropped,
-    required this.onContextMenuAction,
   });
 
   @override
@@ -29,7 +26,8 @@ class TagChipWidget extends StatelessWidget {
       builder: (context, candidateData, rejectedData) {
         return GestureDetector(
           onSecondaryTapDown: (TapDownDetails details) {
-            _showContextMenu(context, details.globalPosition);
+            showTagContextMenu(
+                context, details.globalPosition, tag, onTagSelected);
           },
           child: Draggable<TagEntity>(
             data: tag,
@@ -72,49 +70,5 @@ class TagChipWidget extends StatelessWidget {
         backgroundColor: ColorUtil.getLightShade(tag.color),
       ),
     );
-  }
-
-  _showContextMenu(BuildContext context, Offset position) async {
-    final result = await showMenu(
-      context: context,
-      elevation: 10.0,
-      position: RelativeRect.fromLTRB(
-          position.dx, position.dy, position.dx, position.dy),
-      items: [
-        const PopupMenuItem(
-          value: TagContextMenuActions.changeColor,
-          child: ListTile(
-              leading: Icon(Icons.color_lens, color: Colors.blue),
-              title: Text('Изменить цвет')),
-        ),
-        const PopupMenuItem(
-          value: TagContextMenuActions.rename,
-          child: ListTile(
-              leading: Icon(Icons.edit, color: Colors.blue),
-              title: Text('Переименовать')),
-        ),
-        const PopupMenuItem(
-          value: TagContextMenuActions.copyName,
-          child: ListTile(
-              leading: Icon(Icons.copy_outlined, color: Colors.blue),
-              title: Text('Копировать имя')),
-        ),
-        const PopupMenuItem(
-          value: TagContextMenuActions.moveToRoot,
-          child: ListTile(
-              leading: Icon(Icons.move_up_outlined, color: Colors.blue),
-              title: Text('Переместить в корень')),
-        ),
-        const PopupMenuItem(
-          value: TagContextMenuActions.delete,
-          child: ListTile(
-              leading: Icon(Icons.delete, color: Colors.red),
-              title: Text('Удалить тег')),
-        ),
-      ],
-    );
-    if (result != null) {
-      onContextMenuAction(result, tag);
-    }
   }
 }

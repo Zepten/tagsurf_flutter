@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/tag_context_menu.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/color_util.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/entities/file_entity.dart';
@@ -23,37 +24,42 @@ class TagForFileChipWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isSelected = filters.contains(tag.name);
-    return RawChip(
-      elevation: 5.0,
-      shadowColor: isSelected ? Colors.blue : Colors.black,
-      avatar: Icon(Icons.sell, color: ColorUtil.getDarkShade(tag.color)),
-      label: Text(tag.name,
-          style: TextStyle(
-            color: ColorUtil.getDarkShade(tag.color),
-            overflow: TextOverflow.ellipsis,
-          )),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100.0),
-      ),
-      side: BorderSide(
-        color: isSelected ? Colors.blue : Colors.transparent,
-        width: 2.0,
-      ),
-      deleteIcon: const Icon(
-        Icons.remove_circle,
-        size: 15.0,
-      ),
-      deleteIconColor: Colors.red[300],
-      deleteButtonTooltipMessage: 'Убрать тег',
-      onPressed: () {
-        onTagSelected(tag, !isSelected);
+    return GestureDetector(
+      onSecondaryTapDown: (TapDownDetails details) {
+        showTagContextMenu(context, details.globalPosition, tag, onTagSelected);
       },
-      onDeleted: () {
-        context
-            .read<TagBloc>()
-            .add(UnlinkFileAndTagEvent(file: file, tagName: tag.name));
-      },
-      backgroundColor: ColorUtil.getLightShade(tag.color),
+      child: RawChip(
+        elevation: 5.0,
+        shadowColor: isSelected ? Colors.blue : Colors.black,
+        avatar: Icon(Icons.sell, color: ColorUtil.getDarkShade(tag.color)),
+        label: Text(tag.name,
+            style: TextStyle(
+              color: ColorUtil.getDarkShade(tag.color),
+              overflow: TextOverflow.ellipsis,
+            )),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(100.0),
+        ),
+        side: BorderSide(
+          color: isSelected ? Colors.blue : Colors.transparent,
+          width: 2.0,
+        ),
+        deleteIcon: const Icon(
+          Icons.remove_circle,
+          size: 15.0,
+        ),
+        deleteIconColor: Colors.red[300],
+        deleteButtonTooltipMessage: 'Убрать тег',
+        onPressed: () {
+          onTagSelected(tag, !isSelected);
+        },
+        onDeleted: () {
+          context
+              .read<TagBloc>()
+              .add(UnlinkFileAndTagEvent(file: file, tagName: tag.name));
+        },
+        backgroundColor: ColorUtil.getLightShade(tag.color),
+      ),
     );
   }
 }
