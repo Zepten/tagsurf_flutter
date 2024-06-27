@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tagsurf_flutter/features/file_explorer/core/filtering/filtering_modes.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/bloc/tag/tag_bloc.dart';
+import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/common/dialogs/settings_dialog.dart';
 import 'package:tagsurf_flutter/features/file_explorer/presentation/widgets/util/pick_file.dart';
 
 AppBar appBar(
@@ -39,7 +40,7 @@ AppBar appBar(
         icon: const Icon(Icons.add_circle, color: Colors.white),
       ),
       IconButton(
-        onPressed: () {},
+        onPressed: () async => await showSettingsDialog(context),
         tooltip: 'Настройки',
         icon: const Icon(
           Icons.settings,
