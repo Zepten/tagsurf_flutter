@@ -10,6 +10,7 @@ import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/link_file_and_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/link_or_create_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/file_tag_links/unlink_file_and_tag.dart';
+import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/files/get_tracked_files.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/change_tag_color.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/create_tag.dart';
 import 'package:tagsurf_flutter/features/file_explorer/domain/usecases/tags/delete_tag.dart';
@@ -30,6 +31,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   final DeleteTagUseCase deleteTagUseCase;
   // File-tag linking UseCases
   final GetTagsByFileUseCase getTagsByFileUseCase;
+  final GetTrackedFilesUseCase getTrackedFilesUseCase;
   final LinkFileAndTagUseCase linkFileAndTagUseCase;
   final LinkOrCreateTagUseCase linkOrCreateTagUseCase;
   final UnlinkFileAndTagUseCase unlinkFileAndTagUseCase;
@@ -41,6 +43,7 @@ class TagBloc extends Bloc<TagEvent, TagState> {
       this.renameTagUseCase,
       this.changeTagColorUseCase,
       this.getTagsByFileUseCase,
+      this.getTrackedFilesUseCase,
       this.linkFileAndTagUseCase,
       this.linkOrCreateTagUseCase,
       this.unlinkFileAndTagUseCase,
@@ -64,6 +67,21 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   // Tag business logic
   void onGetAllTags(GetAllTagsEvent event, Emitter<TagState> emit) async {
     emit(TagsLoadingState());
+    final files = await getTrackedFilesUseCase(params: '');
+    await files.fold(
+      (failure) async => emit(TagsErrorState(failure: failure)),
+      (files) async {
+        for (final file in files) {
+          emit(TagsForFileLoadingState(file: file));
+          final tagsForFileResult = await getTagsByFileUseCase(params: file);
+          tagsForFileResult.fold(
+            (failure) => emit(TagsErrorState(failure: failure)),
+            (tagsForFile) =>
+                emit(TagsForFileLoadedState(file: file, tags: tagsForFile)),
+          );
+        }
+      },
+    );
     final tags = await getAllTagsUseCase();
     tags.fold(
       (failure) => emit(TagsErrorState(failure: failure)),

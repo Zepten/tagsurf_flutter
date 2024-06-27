@@ -35,7 +35,7 @@ Future<void> init() async {
   //! Features: File Explorer
   //? BLoCs
   sl.registerFactory<FileBloc>(() => FileBloc(sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory<TagBloc>(() => TagBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 
   //? Use cases
   // File Use cases
