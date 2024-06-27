@@ -20,7 +20,7 @@ Future<void> main() async {
       database.close();
     });
 
-    test('Create tag', () async {
+    test('Create 1 tag', () async {
       final testTag = TagEntity(
         name: 'test tag',
         parentTagName: null,
@@ -29,13 +29,47 @@ Future<void> main() async {
       );
 
       // Create tag
-      await tagRepository.createTag(tag: testTag);
+      await tagRepository.createTags(tags: [testTag]);
 
       // Check if tag is created
       final result = await tagRepository.getTagByName(name: testTag.name);
       result.fold(
         (failure) => fail('Failure: $failure'),
         (tag) => expect(tag, equals(testTag)),
+      );
+    });
+
+    test('Create 3 different tags', () async {
+      final testTags = [
+        TagEntity(
+          name: 'test tag 1',
+          parentTagName: null,
+          color: Colors.red,
+          dateTimeAdded: DateTime.now(),
+        ),
+        TagEntity(
+          name: 'test tag 2',
+          parentTagName: null,
+          color: Colors.green,
+          dateTimeAdded: DateTime.now(),
+        ),
+        TagEntity(
+          name: 'test tag 3',
+          parentTagName: null,
+          color: Colors.blue,
+          dateTimeAdded: DateTime.now(),
+        ),
+      ];
+
+      // Create tag
+      await tagRepository.createTags(tags: testTags);
+
+      // Check if tag is created
+      final tagsNames = testTags.map((tag) => tag.name).toList();
+      final result = await tagRepository.getTagsByNames(names: tagsNames);
+      result.fold(
+        (failure) => fail('Failure: $failure'),
+        (tags) => expect(tags, equals(testTags)),
       );
     });
 
@@ -48,7 +82,7 @@ Future<void> main() async {
       );
 
       // Create tag
-      await tagRepository.createTag(tag: testTag);
+      await tagRepository.createTags(tags: [testTag]);
       final createResult = await tagRepository.getTagByName(name: testTag.name);
       createResult.fold(
         (failure) => fail('Failure: $failure'),
@@ -89,9 +123,7 @@ Future<void> main() async {
       ];
 
       // Create tags
-      for (final tag in testTags) {
-        await tagRepository.createTag(tag: tag);
-      }
+      await tagRepository.createTags(tags: testTags);
 
       // Get all tags
       final result = await tagRepository.getAllTags();
@@ -112,7 +144,7 @@ Future<void> main() async {
       );
 
       // Create tag
-      final resultOk = await tagRepository.createTag(tag: testTag);
+      final resultOk = await tagRepository.createTags(tags: [testTag]);
 
       // Check if tag creation is successful
       resultOk.fold(
@@ -129,7 +161,7 @@ Future<void> main() async {
       );
 
       // Create same tag again
-      final resultNotOk = await tagRepository.createTag(tag: testTag);
+      final resultNotOk = await tagRepository.createTags(tags: [testTag]);
 
       // Check if same tag creation is not successful
       resultNotOk.fold(
